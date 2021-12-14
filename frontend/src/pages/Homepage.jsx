@@ -1,9 +1,30 @@
+import {useState} from "react";
+import Button from '@mui/material/Button';
 
 const Homepage = () => {
+
+    const [tickers, setTickers] = useState(undefined)
+
+    const getAusTickers = () => {
+        fetch('/aus_tickers')
+            .then((res) => setTickers(res))
+    }
+
     return (
-        <>
-        Hi there
-        </>
+        <div>
+            <Button onClick={getAusTickers}>
+                Submit button
+            </Button>
+            {tickers && tickers.map((index, item) => {
+                return (
+                    <div key={index}>
+                        <div>
+                            {item.ticker}
+                        </div>
+                    </div>
+                )
+            })}
+        </div>
     )
 }
 
