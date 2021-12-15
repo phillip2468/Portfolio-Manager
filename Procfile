@@ -1,2 +1,2 @@
 web: gunicorn backend.run:app
-worker:  celery -A backend.worker:celery worker --loglevel=DEBUG
+worker: celery -A backend.money_maker.worker:celery worker --loglevel=DEBUG
