@@ -1,4 +1,4 @@
-from money_maker import app
+from .money_maker import app
 
 app = app.create_app()
 
