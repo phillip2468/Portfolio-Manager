@@ -1,26 +1,35 @@
 import datetime
+import typing
 
 import flask
 from flask import Blueprint, current_app as app, jsonify
 import aiohttp
 import asyncio
 import requests
-from typing import get_type_hints
+
+from money_maker.helpers import sync_request
 
 home_bp = Blueprint('home_bp', __name__)
 
-# https://www.marketindex.com.au/api/v1/companies
 
-
-
-
-def get_aus_tickers() -> requests.Response:
-    response: requests.Response = requests.get('https://www.marketindex.com.au/api/v1/companies', headers=header)
-    return response.json()
+def get_aus_tickers() -> list[dict[str, str, str]]:
+    """
+    Gets the code, status and title of all ASX listed stocks.
+    All results are held in a list of dictionaries.
+    :return: List of dictionaries
+    :rtype: list[dict[str, str, str]]
+    """
+    url: str = 'https://www.marketindex.com.au/api/v1/companies'
+    return sync_request(url)
 
 
 @home_bp.route('/aus_tickers', methods=['GET'])
-def these_tickers() -> flask.Response:
+def asx_tickers() -> flask.Response:
+    """
+    Packages the response to a json format.
+    :return: The list of dictionaries containing the tickers.
+    :rtype: flask.Response
+    """
     return jsonify(get_aus_tickers())
 
 
