@@ -1,30 +1,35 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Button from '@mui/material/Button';
+import {Container} from "@mui/material";
 
 const Homepage = () => {
 
-    const [tickers, setTickers] = useState([])
+    const [tickers, setTickers] = useState(undefined)
 
-    const getAusTickers = () => {
-        fetch('/aus_tickers')
-            .then((res) => setTickers(res))
+    const getAusTickers = async () => {
+        const result = await fetch('/aus_tickers');
+        const response = await result.json();
+        console.log(response[0])
+        setTickers(response)
     }
 
+    useEffect(()=>{
+        console.log('Mounted!')
+    }, [tickers])
+
     return (
-        <div>
+        <Container>
             <Button onClick={getAusTickers}>
                 Submit button
             </Button>
-            {tickers && Object.keys(tickers).map((index, item) => {
+            {tickers && tickers.map((item) => {
                 return (
-                    <div key={index}>
-                        <div>
-                            {item.ticker}
-                        </div>
+                    <div>
+                        {item.code}
                     </div>
                 )
             })}
-        </div>
+        </Container>
     )
 }
 
