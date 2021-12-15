@@ -3,14 +3,13 @@ import typing
 
 import flask
 from flask import Blueprint, current_app as app, jsonify
-import aiohttp
-import asyncio
-import requests
 from requests import Response
 
-from backend.money_maker.helpers import sync_request
-from backend.money_maker.celery_tasks.tasks import add_together
+
+#from money_maker.celery_tasks.tasks import add_together
 from celery.result import AsyncResult
+
+from backend.money_maker.helpers import sync_request
 
 home_bp = Blueprint('home_bp', __name__)
 
@@ -39,8 +38,8 @@ def asx_tickers() -> flask.Response:
 
 @home_bp.route('/')
 def serve():
-    result = add_together.delay()
-    print(result.wait())
+    #result = add_together.delay()
+    #print(result.wait())
     return app.send_static_file('index.html')
 
 
