@@ -5,20 +5,20 @@ from backend.money_maker.app import create_worker_app
 
 
 def init_celery(app):
-    celery = Celery()
-    celery.conf.broker_url = environ.get('CELERY_BROKER_URL')
+    new_celery = Celery()
+    new_celery.conf.broker_url = environ.get('CELERY_BROKER_URL')
     # celery.conf.result_backend = app.config['CELERY_RESULT_BACKEND']
-    celery.conf.update(app.config)
+    new_celery.conf.update(app.config)
 
-    class ContextTask(celery.Task):
+    class ContextTask(new_celery.Task):
         """Make celery tasks work with Flask app context"""
 
         def __call__(self, *args, **kwargs):
             with app.app_context():
                 return self.run(*args, **kwargs)
 
-    celery.Task = ContextTask
-    return celery
+    new_celery.Task = ContextTask
+    return new_celery
 
 
 flask_app = create_worker_app()
