@@ -1,4 +1,4 @@
-from home.routes import home_bp
+from money_maker.home.routes import home_bp
 from flask import Flask
 from flask_cors import CORS
 
