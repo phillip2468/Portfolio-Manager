@@ -1,3 +1,5 @@
+import datetime
+
 from flask import Blueprint, current_app as app, jsonify
 import aiohttp
 import asyncio
@@ -14,17 +16,14 @@ header = {
 }
 
 
-async def get_aus_tickers():
-    async with aiohttp.ClientSession(headers=header) as session:
-        async with session.get('https://www.marketindex.com.au/api/v1/companies') as response:
-            print(response.status)
-            return await response.json()
+def get_aus_tickers() -> requests.Response:
+    response: requests.Response = requests.get('https://www.marketindex.com.au/api/v1/companies', headers=header)
+    return response.json()
 
 
 @home_bp.route('/aus_tickers', methods=['GET'])
-async def these_tickers():
-    results = await get_aus_tickers()
-    return jsonify(results)
+def these_tickers():
+    return jsonify(get_aus_tickers())
 
 
 @home_bp.route('/', methods=['GET'])
