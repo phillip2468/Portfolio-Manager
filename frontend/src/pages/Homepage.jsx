@@ -15,7 +15,7 @@ const Homepage = () => {
             <Button onClick={getAusTickers}>
                 Submit button
             </Button>
-            {tickers && tickers.map((index, item) => {
+            {tickers !== undefined && tickers.map((index, item) => {
                 return (
                     <div key={index}>
                         <div>

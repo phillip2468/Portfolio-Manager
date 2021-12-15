@@ -1,6 +1,7 @@
 from flask import Blueprint, current_app as app, jsonify
 import aiohttp
 import asyncio
+import requests
 
 home_bp = Blueprint('home_bp', __name__)
 
@@ -17,12 +18,12 @@ async def get_aus_tickers():
     async with aiohttp.ClientSession(headers=header) as session:
         async with session.get('https://www.marketindex.com.au/api/v1/companies') as response:
             print(response.status)
-            return response.json()
+            return await response.json()
 
 
 @home_bp.route('/aus_tickers', methods=['GET'])
-def get_aus_tickers():
-    results = get_aus_tickers()
+async def these_tickers():
+    results = await get_aus_tickers()
     return jsonify(results)
 
 
