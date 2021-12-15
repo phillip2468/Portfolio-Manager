@@ -37,9 +37,9 @@ def asx_tickers() -> flask.Response:
     return jsonify(get_aus_tickers())
 
 
-@home_bp.route('/', methods=['GET'])
-def homepage() -> str:
-    return 'im the home page!'
+@home_bp.route('/')
+def serve():
+    return app.send_static_file('index.html')
 
 
 @home_bp.route('/tasks/<task_id>')
