@@ -1,7 +1,15 @@
 from os import environ
 
 from celery import Celery
-from backend.money_maker.app import create_worker_app
+from flask import Flask
+from flask_cors import CORS
+
+
+def create_worker_app():
+    app = Flask(__name__)
+    CORS(app)
+
+    return app
 
 
 def init_celery(app):

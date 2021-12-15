@@ -4,6 +4,8 @@ from requests import Response
 
 from money_maker.helpers import sync_request
 
+from money_maker.celery_tasks.tasks import add_together
+
 home_bp = Blueprint('home_bp', __name__)
 
 
@@ -25,6 +27,8 @@ def asx_tickers() -> flask.Response:
     :return: The list of dictionaries containing the tickers.
     :rtype: flask.Response
     """
+    result = add_together().delay()
+    print(result.wait())
 
     return jsonify(get_aus_tickers())
 
