@@ -1,15 +1,8 @@
-import datetime
-import typing
-
 import flask
 from flask import Blueprint, current_app as app, jsonify
 from requests import Response
 
-
-from money_maker.celery_tasks.tasks import add_together
-from celery.result import AsyncResult
-
-from money_maker.helpers import sync_request
+from backend.money_maker.helpers import sync_request
 
 home_bp = Blueprint('home_bp', __name__)
 
@@ -39,23 +32,3 @@ def asx_tickers() -> flask.Response:
 @home_bp.route('/')
 def serve():
     return app.send_static_file('index.html')
-
-
-@home_bp.route('/tasks/<task_id>')
-def check_task(task_id):
-    task = AsyncResult(task_id)
-
-    if task.state == 'FAILURE':
-        result = None
-        error = str(task.result)
-    else:
-        result = task.result
-        error = None
-
-    response = {
-        'id': task_id,
-        'state': task.state,
-        'result': result,
-        'error': error,
-    }
-    return jsonify(response)
