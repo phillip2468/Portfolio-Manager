@@ -9,7 +9,7 @@ import requests
 from requests import Response
 
 from backend.money_maker.helpers import sync_request
-from money_maker.celery_tasks.tasks import add_together
+from backend.money_maker.celery_tasks.tasks import add_together
 from celery.result import AsyncResult
 
 home_bp = Blueprint('home_bp', __name__)
