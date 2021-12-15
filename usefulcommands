@@ -1,0 +1,4 @@
+net stop rabbitmq
+net start rabbitmq
+
+heroku local web -f Procfile.windows
