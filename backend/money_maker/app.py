@@ -10,7 +10,7 @@ def create_worker_app():
 
 
 def create_app():
-    from backend.money_maker.home.routes import home_bp
+    from money_maker.home.routes import home_bp
     app = Flask(__name__, static_folder='../../frontend/build', static_url_path='')
     app.register_blueprint(home_bp)
     CORS(app)

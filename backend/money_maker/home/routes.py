@@ -2,7 +2,7 @@ import flask
 from flask import Blueprint, current_app as app, jsonify
 from requests import Response
 
-from backend.money_maker.helpers import sync_request
+from money_maker.helpers import sync_request
 
 home_bp = Blueprint('home_bp', __name__)
 
