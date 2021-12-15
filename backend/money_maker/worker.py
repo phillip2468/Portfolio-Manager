@@ -9,7 +9,6 @@ def init_celery(app):
     new_celery.conf.broker_url = environ.get('CELERY_BROKER_URL')
     # celery.conf.result_backend = app.config['CELERY_RESULT_BACKEND']
     new_celery.conf.update(app.config)
-    print('lol')
 
     class ContextTask(new_celery.Task):
         """Make celery tasks work with Flask app context"""
