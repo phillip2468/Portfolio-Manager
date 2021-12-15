@@ -1,7 +1,7 @@
 from os import environ
 
 from celery import Celery
-from backend.money_maker import create_worker_app
+from backend.money_maker.app import create_worker_app
 
 
 def init_celery(app):
@@ -23,4 +23,3 @@ def init_celery(app):
 
 flask_app = create_worker_app()
 celery = init_celery(flask_app)
-
