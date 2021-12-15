@@ -1,6 +1,6 @@
-from .money_maker import app
+from money_maker.app import create_app
 
-app = app.create_app()
+app = create_app()
 
 if __name__ == '__main__':
     app.run()
