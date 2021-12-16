@@ -1,3 +1,4 @@
+import datetime
 import time
 
 import flask
@@ -32,15 +33,17 @@ def asx_tickers() -> flask.Response:
     :return: The list of dictionaries containing the tickers.
     :rtype: flask.Response
     """
-    these_tickers = [element['code'] + '.AX' for element in get_aus_tickers()[:5]]
-    data: yahooquery.ticker.Ticker.__dict__ = Ticker(these_tickers, formatted=False).price
+    time1 = datetime.datetime.now()
+    these_tickers = [element['code'] + '.AX' for element in get_aus_tickers()[:100]]
+    data: yahooquery.ticker.Ticker.__dict__ = Ticker(these_tickers, formatted=False, asynchronous=True).price
     wanted_keys = ['symbol', 'regularMarketPrice', 'regularMarketChange', 'currencySymbol', 'marketCap']
     #data_as_list = [element for element in data]
     for key, value in data.items():
         new_dict = {k: value[k] for k in set(wanted_keys) & set(value.keys())}
         data[key] = new_dict
 
-    print(data)
+    print(datetime.datetime.now() - time1)
+    print(len(data))
     return jsonify(get_aus_tickers())
 
 
