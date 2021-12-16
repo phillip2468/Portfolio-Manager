@@ -1,6 +1,6 @@
-from os import environ
+from __future__ import absolute_import
 
-from celery import Celery
+from celery import Celery, Task
 from flask import Flask
 from flask_cors import CORS
 
@@ -13,19 +13,22 @@ def create_worker_app():
 
 
 def init_celery(app):
-    new_celery = Celery()
-    new_celery.conf.broker_url = environ.get('CELERY_BROKER_URL')
-    # celery.conf.result_backend = app.config['CELERY_RESULT_BACKEND']
+    new_celery = Celery(include=['backend.money_maker.celery_tasks.tasks'])
+    new_celery.conf.broker_url = 'redis://:p16bd01a8b5016a315d6b23b64c53f2eb0813ee6f724f14643f317d6e1d9fc9e3@ec2-34-196-91-164.compute-1.amazonaws.com:6779'
+    new_celery.conf.result_backend = 'redis://:p16bd01a8b5016a315d6b23b64c53f2eb0813ee6f724f14643f317d6e1d9fc9e3@ec2-34-196-91-164.compute-1.amazonaws.com:6779'
     new_celery.conf.update(app.config)
 
-    class ContextTask(new_celery.Task):
-        """Make celery tasks work with Flask app context"""
+    TaskBase = celery.Task
+
+    class ContextTask(TaskBase):
+        abstract = True
 
         def __call__(self, *args, **kwargs):
             with app.app_context():
-                return self.run(*args, **kwargs)
+                return TaskBase.__call__(self, *args, **kwargs)
 
-    new_celery.Task = ContextTask
+    celery.Task = ContextTask
+
     return new_celery
 
 

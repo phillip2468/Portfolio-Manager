@@ -7,5 +7,4 @@ def create_app():
     from money_maker.home.routes import home_bp
     app.register_blueprint(home_bp)
     CORS(app)
-
     return app

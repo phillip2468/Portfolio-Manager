@@ -1,2 +1,2 @@
 web: python backend/run.py runserver 0.0.0.0:5000
-worker: celery -A backend.money_maker.worker:celery worker -l info -P gevent
+worker: celery -A backend.money_maker.worker:celery worker -l info -P gevent -E
