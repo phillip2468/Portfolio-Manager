@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import Button from '@mui/material/Button';
 import {Container} from "@mui/material";
+import Header from "../components/Header";
 
 const Homepage = () => {
 
@@ -12,23 +13,25 @@ const Homepage = () => {
         setTickers(response)
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         console.log('Mounted!')
     }, [tickers])
 
     return (
-        <Container>
-            <Button onClick={getAusTickers}>
-                Submit button
-            </Button>
-            {tickers && tickers.map((item, index) => {
-                return (
-                    <div key={index}>
+        <>
+            <Header/>
+            <Container>
+                <Button onClick={getAusTickers}>
+                    Submit button
+                </Button>
+                {tickers && tickers.map((item, index) => {
+                    return (<div key={index}>
                         {item.code}
-                    </div>
-                )
-            })}
-        </Container>
+                    </div>)
+                })}
+            </Container>
+        </>
+
     )
 }
 
