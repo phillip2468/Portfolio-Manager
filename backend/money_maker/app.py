@@ -25,7 +25,7 @@ def init_celery(app=None):
     celery.conf.result_backend = 'redis://redistogo:e787816e73475a0d975f8c34e30a9b8a@herring.redistogo.com:9072/'
 
     class ContextTask(celery.Task):
-        """Make celery tasks work with Flask app context1"""
+        """Make celery tasks work with Flask app conte1xt1"""
 
         def __call__(self, *args, **kwargs):
             with app.app_context():
