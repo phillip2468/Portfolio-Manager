@@ -4,7 +4,7 @@ from requests import Response
 
 from money_maker.helpers import sync_request
 
-from money_maker.tasks.tasks import add_together
+from money_maker.tasks.task import add_together
 
 home_bp = Blueprint('home_bp', __name__)
 
@@ -32,5 +32,7 @@ def asx_tickers() -> flask.Response:
 
 @home_bp.route('/')
 def serve():
+    res = add_together.delay()
+    print(res)
     return app.send_static_file('index.html')
 

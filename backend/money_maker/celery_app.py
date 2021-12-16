@@ -1,9 +1,4 @@
-from flask import Flask
-from flask_cors import CORS
+from money_maker.app import init_celery
 
-
-def create_worker_app():
-    app = Flask(__name__)
-    CORS(app)
-
-    return app
+app = init_celery()
+app.conf.imports = app.conf.imports + ("money_maker.tasks.task",)
