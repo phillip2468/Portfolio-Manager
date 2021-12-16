@@ -36,6 +36,6 @@ def asx_tickers() -> flask.Response:
 @home_bp.route('/')
 def serve():
     res = add_together.delay()
-    print(res)
+    print(res.get())
     return app.send_static_file('index.html')
 
