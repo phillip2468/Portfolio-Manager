@@ -9,6 +9,7 @@ def create_app(testing=False) -> Flask:
     app = Flask(__name__, static_folder='../../frontend/build', static_url_path='')
     from money_maker.home.routes import home_bp
 
+    db = SQLAlchemy(app)
     app.register_blueprint(home_bp)
     CORS(app)
     if testing is True:
