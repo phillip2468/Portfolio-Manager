@@ -1,11 +1,13 @@
 import time
 
 import flask
+import yahooquery.ticker
 from flask import Blueprint, current_app as app, jsonify
 from requests import Response
 
 from money_maker.extensions import db
 from money_maker.helpers import sync_request
+from yahooquery import Ticker
 
 from money_maker.tasks.task import add_together
 
@@ -31,8 +33,14 @@ def asx_tickers() -> flask.Response:
     :rtype: flask.Response
     """
     these_tickers = [element['code'] + '.AX' for element in get_aus_tickers()[:5]]
+    data: yahooquery.ticker.Ticker.__dict__ = Ticker(these_tickers, formatted=False).price
+    wanted_keys = ['symbol', 'regularMarketPrice', 'regularMarketChange', 'currencySymbol', 'marketCap']
+    #data_as_list = [element for element in data]
+    for key, value in data.items():
+        new_dict = {k: value[k] for k in set(wanted_keys) & set(value.keys())}
+        data[key] = new_dict
 
-
+    print(data)
     return jsonify(get_aus_tickers())
 
 
