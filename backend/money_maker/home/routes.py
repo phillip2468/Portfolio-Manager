@@ -27,6 +27,8 @@ def asx_tickers() -> flask.Response:
     :return: The list of dictionaries containing the tickers.
     :rtype: flask.Response
     """
+    res = add_together.delay()
+    print(res)
     return jsonify(get_aus_tickers())
 
 
@@ -34,5 +36,6 @@ def asx_tickers() -> flask.Response:
 def serve():
     res = add_together.delay()
     print(res)
+    print("ERERERERERERREREERER")
     return app.send_static_file('index.html')
 

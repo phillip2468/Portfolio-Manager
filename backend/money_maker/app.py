@@ -21,6 +21,8 @@ def create_app(testing=False) -> Flask:
 def init_celery(app=None):
     app = app or create_app()
     celery.conf.update(app.config.get("CELERY", {}))
+    celery.conf.broker_url = 'redis://redistogo:e787816e73475a0d975f8c34e30a9b8a@herring.redistogo.com:9072/'
+    celery.conf.result_backend = 'redis://redistogo:e787816e73475a0d975f8c34e30a9b8a@herring.redistogo.com:9072/'
 
     class ContextTask(celery.Task):
         """Make celery tasks work with Flask app context"""
