@@ -4,6 +4,7 @@ import flask
 from flask import Blueprint, current_app as app, jsonify
 from requests import Response
 
+from money_maker.extensions import db
 from money_maker.helpers import sync_request
 
 from money_maker.tasks.task import add_together
@@ -29,9 +30,7 @@ def asx_tickers() -> flask.Response:
     :return: The list of dictionaries containing the tickers.
     :rtype: flask.Response
     """
-    res = add_together.delay()
-    print(res)
-    time.sleep(5)
+    db.session
     print('Hash key is above!')
     return jsonify(get_aus_tickers())
 
