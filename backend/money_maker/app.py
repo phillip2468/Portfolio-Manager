@@ -11,10 +11,11 @@ def create_app(testing=False) -> Flask:
     """Application factory, used to create application"""
     app: flask.app.Flask = Flask(__name__, static_folder='../../frontend/build', static_url_path='')
     from money_maker.home.routes import home_bp
+    app.debug = True
 
     app.app_context().push()
-    db.init_app(app)
-    base.__prepare__(db.engine, reflect=True)
+    #db.init_app(app)
+    #base.__prepare__(db.engine, reflect=True)
 
     app.register_blueprint(home_bp)
     CORS(app)

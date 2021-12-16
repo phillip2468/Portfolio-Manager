@@ -30,14 +30,13 @@ def asx_tickers() -> flask.Response:
     :return: The list of dictionaries containing the tickers.
     :rtype: flask.Response
     """
-    db.session
-    print('Hash key is above!')
+    these_tickers = [element['code'] + '.AX' for element in get_aus_tickers()[:5]]
+
+
     return jsonify(get_aus_tickers())
 
 
 @home_bp.route('/')
 def serve():
-    res = add_together.delay()
-    print(res.get())
     return app.send_static_file('index.html')
 
