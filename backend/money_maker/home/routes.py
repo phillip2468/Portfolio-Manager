@@ -1,3 +1,5 @@
+import time
+
 import flask
 from flask import Blueprint, current_app as app, jsonify
 from requests import Response
@@ -29,6 +31,7 @@ def asx_tickers() -> flask.Response:
     """
     res = add_together.delay()
     print(res)
+    time.sleep(5)
     print('Hash key is above!')
     return jsonify(get_aus_tickers())
 
