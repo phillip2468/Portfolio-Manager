@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import Button from '@mui/material/Button';
-import {Container} from "@mui/material";
+import {Container, Grid, Input, Stack} from "@mui/material";
 import Header from "../components/Header";
 
 const Homepage = () => {
@@ -21,15 +21,23 @@ const Homepage = () => {
         <>
             <Header/>
             <Container>
-                <Button onClick={getAusTickers}>
-                    Submit button
-                </Button>
-                {tickers && tickers.map((item, index) => {
-                    return (<div key={index}>
-                        {item.code}
-                    </div>)
-                })}
+                <Grid
+                container
+                justifyContent={'center'}
+                alignItems={'center'}>
+                    <Stack>
+                        {tickers && tickers.map((item, index) => {
+                            return (<div key={index}>
+                                {item.code}
+                            </div>)
+                        })}
+                        <Button onClick={getAusTickers}>
+                            Submit button
+                        </Button>
+                    </Stack>
+                </Grid>
             </Container>
+
         </>
 
     )

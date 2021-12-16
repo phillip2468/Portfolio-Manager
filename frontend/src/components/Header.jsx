@@ -4,9 +4,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 const Header = () => {
     return (<>
-            <Box sx={{flexGrow: 1}}>
+            <Box>
                 <AppBar position="static">
-                    <Toolbar>
+                    <Toolbar sx={{justifyContent: "space-between"}}>
                         <IconButton
                             size="large"
                             edge="start"
@@ -16,7 +16,7 @@ const Header = () => {
                         >
                         <MenuIcon/>
                         </IconButton>
-                        <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+                        <Typography variant="h5" component="div" sx={{flexGrow: 1}}>
                             Money maker
                         </Typography>
                         <Button color="inherit">Login</Button>

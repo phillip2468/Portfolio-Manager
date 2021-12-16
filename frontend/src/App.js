@@ -1,7 +1,7 @@
 import './App.css';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Homepage from "./pages/Homepage";
-import {createTheme, Paper, ThemeProvider, useMediaQuery} from "@mui/material";
+import {createTheme, Paper, ThemeProvider} from "@mui/material";
 import {useMemo} from "react";
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
         [],
     );
     return (
-        <ThemeProvider className="App" theme={theme}>
+        <ThemeProvider theme={theme}>
             <Paper style={{minHeight: "100vh"}}>
                 <Router>
                     <Routes>
