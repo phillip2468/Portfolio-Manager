@@ -34,7 +34,7 @@ def asx_tickers() -> flask.Response:
     :rtype: flask.Response
     """
     time1 = datetime.datetime.now()
-    these_tickers = [element['code'] + '.AX' for element in get_aus_tickers()[:100]]
+    these_tickers = [element['code'] + '.AX' for element in get_aus_tickers()[:1000]]
     data: yahooquery.ticker.Ticker.__dict__ = Ticker(these_tickers, formatted=False, asynchronous=True).price
     wanted_keys = ['symbol', 'regularMarketPrice', 'regularMarketChange', 'currencySymbol', 'marketCap']
     #data_as_list = [element for element in data]
