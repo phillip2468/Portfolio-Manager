@@ -8,7 +8,7 @@ const Homepage = () => {
     const [tickers, setTickers] = useState(undefined)
 
     const getAusTickers = async () => {
-        const result = await fetch('/aus_tickers');
+        const result = await fetch('/aus-tickers');
         const response = await result.json();
         setTickers(response)
     }
@@ -16,6 +16,12 @@ const Homepage = () => {
     useEffect(() => {
         console.log('Mounted!')
     }, [tickers])
+
+    useEffect(() => {
+        fetch('/trending-tickers')
+            .then((res) => res.json())
+            .then((res) => console.log(res))
+    }, [])
 
     return (
         <>
