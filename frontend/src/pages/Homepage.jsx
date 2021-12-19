@@ -1,48 +1,41 @@
 import {useEffect, useState} from "react";
-import Button from '@mui/material/Button';
-import {Container, Grid, Input} from "@mui/material";
+import {Container} from "@mui/material";
 import Header from "../components/Header";
+import MUIDataTable from "mui-datatables";
 
 const Homepage = () => {
 
-    const [tickers, setTickers] = useState(undefined)
+    const [trendingStocks, setTrendingStocks] = useState([]);
 
-    const getAusTickers = async () => {
-        const result = await fetch('/aus-tickers');
-        const response = await result.json();
-        setTickers(response)
-    }
+    const columnsDefitions = [
+        {name: 'symbol', label: 'Ticker symbol'},
+        {name: 'regularMarketPrice', label: 'Price'},
+        {name: 'regularMarketDayHigh', label: 'High price'},
+        {name: 'regularMarketDayLow', label: 'Low price'},
+        {name: 'regularMarketChange', label: 'Change %'},
+        {name: 'marketCap', label: 'Market cap'},
+    ]
+
 
     useEffect(() => {
         console.log('Mounted!')
-    }, [tickers])
+    }, [])
 
     useEffect(() => {
         fetch('/trending-tickers')
             .then((res) => res.json())
-            .then((res) => console.log(res))
+            .then((res) => {
+                setTrendingStocks(Object.values(res))
+            })
     }, [])
+
 
     return (
         <>
             <Header/>
             <Container>
-                <Grid
-                container
-                justifyContent={'center'}
-                alignItems={'center'}
-                direction={'column'}>
-                    {tickers && tickers.map((item, index) => {
-                        return (<div key={index}>
-                            {item.code}
-                        </div>)
-                    })}
-                    <Button onClick={getAusTickers}>
-                        Submit button
-                    </Button>
-                </Grid>
+                <MUIDataTable title={"trending"} data={trendingStocks} columns={columnsDefitions}/>
             </Container>
-
         </>
 
     )
