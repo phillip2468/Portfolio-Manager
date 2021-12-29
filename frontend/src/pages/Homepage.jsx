@@ -2,6 +2,14 @@ import {useEffect, useState} from "react";
 import {Container, Grid, Typography} from "@mui/material";
 import Header from "../components/Header";
 import MUIDataTable from "mui-datatables";
+import styled from "styled-components"
+
+const percentageText = styled.div`
+  display: inline-flex;
+  padding: 5px;
+  font-size: 1em;
+  border-radius: 8px;
+`
 
 const Homepage = () => {
 
@@ -19,21 +27,21 @@ const Homepage = () => {
                     return (
                         <>
                             {value > 0 ? (
-                                <span style={{
-                                    backgroundColor: "firebrick",
-                                    display: "inline-flex",
-                                    padding: "5px",
-                                    fontSize: "1em",
-                                    borderRadius: "8px"
-                                }}>
+                                    <span style={{
+                                        backgroundColor: "firebrick",
+                                        display: "inline-flex",
+                                        padding: "5px",
+                                        fontSize: "1em",
+                                        borderRadius: "8px"
+                                    }}>
                                 <div style={{display: "inline-block", borderRight: "8px solid transparent"}}>
                                     &darr;
                                 </div>
                                 <Typography align={"center"}>{value.toFixed(2)}</Typography>
                             </span>
-                            ) :
+                                ) :
                                 (
-                                <span style={{
+                                    <span style={{
                                         backgroundColor: "darkseagreen",
                                         display: "inline-flex",
                                         padding: "5px",
