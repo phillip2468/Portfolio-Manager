@@ -2,6 +2,7 @@ import MUIDataTable from "mui-datatables";
 import {useEffect, useState} from "react";
 import {Typography} from "@mui/material";
 import styled from "styled-components";
+import millify from "millify";
 
 const PercentageText = styled.span`
   display: inline-flex;
@@ -41,7 +42,17 @@ const TrendingTable = () => {
                 }
             }
         },
-        {name: 'marketCap', label: 'Market cap'},
+        {name: 'marketCap', label: 'Market cap', options: {
+            customBodyRender: (value, tableMeta, updateValue) => {
+                return (
+                    <>
+                        {value && millify(value, {
+                            precision: 3
+                        })}
+                    </>
+                )
+            }
+            }},
     ]
 
     useEffect(() => {
@@ -60,7 +71,6 @@ const TrendingTable = () => {
         viewColumns: false,
         selectableRows: 'none',
         rowHover: false,
-        pagination: false,
         fixedSelectColumn: false,
         fixedHeader: false,
         filterArrayFullMatch: false,
