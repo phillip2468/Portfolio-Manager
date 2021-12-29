@@ -16,6 +16,7 @@ const PercentageText = styled.span`
 const TriangleSymbol = styled.div`
   display: inline-block;
   border-right: 8px solid transparent;
+  align-self: center;
 `
 
 const Homepage = () => {
