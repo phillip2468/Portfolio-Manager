@@ -16,7 +16,13 @@ const Homepage = () => {
         {name: 'regularMarketChange', label: 'Change %', options: {
             customBodyRender: (value, tableMeta, updateValue) => {
                 return (
-                    <Typography>{value.toFixed(2)}</Typography>
+                    <span style={{backgroundColor: "firebrick", display:"inline-flex", padding: "5px", fontSize: "1em", borderRadius: "8px"}}>
+                        <div style={{display: "inline-block", borderRight: "8px solid transparent"}}>
+                            &darr;
+                        </div>
+                        <Typography align={"center"}>{value.toFixed(2)}</Typography>
+                    </span>
+
                 )
             }
             }
