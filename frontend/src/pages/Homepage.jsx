@@ -4,11 +4,18 @@ import Header from "../components/Header";
 import MUIDataTable from "mui-datatables";
 import styled from "styled-components"
 
-const percentageText = styled.div`
+const PercentageText = styled.span`
   display: inline-flex;
   padding: 5px;
   font-size: 1em;
   border-radius: 8px;
+  background-color: ${(props) => props.changePercentage > 0 ? "firebrick" : "darkseagreen"};
+  color: ${(props) => props.changePercentage > 0 ? "darkred" : "darkgreen"};
+`
+
+const TriangleSymbol = styled.div`
+  display: inline-block;
+  border-right: 8px solid transparent;
 `
 
 const Homepage = () => {
@@ -26,36 +33,10 @@ const Homepage = () => {
                 customBodyRender: (value, tableMeta, updateValue) => {
                     return (
                         <>
-                            {value > 0 ? (
-                                    <span style={{
-                                        backgroundColor: "firebrick",
-                                        display: "inline-flex",
-                                        padding: "5px",
-                                        fontSize: "1em",
-                                        borderRadius: "8px"
-                                    }}>
-                                <div style={{display: "inline-block", borderRight: "8px solid transparent"}}>
-                                    &darr;
-                                </div>
+                            <PercentageText changePercentage={value}>
+                                {value > 0 ? <TriangleSymbol>&#x25B2;</TriangleSymbol> : <TriangleSymbol>&#x25BC;</TriangleSymbol>}
                                 <Typography align={"center"}>{value.toFixed(2)}</Typography>
-                            </span>
-                                ) :
-                                (
-                                    <span style={{
-                                        backgroundColor: "darkseagreen",
-                                        display: "inline-flex",
-                                        padding: "5px",
-                                        fontSize: "1em",
-                                        borderRadius: "8px"
-                                    }}>
-                                    <div style={{display: "inline-block", borderRight: "8px solid transparent"}}>
-                                        &uarr;
-                                    </div>
-                                        <Typography align={"center"}>{value.toFixed(2)}</Typography>
-                                </span>
-                                )
-                            }
-
+                            </PercentageText>
                         </>
                     )
                 }
