@@ -13,18 +13,44 @@ const Homepage = () => {
         {name: 'regularMarketPrice', label: 'Price'},
         {name: 'regularMarketDayHigh', label: 'High price'},
         {name: 'regularMarketDayLow', label: 'Low price'},
-        {name: 'regularMarketChange', label: 'Change %', options: {
-            customBodyRender: (value, tableMeta, updateValue) => {
-                return (
-                    <span style={{backgroundColor: "firebrick", display:"inline-flex", padding: "5px", fontSize: "1em", borderRadius: "8px"}}>
-                        <div style={{display: "inline-block", borderRight: "8px solid transparent"}}>
-                            &darr;
-                        </div>
-                        <Typography align={"center"}>{value.toFixed(2)}</Typography>
-                    </span>
+        {
+            name: 'regularMarketChange', label: 'Change %', options: {
+                customBodyRender: (value, tableMeta, updateValue) => {
+                    return (
+                        <>
+                            {value > 0 ? (
+                                <span style={{
+                                    backgroundColor: "firebrick",
+                                    display: "inline-flex",
+                                    padding: "5px",
+                                    fontSize: "1em",
+                                    borderRadius: "8px"
+                                }}>
+                                <div style={{display: "inline-block", borderRight: "8px solid transparent"}}>
+                                    &darr;
+                                </div>
+                                <Typography align={"center"}>{value.toFixed(2)}</Typography>
+                            </span>
+                            ) :
+                                (
+                                <span style={{
+                                        backgroundColor: "darkseagreen",
+                                        display: "inline-flex",
+                                        padding: "5px",
+                                        fontSize: "1em",
+                                        borderRadius: "8px"
+                                    }}>
+                                    <div style={{display: "inline-block", borderRight: "8px solid transparent"}}>
+                                        &uarr;
+                                    </div>
+                                        <Typography align={"center"}>{value.toFixed(2)}</Typography>
+                                </span>
+                                )
+                            }
 
-                )
-            }
+                        </>
+                    )
+                }
             }
         },
         {name: 'marketCap', label: 'Market cap'},
