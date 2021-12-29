@@ -9,8 +9,8 @@ const PercentageText = styled.span`
   padding: 5px;
   font-size: 1em;
   border-radius: 8px;
-  background-color: ${(props) => props.changePercentage > 0 ? "firebrick" : "darkseagreen"};
-  color: ${(props) => props.changePercentage > 0 ? "darkred" : "darkgreen"};
+  background-color: ${(props) => props.changePercentage > 0 ? "darkseagreen" : "firebrick"};
+  color: ${(props) => props.changePercentage > 0 ? "darkgreen" : "darkred"};
 `
 
 const TriangleSymbol = styled.div`
