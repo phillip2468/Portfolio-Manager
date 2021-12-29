@@ -58,10 +58,12 @@ def trending_tickers() -> flask.Response:
     :return: flask.Response
     """
     data: dict = yahooquery.get_trending()
+
+    # This gets rid of crypto related items
     trending_securities = [element["symbol"] for element in data["quotes"] if "-" not in element["symbol"]]
     data: yahooquery.ticker.Ticker.__dict__ = Ticker(trending_securities).price
     wanted_keys = ['symbol', 'regularMarketPrice', 'regularMarketChange',
-                   'regularMarketDayHigh', 'regularMarketDayLow', 'marketCap']
+                   'regularMarketDayHigh', 'regularMarketDayLow', 'marketCap', 'shortName']
 
     for key, value in data.items():
         new_dict = {k: value[k] for k in set(wanted_keys) & set(value.keys())}

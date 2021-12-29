@@ -7,19 +7,15 @@ const Homepage = () => {
 
     const [trendingStocks, setTrendingStocks] = useState([]);
 
-    const columnsDefitions = [
+    const columnDefinitions = [
         {name: 'symbol', label: 'Ticker symbol'},
+        {name: 'shortName', label: 'Company name'},
         {name: 'regularMarketPrice', label: 'Price'},
         {name: 'regularMarketDayHigh', label: 'High price'},
         {name: 'regularMarketDayLow', label: 'Low price'},
         {name: 'regularMarketChange', label: 'Change %'},
         {name: 'marketCap', label: 'Market cap'},
     ]
-
-
-    useEffect(() => {
-        console.log('Mounted!')
-    }, [])
 
     useEffect(() => {
         fetch('/trending-tickers')
@@ -37,7 +33,7 @@ const Homepage = () => {
                 <MUIDataTable
                     title={"Trending stocks today"}
                     data={trendingStocks}
-                    columns={columnsDefitions}
+                    columns={columnDefinitions}
                     options={{
                         download: false,
                         print: false,
