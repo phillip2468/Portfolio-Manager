@@ -39,23 +39,27 @@ def asx_tickers() -> flask.Response:
     """
     asx_ticker = base.classes.asx_ticker
 
-    all_asx_tickers: list[str] = [element['code'] + '.AX' for element in get_aus_tickers()[:10]]
-    print(all_asx_tickers)
-    stmt = insert(asx_ticker).values(all_asx_tickers)
+    aus_tickers = get_aus_tickers()
+    all_asx_tickers: list[str] = [element['code'] + '.AX' for element in aus_tickers]
+    stmt = insert(asx_ticker).values(aus_tickers)
+    stmt = stmt.on_conflict_do_nothing()
+    print(aus_tickers[0])
+    db.session.execute(stmt)
+    db.session.commit()
 
     
-    data: yahooquery.ticker.Ticker.__dict__ = Ticker(all_asx_tickers, formatted=False, asynchronous=True).price
-    wanted_keys: list[str] = ['symbol', 'regularMarketPrice', 'regularMarketChange', 'currencySymbol', 'marketCap']
+    # data: yahooquery.ticker.Ticker.__dict__ = Ticker(all_asx_tickers, formatted=False, asynchronous=True).price
+    # wanted_keys: list[str] = ['symbol', 'regularMarketPrice', 'regularMarketChange', 'currencySymbol', 'marketCap']
+    #
+    # # This gets all the keys necessary
+    # for key, value in data.items():
+    #     new_dict = {k: value[k] for k in set(wanted_keys) & set(value.keys())}
+    #     data[key] = new_dict
+    #
+    # for key, value in data.items():
+    #     print(value)
 
-    # This gets all the keys necessary
-    for key, value in data.items():
-        new_dict = {k: value[k] for k in set(wanted_keys) & set(value.keys())}
-        data[key] = new_dict
-
-    for key, value in data.items():
-        print(value)
-
-    return jsonify(get_aus_tickers())
+    return jsonify(all_asx_tickers)
 
 
 def get_all_asx_prices() -> flask.Response:
