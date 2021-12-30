@@ -7,9 +7,11 @@ import yahooquery.ticker
 from flask import Blueprint, current_app as app, jsonify
 from requests import Response
 
-from money_maker.extensions import db
+from money_maker.extensions import db, base
 from money_maker.helpers import sync_request
 from yahooquery import Ticker
+
+from sqlalchemy.dialects.postgresql import insert
 
 from money_maker.tasks.task import add_together
 
@@ -20,6 +22,7 @@ def get_aus_tickers() -> Response:
     """
     Gets the code, status and title of all ASX listed stocks.
     All results are held in a list of dictionaries.
+    code, status, title
     :return: List of dictionaries
     :rtype: list[dict[str, str, str]]
     """
@@ -34,20 +37,29 @@ def asx_tickers() -> flask.Response:
     :return: The list of dictionaries containing the tickers.
     :rtype: flask.Response
     """
-    time1 = datetime.datetime.now()
-    these_tickers = [element['code'] + '.AX' for element in get_aus_tickers()[:10]]
-    data: yahooquery.ticker.Ticker.__dict__ = Ticker(these_tickers, formatted=False, asynchronous=True).price
-    wanted_keys = ['symbol', 'regularMarketPrice', 'regularMarketChange', 'currencySymbol', 'marketCap']
-    data_as_list = [element for element in data]
+    asx_ticker = base.classes.asx_ticker
+
+    all_asx_tickers: list[str] = [element['code'] + '.AX' for element in get_aus_tickers()[:10]]
+    print(all_asx_tickers)
+    stmt = insert(asx_ticker).values(all_asx_tickers)
+
+    
+    data: yahooquery.ticker.Ticker.__dict__ = Ticker(all_asx_tickers, formatted=False, asynchronous=True).price
+    wanted_keys: list[str] = ['symbol', 'regularMarketPrice', 'regularMarketChange', 'currencySymbol', 'marketCap']
+
+    # This gets all the keys necessary
     for key, value in data.items():
-        print(value)
         new_dict = {k: value[k] for k in set(wanted_keys) & set(value.keys())}
         data[key] = new_dict
-    print(datetime.datetime.now() - time1)
-    print(len(data))
-    print(data)
+
+    for key, value in data.items():
+        print(value)
 
     return jsonify(get_aus_tickers())
+
+
+def get_all_asx_prices() -> flask.Response:
+    pass
 
 
 @home_bp.route('/trending-tickers')

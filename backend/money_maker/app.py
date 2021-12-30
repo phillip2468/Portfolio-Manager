@@ -5,25 +5,35 @@ from flask_cors import CORS
 
 from extensions import celery
 from money_maker.extensions import db, celery, base
+from money_maker.home.routes import home_bp
 
 
 def create_app(testing=False) -> Flask:
     """Application factory, used to create application"""
     app: flask.app.Flask = Flask(__name__, static_folder='../../frontend/build', static_url_path='')
-    from money_maker.home.routes import home_bp
+    app.config.from_object("money_maker.config")
+
+    configure_extensions(app)
+
     app.debug = True
 
     app.app_context().push()
-    #db.init_app(app)
-    #base.__prepare__(db.engine, reflect=True)
+    base.prepare(db.engine, reflect=True)
 
-    app.register_blueprint(home_bp)
     CORS(app)
     if testing is True:
         app.config["TESTING"] = True
 
-    #init_celery(app)
+    # init_celery(app)
     return app
+
+
+def configure_extensions(app):
+    db.init_app(app)
+
+
+def register_blueprints(app: flask.Flask):
+    app.register_blueprint(home_bp)
 
 
 def init_celery(app: flask.app.Flask = None) -> celery:
