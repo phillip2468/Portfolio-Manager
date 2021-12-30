@@ -22,7 +22,7 @@ def create_app(testing=False) -> Flask:
     if testing is True:
         app.config["TESTING"] = True
 
-    init_celery(app)
+    #init_celery(app)
     return app
 
 

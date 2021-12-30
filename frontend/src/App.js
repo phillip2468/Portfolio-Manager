@@ -17,7 +17,7 @@ function App() {
     );
     return (
         <ThemeProvider theme={theme}>
-            <Paper style={{minHeight: "100vh"}}>
+            <Paper style={{minHeight: "150vh"}}>
                 <Router>
                     <Routes>
                         <Route exact path={'/'} element={<Homepage/>}/>
