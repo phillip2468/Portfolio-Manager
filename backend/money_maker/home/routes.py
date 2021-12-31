@@ -1,7 +1,3 @@
-import datetime
-import functools
-import time
-
 import flask
 import yahooquery.ticker
 from flask import Blueprint, current_app as app, jsonify
@@ -41,9 +37,9 @@ def asx_tickers() -> flask.Response:
 
     aus_tickers = get_aus_tickers()
     all_asx_tickers: list[str] = [element['code'] + '.AX' for element in aus_tickers]
+
     stmt = insert(asx_ticker).values(aus_tickers)
     stmt = stmt.on_conflict_do_nothing()
-    print(aus_tickers[0])
     db.session.execute(stmt)
     db.session.commit()
 
