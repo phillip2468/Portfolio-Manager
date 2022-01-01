@@ -75,7 +75,6 @@ def get_all_asx_prices() -> flask.Response:
         'market_volume': bindparam('regularMarketVolume'),
         'symbol': bindparam('symbol')
     })
-    print(ticker_prices.__table__.constraints)
 
     upsert_statement = statement.on_conflict_do_update(
         index_elements=['symbol'],
@@ -93,7 +92,7 @@ def get_all_asx_prices() -> flask.Response:
             'market_previous_close': bindparam('regularMarketPreviousClose'),
             'market_current_price': bindparam('regularMarketPrice'),
             'market_volume': bindparam('regularMarketVolume'),
-            'last_updated': datetime.datetime.now()
+            'market_state': bindparam('marketState')
         }
     )
 
