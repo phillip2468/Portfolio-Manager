@@ -1,3 +1,5 @@
+import datetime
+
 import flask
 import sqlalchemy.orm.scoping
 import yahooquery.ticker
@@ -42,7 +44,6 @@ def asx_tickers() -> None:
     db.session.commit()
 
 from sqlalchemy.sql.expression import bindparam
-from typing import get_type_hints
 
 @home_bp.route("/all-asx-prices")
 def get_all_asx_prices() -> flask.Response:
@@ -51,7 +52,6 @@ def get_all_asx_prices() -> flask.Response:
     asx_ticker = base.classes.asx_ticker
 
     ticker_prices = base.classes.ticker_prices
-    print(ticker_prices)
 
     list_of_asx_codes: list[str] = [object_as_dict(element)["code"]+".AX"
                                     for element in db.session.query(asx_ticker).all()]
@@ -75,9 +75,10 @@ def get_all_asx_prices() -> flask.Response:
         'market_volume': bindparam('regularMarketVolume'),
         'symbol': bindparam('symbol')
     })
+    print(ticker_prices.__table__.constraints)
 
     upsert_statement = statement.on_conflict_do_update(
-        constraint='ticker_prices_symbol_uindex',
+        index_elements=['symbol'],
         set_={
             'currency': bindparam('currency'),
             'exchange': bindparam('exchange'),
@@ -92,6 +93,7 @@ def get_all_asx_prices() -> flask.Response:
             'market_previous_close': bindparam('regularMarketPreviousClose'),
             'market_current_price': bindparam('regularMarketPrice'),
             'market_volume': bindparam('regularMarketVolume'),
+            'last_updated': datetime.datetime.now()
         }
     )
 
