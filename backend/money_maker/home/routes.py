@@ -1,7 +1,9 @@
 import flask
+import sqlalchemy.orm.scoping
 import yahooquery.ticker
 from flask import Blueprint, current_app as app, jsonify
 from requests import Response
+from sqlalchemy import inspect
 
 from money_maker.extensions import db, base
 from money_maker.helpers import sync_request
@@ -14,7 +16,7 @@ from money_maker.tasks.task import add_together
 home_bp = Blueprint('home_bp', __name__)
 
 
-def get_aus_tickers() -> Response:
+def market_index_ticker() -> Response:
     """
     Gets the code, status and title of all ASX listed stocks.
     All results are held in a list of dictionaries.
@@ -26,40 +28,77 @@ def get_aus_tickers() -> Response:
     return sync_request(url)
 
 
-@home_bp.route('/aus-tickers', methods=['GET'])
-def asx_tickers() -> flask.Response:
+def asx_tickers() -> None:
     """
-    Packages the response to a json format.
-    :return: The list of dictionaries containing the tickers.
-    :rtype: flask.Response
+    Inserts all the tickers from market index ASX.
     """
     asx_ticker = base.classes.asx_ticker
 
-    aus_tickers = get_aus_tickers()
-    all_asx_tickers: list[str] = [element['code'] + '.AX' for element in aus_tickers]
+    aus_tickers = market_index_ticker()
 
     stmt = insert(asx_ticker).values(aus_tickers)
     stmt = stmt.on_conflict_do_nothing()
     db.session.execute(stmt)
     db.session.commit()
 
-    
-    # data: yahooquery.ticker.Ticker.__dict__ = Ticker(all_asx_tickers, formatted=False, asynchronous=True).price
-    # wanted_keys: list[str] = ['symbol', 'regularMarketPrice', 'regularMarketChange', 'currencySymbol', 'marketCap']
-    #
-    # # This gets all the keys necessary
-    # for key, value in data.items():
-    #     new_dict = {k: value[k] for k in set(wanted_keys) & set(value.keys())}
-    #     data[key] = new_dict
-    #
-    # for key, value in data.items():
-    #     print(value)
+from sqlalchemy.sql.expression import bindparam
+from typing import get_type_hints
 
-    return jsonify(all_asx_tickers)
-
-
+@home_bp.route("/all-asx-prices")
 def get_all_asx_prices() -> flask.Response:
-    pass
+    #https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func
+    #https://newbedev.com/sqlalchemy-performing-a-bulk-upsert-if-exists-update-else-insert-in-postgresql
+    asx_ticker = base.classes.asx_ticker
+
+    ticker_prices = base.classes.ticker_prices
+    print(ticker_prices)
+
+    list_of_asx_codes: list[str] = [object_as_dict(element)["code"]+".AX"
+                                    for element in db.session.query(asx_ticker).all()]
+
+    market_information_prices: yahooquery.Ticker.__dict__ = \
+        Ticker(list_of_asx_codes[:2], formatted=False, asynchronous=True, max_workers=100, progress=True).price
+
+    statement = insert(ticker_prices).values({
+        'currency': bindparam('currency'),
+        'exchange': bindparam('exchange'),
+        'stock_name': bindparam('longName'),
+        'market_cap': bindparam('marketCap'),
+        'quote_type': bindparam('quoteType'),
+        'market_change': bindparam('regularMarketChange'),
+        'market_change_percentage': bindparam('regularMarketChangePercent'),
+        'market_high': bindparam('regularMarketDayHigh'),
+        'market_low': bindparam('regularMarketDayLow'),
+        'market_open': bindparam('regularMarketOpen'),
+        'market_previous_close': bindparam('regularMarketPreviousClose'),
+        'market_current_price': bindparam('regularMarketPrice'),
+        'market_volume': bindparam('regularMarketVolume'),
+        'symbol': bindparam('symbol')
+    })
+
+    upsert_statement = statement.on_conflict_do_update(
+        constraint='ticker_prices_symbol_uindex',
+        set_={
+            'currency': bindparam('currency'),
+            'exchange': bindparam('exchange'),
+            'stock_name': bindparam('longName'),
+            'market_cap': bindparam('marketCap'),
+            'quote_type': bindparam('quoteType'),
+            'market_change': bindparam('regularMarketChange'),
+            'market_change_percentage': bindparam('regularMarketChangePercent'),
+            'market_high': bindparam('regularMarketDayHigh'),
+            'market_low': bindparam('regularMarketDayLow'),
+            'market_open': bindparam('regularMarketOpen'),
+            'market_previous_close': bindparam('regularMarketPreviousClose'),
+            'market_current_price': bindparam('regularMarketPrice'),
+            'market_volume': bindparam('regularMarketVolume'),
+        }
+    )
+
+    db.session.execute(upsert_statement, [element for element in market_information_prices.values()])
+    db.session.commit()
+
+    return jsonify(market_information_prices)
 
 
 @home_bp.route('/trending-tickers')
@@ -88,3 +127,8 @@ def trending_tickers() -> flask.Response:
 @home_bp.route('/')
 def serve():
     return app.send_static_file('index.html')
+
+
+def object_as_dict(obj):
+    return {c.key: getattr(obj, c.key)
+            for c in inspect(obj).mapper.column_attrs}
