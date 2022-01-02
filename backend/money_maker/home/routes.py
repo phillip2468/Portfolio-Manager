@@ -46,9 +46,7 @@ def asx_tickers() -> flask.Response:
         'stock_name': bindparam('title')
     }
 
-    stmt = insert(TickerPrice).values(insert_dictionary)
-
-    stmt = stmt.on_conflict_do_update(
+    stmt = insert(TickerPrice).values(insert_dictionary).on_conflict_do_update(
         index_elements=['symbol'],
         set_=insert_dictionary
     )
