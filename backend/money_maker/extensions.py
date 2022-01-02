@@ -11,5 +11,4 @@ db: flask_sqlalchemy.SQLAlchemy = flask_sqlalchemy.SQLAlchemy(engine_options={
     "executemany_batch_page_size": 500
 })
 migrate = Migrate()
-base: sqlalchemy.ext.automap = automap_base()
 

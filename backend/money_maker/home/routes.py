@@ -1,17 +1,14 @@
-import datetime
-
 import flask
 import yahooquery.ticker
 from flask import Blueprint, current_app as app, jsonify
 from requests import Response
-from sqlalchemy import inspect
+from sqlalchemy import inspect, select, bindparam
 
-from money_maker.extensions import db, base
+from money_maker.extensions import db
 from money_maker.helpers import sync_request
 from yahooquery import Ticker
 
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.sql.expression import bindparam
 from money_maker.models.ticker_prices import TickerPrice
 
 from money_maker.tasks.task import add_together
@@ -40,7 +37,7 @@ def asx_tickers() -> flask.Response:
 
     insert_dictionary = {
         'market_state': bindparam('status'),
-        'symbol': bindparam('code'),
+        'symbol': bindparam('code') + ".AX",
         'stock_name': bindparam('title')
     }
 
@@ -60,57 +57,45 @@ def asx_tickers() -> flask.Response:
 def get_all_asx_prices() -> flask.Response:
     # https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func
     # https://newbedev.com/sqlalchemy-performing-a-bulk-upsert-if-exists-update-else-insert-in-postgresql
-    asx_ticker = base.classes.asx_ticker
 
-    ticker_prices = base.classes.ticker_prices
+    stmt = select(TickerPrice.symbol)
+    list_symbols: list[str] = [element[0] for element in db.session.execute(stmt)]
 
-    list_of_asx_codes: list[str] = [object_as_dict(element)["code"] + ".AX"
-                                    for element in db.session.query(asx_ticker).all()]
+    yh_market_information: yahooquery.Ticker.__dict__ = \
+        Ticker(list_symbols, formatted=False, asynchronous=True, max_workers=100, progress=True,
+               country='australia', validate=True)
 
-    market_information_prices: yahooquery.Ticker.__dict__ = \
-        Ticker(list_of_asx_codes[:2], formatted=False, asynchronous=True, max_workers=100, progress=True).price
-
-    statement = insert(ticker_prices).values({
-        'currency': bindparam('currency'),
-        'exchange': bindparam('exchange'),
-        'stock_name': bindparam('longName'),
-        'market_cap': bindparam('marketCap'),
-        'quote_type': bindparam('quoteType'),
-        'market_change': bindparam('regularMarketChange'),
-        'market_change_percentage': bindparam('regularMarketChangePercent'),
-        'market_high': bindparam('regularMarketDayHigh'),
-        'market_low': bindparam('regularMarketDayLow'),
-        'market_open': bindparam('regularMarketOpen'),
-        'market_previous_close': bindparam('regularMarketPreviousClose'),
-        'market_current_price': bindparam('regularMarketPrice'),
-        'market_volume': bindparam('regularMarketVolume'),
+    market_information = {
+        'currency': default_bindparam('currency'),
+        'exchange': default_bindparam('exchange'),
+        'stock_name': default_bindparam('longName'),
+        'market_cap': default_bindparam('marketCap'),
+        'quote_type': default_bindparam('quoteType'),
+        'market_change': default_bindparam('regularMarketChange'),
+        'market_change_percentage': default_bindparam('regularMarketChangePercent'),
+        'market_high': default_bindparam('regularMarketDayHigh'),
+        'market_low': default_bindparam('regularMarketDayLow'),
+        'market_open': default_bindparam('regularMarketOpen'),
+        'market_previous_close': default_bindparam('regularMarketPreviousClose'),
+        'market_current_price': default_bindparam('regularMarketPrice'),
+        'market_volume': bindparam('regularMarketVolume', value=0),
         'symbol': bindparam('symbol')
-    })
+    }
+    statement = insert(TickerPrice).values(market_information)
 
     upsert_statement = statement.on_conflict_do_update(
         index_elements=['symbol'],
-        set_={
-            'currency': bindparam('currency'),
-            'exchange': bindparam('exchange'),
-            'stock_name': bindparam('longName'),
-            'market_cap': bindparam('marketCap'),
-            'quote_type': bindparam('quoteType'),
-            'market_change': bindparam('regularMarketChange'),
-            'market_change_percentage': bindparam('regularMarketChangePercent'),
-            'market_high': bindparam('regularMarketDayHigh'),
-            'market_low': bindparam('regularMarketDayLow'),
-            'market_open': bindparam('regularMarketOpen'),
-            'market_previous_close': bindparam('regularMarketPreviousClose'),
-            'market_current_price': bindparam('regularMarketPrice'),
-            'market_volume': bindparam('regularMarketVolume'),
-            'market_state': bindparam('marketState')
-        }
+        set_=market_information
     )
 
-    db.session.execute(upsert_statement, [element for element in market_information_prices.values()])
+    db.session.execute(upsert_statement, [element for element in yh_market_information.price.values()])
     db.session.commit()
 
-    return jsonify(market_information_prices)
+    return jsonify(yh_market_information)
+
+
+def default_bindparam(input_key: str):
+    return bindparam(key=input_key, value=None)
 
 
 @home_bp.route('/trending-tickers')
