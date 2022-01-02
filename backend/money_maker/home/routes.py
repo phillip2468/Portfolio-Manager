@@ -30,20 +30,34 @@ def market_index_ticker() -> Response:
     url: str = 'https://www.marketindex.com.au/api/v1/companies'
     return sync_request(url)
 
+from money_maker.models.ticker_prices import TickerPrice
 
 @home_bp.route('/retrieve-asx-tickers')
-def asx_tickers() -> None:
+def asx_tickers() -> flask.Response:
     """
     Inserts all the tickers from market index ASX.
     """
-    asx_ticker = base.classes.asx_ticker
 
     aus_tickers = market_index_ticker()
 
-    stmt = insert(asx_ticker).values(aus_tickers)
-    stmt = stmt.on_conflict_do_nothing()
-    db.session.execute(stmt)
+    insert_dictionary = {
+        'market_state': bindparam('status'),
+        'symbol': bindparam('code'),
+        'stock_name': bindparam('title')
+    }
+
+    stmt = insert(TickerPrice).values(insert_dictionary)
+
+    stmt = stmt.on_conflict_do_update(
+        index_elements=['symbol'],
+        set_=insert_dictionary
+    )
+
+    db.session.execute(stmt, aus_tickers)
     db.session.commit()
+    result = [object_as_dict(element) for element in (db.session.query(TickerPrice).all())]
+
+    return jsonify(result)
 
 
 @home_bp.route("/all-asx-prices")

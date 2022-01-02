@@ -15,3 +15,8 @@ CELERY = {
     "result_backend": os.getenv("REDIS_URL"),
     "result_serializer": 'json'
 }
+
+SQLALCHEMY_ENGINE_OPTIONS = {
+    "executemany_mode": 'values',
+    "executemany_values_page_size": 10000
+}

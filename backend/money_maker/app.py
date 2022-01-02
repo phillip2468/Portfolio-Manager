@@ -4,23 +4,24 @@ from flask import Flask
 from flask_cors import CORS
 
 from extensions import celery
-from money_maker.extensions import db, celery, base, migrate
+from money_maker.extensions import db, celery, migrate
 from money_maker.home import routes
 
 
 def create_app(testing=False) -> Flask:
-    """Application factory, used to create application"""
+    """Application factory, used to create application
+    https://stackoverflow.com/questions/33089144/flask-sqlalchemy-setup-engine-configuration
+    """
     app: flask.app.Flask = Flask(__name__, static_folder='../../frontend/build', static_url_path='')
     app.config.from_object("money_maker.config")
     app.config["TESTING"] = True
-    app.config["ENV"] = "Development"
+    app.config["ENV"] = "development"
 
     configure_extensions(app)
     register_blueprints(app)
     app.debug = True
 
     app.app_context().push()
-    base.prepare(db.engine, reflect=True)
 
     CORS(app)
     if testing is True:
@@ -32,7 +33,7 @@ def create_app(testing=False) -> Flask:
 
 def configure_extensions(app):
     db.init_app(app)
-    migrate(app, db)
+    migrate.init_app(app, db)
 
 
 def register_blueprints(app: flask.Flask):
