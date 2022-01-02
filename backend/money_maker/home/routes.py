@@ -1,7 +1,6 @@
 import datetime
 
 import flask
-import sqlalchemy.orm.scoping
 import yahooquery.ticker
 from flask import Blueprint, current_app as app, jsonify
 from requests import Response
@@ -13,6 +12,7 @@ from yahooquery import Ticker
 
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql.expression import bindparam
+from money_maker.models.ticker_prices import TickerPrice
 
 from money_maker.tasks.task import add_together
 
@@ -30,15 +30,13 @@ def market_index_ticker() -> Response:
     url: str = 'https://www.marketindex.com.au/api/v1/companies'
     return sync_request(url)
 
-from money_maker.models.ticker_prices import TickerPrice
 
 @home_bp.route('/retrieve-asx-tickers')
 def asx_tickers() -> flask.Response:
     """
-    Inserts all the tickers from market index ASX.
+    Inserts asx tickers in the database.
+    Returns a list of all tickers.
     """
-
-    aus_tickers = market_index_ticker()
 
     insert_dictionary = {
         'market_state': bindparam('status'),
@@ -51,7 +49,7 @@ def asx_tickers() -> flask.Response:
         set_=insert_dictionary
     )
 
-    db.session.execute(stmt, aus_tickers)
+    db.session.execute(stmt, market_index_ticker())
     db.session.commit()
     result = [object_as_dict(element) for element in (db.session.query(TickerPrice).all())]
 
@@ -60,13 +58,13 @@ def asx_tickers() -> flask.Response:
 
 @home_bp.route("/all-asx-prices")
 def get_all_asx_prices() -> flask.Response:
-    #https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func
-    #https://newbedev.com/sqlalchemy-performing-a-bulk-upsert-if-exists-update-else-insert-in-postgresql
+    # https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func
+    # https://newbedev.com/sqlalchemy-performing-a-bulk-upsert-if-exists-update-else-insert-in-postgresql
     asx_ticker = base.classes.asx_ticker
 
     ticker_prices = base.classes.ticker_prices
 
-    list_of_asx_codes: list[str] = [object_as_dict(element)["code"]+".AX"
+    list_of_asx_codes: list[str] = [object_as_dict(element)["code"] + ".AX"
                                     for element in db.session.query(asx_ticker).all()]
 
     market_information_prices: yahooquery.Ticker.__dict__ = \
