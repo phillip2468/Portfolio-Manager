@@ -12,6 +12,7 @@ from money_maker.helpers import sync_request
 from yahooquery import Ticker
 
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.sql.expression import bindparam
 
 from money_maker.tasks.task import add_together
 
@@ -30,6 +31,7 @@ def market_index_ticker() -> Response:
     return sync_request(url)
 
 
+@home_bp.route('/retrieve-asx-tickers')
 def asx_tickers() -> None:
     """
     Inserts all the tickers from market index ASX.
@@ -43,7 +45,6 @@ def asx_tickers() -> None:
     db.session.execute(stmt)
     db.session.commit()
 
-from sqlalchemy.sql.expression import bindparam
 
 @home_bp.route("/all-asx-prices")
 def get_all_asx_prices() -> flask.Response:
