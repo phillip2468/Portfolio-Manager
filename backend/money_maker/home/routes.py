@@ -1,8 +1,10 @@
+import json
+
 import flask
 import yahooquery.ticker
 from flask import Blueprint, current_app as app, jsonify
 from requests import Response
-from sqlalchemy import inspect, select, bindparam
+from sqlalchemy import inspect, select, bindparam, desc, asc
 
 from money_maker.extensions import db
 from money_maker.helpers import sync_request
@@ -58,12 +60,12 @@ def get_all_asx_prices() -> flask.Response:
     # https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func
     # https://newbedev.com/sqlalchemy-performing-a-bulk-upsert-if-exists-update-else-insert-in-postgresql
 
-    stmt = select(TickerPrice.symbol)
+    stmt = select(TickerPrice.symbol).order_by(asc(TickerPrice.symbol))
     list_symbols: list[str] = [element[0] for element in db.session.execute(stmt)]
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
-        Ticker(list_symbols, formatted=False, asynchronous=True, max_workers=100, progress=True,
-               country='australia', validate=True)
+        Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=100, progress=True,
+               country='australia').price
 
     market_information = {
         'currency': default_bindparam('currency'),
@@ -78,8 +80,8 @@ def get_all_asx_prices() -> flask.Response:
         'market_open': default_bindparam('regularMarketOpen'),
         'market_previous_close': default_bindparam('regularMarketPreviousClose'),
         'market_current_price': default_bindparam('regularMarketPrice'),
-        'market_volume': bindparam('regularMarketVolume', value=0),
-        'symbol': bindparam('symbol')
+        'market_volume': default_bindparam('regularMarketVolume'),
+        'symbol': default_bindparam('symbol')
     }
     statement = insert(TickerPrice).values(market_information)
 
@@ -87,11 +89,23 @@ def get_all_asx_prices() -> flask.Response:
         index_elements=['symbol'],
         set_=market_information
     )
+    formatted_yh_information = []
+    for stock_ticker in yh_market_information.values():
+        if type(stock_ticker) == dict:
+            new_dictionary = {}
+            for value in stock_ticker.items():
+                if type(value[1]) != dict:
+                    new_dictionary[value[0]] = value[1]
+                elif len(stock_ticker[value[0]]) > 0:
+                    new_dictionary[value[0]] = value[1]["raw"]
+                else:
+                    new_dictionary[value[0]] = None
+            formatted_yh_information.append(new_dictionary)
 
-    db.session.execute(upsert_statement, [element for element in yh_market_information.price.values()])
+    db.session.execute(upsert_statement, formatted_yh_information)
     db.session.commit()
 
-    return jsonify(yh_market_information)
+    return jsonify(formatted_yh_information)
 
 
 def default_bindparam(input_key: str):
