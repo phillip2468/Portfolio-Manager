@@ -75,12 +75,17 @@ def get_all_asx_prices() -> flask.Response:
     list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
-        Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=max(100, len(list_symbols)),
+        Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),
                progress=True,
-               country='australia').price
+               country='australia').get_modules('price summaryProfile')
 
     market_information: dict[str | Any, BindParameter[TypeEngine[Any] | Any] | Any] = {
         'currency': bindparam('currency', value=None),
+        'city': bindparam('city', value=None),
+        'industry': bindparam('industry', value=None),
+        'zip_code': bindparam('zip', value=None),
+        'sector': bindparam('sector', value=None),
+        'country': bindparam('country', value=None),
         'exchange': bindparam('exchange', value=None),
         'stock_name': bindparam('longName', value=None),
         'market_cap': bindparam('marketCap', value=None),
@@ -106,13 +111,14 @@ def get_all_asx_prices() -> flask.Response:
     for stock_ticker in yh_market_information.values():
         if type(stock_ticker) == dict:
             new_dictionary = {}
-            for value in stock_ticker.items():
-                if type(value[1]) != dict:
-                    new_dictionary[value[0]] = value[1]
-                elif len(stock_ticker[value[0]]) > 0:
-                    new_dictionary[value[0]] = value[1]["raw"]
-                else:
-                    new_dictionary[value[0]] = None
+            for module in stock_ticker.values():
+                for value in module.items():
+                    if type(value[1]) != dict:
+                        new_dictionary[value[0]] = value[1]
+                    elif len(module[value[0]]) > 0:
+                        new_dictionary[value[0]] = value[1]["raw"]
+                    else:
+                        new_dictionary[value[0]] = None
             formatted_yh_information.append(new_dictionary)
 
     db.session.execute(upsert_statement, formatted_yh_information)

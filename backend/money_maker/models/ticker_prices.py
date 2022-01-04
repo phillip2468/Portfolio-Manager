@@ -10,6 +10,12 @@ class TickerPrice(db.Model):
     __tablename__ = 'ticker_prices'
 
     stock_id = Column(Integer, primary_key=True, autoincrement=True)
+    symbol = Column(String(10), unique=True)
+    city = Column(String(20))
+    country = Column(String(30))
+    industry = Column(String(50))
+    zip_code = Column(String(15))
+    sector = Column(String(30))
     currency = Column(String(6))
     exchange = Column(String(10))
     stock_name = Column(String(150))
@@ -25,4 +31,4 @@ class TickerPrice(db.Model):
     market_current_price = Column(Numeric)
     market_volume = Column(BigInteger)
     last_updated = Column(DateTime(True), nullable=False, server_default=func.now())
-    symbol = Column(String(10), unique=True)
+
