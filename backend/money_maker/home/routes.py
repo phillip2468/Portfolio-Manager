@@ -68,31 +68,31 @@ def get_all_asx_prices() -> flask.Response:
     last_updated_stock = db.session.execute(stmt).one()[0]
 
     # This is so the database isn't queried every time.
-    if datetime.datetime.now(pytz.UTC) - pytz.utc.localize(last_updated_stock) < datetime.timedelta(minutes=-15):
+    if datetime.datetime.now(pytz.UTC) - last_updated_stock < datetime.timedelta(minutes=15):
         return jsonify([object_as_dict(element) for element in db.session.query(TickerPrice).all()])
 
     list_asx_symbols = select(TickerPrice.symbol).order_by(asc(TickerPrice.symbol))
     list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
-        Ticker(list_symbols[:1], formatted=True, asynchronous=True, max_workers=max(100, len(list_symbols)),
+        Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=max(100, len(list_symbols)),
                progress=True,
                country='australia').price
 
     market_information: dict[str | Any, BindParameter[TypeEngine[Any] | Any] | Any] = {
-        'currency': bindparam('currency'),
-        'exchange': bindparam('exchange'),
-        'stock_name': bindparam('longName'),
-        'market_cap': bindparam('marketCap'),
-        'quote_type': bindparam('quoteType'),
-        'market_change': bindparam('regularMarketChange'),
-        'market_change_percentage': bindparam('regularMarketChangePercent'),
-        'market_high': bindparam('regularMarketDayHigh'),
-        'market_low': bindparam('regularMarketDayLow'),
-        'market_open': bindparam('regularMarketOpen'),
-        'market_previous_close': bindparam('regularMarketPreviousClose'),
-        'market_current_price': bindparam('regularMarketPrice'),
-        'market_volume': bindparam('regularMarketVolume'),
+        'currency': bindparam('currency', value=None),
+        'exchange': bindparam('exchange', value=None),
+        'stock_name': bindparam('longName', value=None),
+        'market_cap': bindparam('marketCap', value=None),
+        'quote_type': bindparam('quoteType', value=None),
+        'market_change': bindparam('regularMarketChange', value=None),
+        'market_change_percentage': bindparam('regularMarketChangePercent', value=None),
+        'market_high': bindparam('regularMarketDayHigh', value=None),
+        'market_low': bindparam('regularMarketDayLow', value=None),
+        'market_open': bindparam('regularMarketOpen', value=None),
+        'market_previous_close': bindparam('regularMarketPreviousClose', value=None),
+        'market_current_price': bindparam('regularMarketPrice', value=None),
+        'market_volume': bindparam('regularMarketVolume', value=None),
         'symbol': bindparam('symbol')
     }
     statement = insert(TickerPrice).values(market_information)
@@ -102,9 +102,18 @@ def get_all_asx_prices() -> flask.Response:
         set_=market_information
     )
 
-    formatted_yh_information = [{key: value if type(value) != dict else value["raw"] if len(value) > 0
-    else None for (key, value) in element.items()} for element in
-                                yh_market_information.values() if type(element) == dict]
+    formatted_yh_information = []
+    for stock_ticker in yh_market_information.values():
+        if type(stock_ticker) == dict:
+            new_dictionary = {}
+            for value in stock_ticker.items():
+                if type(value[1]) != dict:
+                    new_dictionary[value[0]] = value[1]
+                elif len(stock_ticker[value[0]]) > 0:
+                    new_dictionary[value[0]] = value[1]["raw"]
+                else:
+                    new_dictionary[value[0]] = None
+            formatted_yh_information.append(new_dictionary)
 
     db.session.execute(upsert_statement, formatted_yh_information)
     db.session.commit()
