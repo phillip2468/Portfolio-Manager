@@ -1,15 +1,14 @@
-import json
+import datetime
 
 import flask
 import yahooquery.ticker
+
 from flask import Blueprint, current_app as app, jsonify
 from requests import Response
-from sqlalchemy import inspect, select, bindparam, desc, asc
-
+from sqlalchemy import inspect, select, bindparam, asc, func
 from money_maker.extensions import db
 from money_maker.helpers import sync_request
 from yahooquery import Ticker
-
 from sqlalchemy.dialects.postgresql import insert
 from money_maker.models.ticker_prices import TickerPrice
 
@@ -55,13 +54,21 @@ def asx_tickers() -> flask.Response:
     return jsonify(result)
 
 
+import pytz
 @home_bp.route("/all-asx-prices")
 def get_all_asx_prices() -> flask.Response:
     # https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func
     # https://newbedev.com/sqlalchemy-performing-a-bulk-upsert-if-exists-update-else-insert-in-postgresql
 
-    stmt = select(TickerPrice.symbol).order_by(asc(TickerPrice.symbol))
-    list_symbols: list[str] = [element[0] for element in db.session.execute(stmt)]
+    last_updated_stmt = select(func.max(TickerPrice.last_updated))
+    max_time_updated = db.session.execute(last_updated_stmt).one()[0]
+
+    # This is so the database isn't queried every time.
+    if datetime.datetime.now(pytz.UTC) - pytz.utc.localize(max_time_updated) < datetime.timedelta(minutes=15):
+        return jsonify([object_as_dict(element) for element in db.session.query(TickerPrice).all()])
+
+    list_asx_symbols = select(TickerPrice.symbol).order_by(asc(TickerPrice.symbol))
+    list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
         Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=100, progress=True,
@@ -89,6 +96,7 @@ def get_all_asx_prices() -> flask.Response:
         index_elements=['symbol'],
         set_=market_information
     )
+
     formatted_yh_information = []
     for stock_ticker in yh_market_information.values():
         if type(stock_ticker) == dict:
