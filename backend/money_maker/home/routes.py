@@ -103,7 +103,7 @@ def get_all_asx_prices() -> flask.Response:
     )
 
     formatted_yh_information = [{key: value if type(value) != dict else value["raw"] if len(value) > 0
-                                else None for (key, value) in element.items()} for element in
+    else None for (key, value) in element.items()} for element in
                                 yh_market_information.values() if type(element) == dict]
 
     db.session.execute(upsert_statement, formatted_yh_information)
@@ -116,6 +116,7 @@ def get_all_asx_prices() -> flask.Response:
 def ticker_information(ticker):
     stmt: select = select(TickerPrice).filter(TickerPrice.symbol == ticker)
     return jsonify([object_as_dict(element) for element in db.session.execute(stmt).one()])
+
 
 @home_bp.route('/trending-tickers')
 def trending_tickers() -> flask.Response:
