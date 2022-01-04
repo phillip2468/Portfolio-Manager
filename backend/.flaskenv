@@ -1,0 +1,1 @@
+FLASK_APP=money_maker.app
