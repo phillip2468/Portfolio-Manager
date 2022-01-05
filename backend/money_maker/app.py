@@ -1,10 +1,8 @@
 import flask.app
-
+from extensions import celery
 from flask import Flask
 from flask_cors import CORS
-
-from extensions import celery
-from money_maker.extensions import db, celery, migrate
+from money_maker.extensions import celery, db, migrate
 from money_maker.home.routes import home_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.trending.routes import trending_bp
