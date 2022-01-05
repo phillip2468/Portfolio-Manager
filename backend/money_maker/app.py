@@ -7,6 +7,7 @@ from extensions import celery
 from money_maker.extensions import db, celery, migrate
 from money_maker.home.routes import home_bp
 from money_maker.quote.routes import quote_bp
+from money_maker.trending.routes import trending_bp
 
 
 def create_app(testing=False) -> Flask:
@@ -40,6 +41,7 @@ def configure_extensions(app):
 def register_blueprints(app: flask.Flask):
     app.register_blueprint(home_bp)
     app.register_blueprint(quote_bp)
+    app.register_blueprint(trending_bp)
 
 
 def init_celery(app: flask.app.Flask = None) -> celery:

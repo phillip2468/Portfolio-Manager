@@ -6,13 +6,12 @@ import yahooquery.ticker
 import pytz
 
 from flask import Blueprint, current_app as app, jsonify
-from requests import Response
 from sqlalchemy import select, bindparam, asc, func
 from sqlalchemy.sql.elements import BindParameter
 from sqlalchemy.sql.type_api import TypeEngine
 
 from money_maker.extensions import db
-from money_maker.helpers import sync_request, object_as_dict
+from money_maker.helpers import object_as_dict, market_index_ticker
 from yahooquery import Ticker
 from sqlalchemy.dialects.postgresql import insert
 from money_maker.models.ticker_prices import TickerPrice
@@ -20,19 +19,7 @@ from money_maker.models.ticker_prices import TickerPrice
 home_bp = Blueprint('home_bp', __name__)
 
 
-def market_index_ticker() -> Response:
-    """
-    Gets the code, status and title of all ASX listed stocks.
-    All results are held in a list of dictionaries.
-    code, status, title
-    :return: List of dictionaries
-    :rtype: list[dict[str, str, str]]
-    """
-    url: str = 'https://www.marketindex.com.au/api/v1/companies'
-    return sync_request(url)
-
-
-@home_bp.route('/retrieve-asx-tickers')
+@home_bp.route("/retrieve-asx-tickers")
 def asx_tickers() -> flask.Response:
     """
     Inserts asx tickers in the database.
@@ -66,7 +53,7 @@ def get_all_asx_prices() -> flask.Response:
     last_updated_stock = db.session.execute(stmt).one()[0]
 
     # This is so the database isn't queried every time.
-    if datetime.datetime.now(pytz.UTC) - last_updated_stock < datetime.timedelta(minutes=15):
+    if datetime.datetime.now(pytz.UTC) - pytz.utc.localize(last_updated_stock) > datetime.timedelta(minutes=15):
         return jsonify([object_as_dict(element) for element in db.session.query(TickerPrice).all()])
 
     list_asx_symbols = select(TickerPrice.symbol).order_by(asc(TickerPrice.symbol))
