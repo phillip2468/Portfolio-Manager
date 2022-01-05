@@ -1,9 +1,8 @@
 import sqlalchemy
-from flask import jsonify, Blueprint
-from sqlalchemy import select, text, func, cast
-
+from flask import Blueprint, jsonify
 from money_maker.extensions import db
 from money_maker.models.ticker_prices import TickerPrice as tP
+from sqlalchemy import cast, func, select, text
 
 trending_bp = Blueprint('trending_bp', __name__)
 

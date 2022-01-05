@@ -1,9 +1,10 @@
 # coding: utf-8
 
 from money_maker.extensions import db
-from sqlalchemy.types import Integer, String, Numeric, Float, BigInteger, TIMESTAMP
 from sqlalchemy import Column
 from sqlalchemy.sql import func
+from sqlalchemy.types import (TIMESTAMP, BigInteger, Float, Integer, Numeric,
+                              String)
 
 
 class TickerPrice(db.Model):
@@ -30,5 +31,5 @@ class TickerPrice(db.Model):
     market_previous_close = Column(Numeric)
     market_current_price = Column(Numeric)
     market_volume = Column(BigInteger)
-    last_updated = Column(TIMESTAMP, nullable=False, server_default=func.now(), server_onupdate=func.utc_timestamp())
+    last_updated = Column(TIMESTAMP, server_default=func.now(), server_onupdate=func.utc_timestamp()) # type: ignore
 
