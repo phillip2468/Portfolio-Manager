@@ -5,7 +5,8 @@ from flask_cors import CORS
 
 from extensions import celery
 from money_maker.extensions import db, celery, migrate
-from money_maker.home import routes
+from money_maker.home.routes import home_bp
+from money_maker.quote.routes import quote_bp
 
 
 def create_app(testing=False) -> Flask:
@@ -37,7 +38,8 @@ def configure_extensions(app):
 
 
 def register_blueprints(app: flask.Flask):
-    app.register_blueprint(routes.home_bp)
+    app.register_blueprint(home_bp)
+    app.register_blueprint(quote_bp)
 
 
 def init_celery(app: flask.app.Flask = None) -> celery:

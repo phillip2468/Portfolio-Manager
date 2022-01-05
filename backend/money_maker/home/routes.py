@@ -7,17 +7,15 @@ import pytz
 
 from flask import Blueprint, current_app as app, jsonify
 from requests import Response
-from sqlalchemy import inspect, select, bindparam, asc, func
+from sqlalchemy import select, bindparam, asc, func
 from sqlalchemy.sql.elements import BindParameter
 from sqlalchemy.sql.type_api import TypeEngine
 
 from money_maker.extensions import db
-from money_maker.helpers import sync_request
+from money_maker.helpers import sync_request, object_as_dict
 from yahooquery import Ticker
 from sqlalchemy.dialects.postgresql import insert
 from money_maker.models.ticker_prices import TickerPrice
-
-from money_maker.tasks.task import add_together
 
 home_bp = Blueprint('home_bp', __name__)
 
@@ -127,12 +125,6 @@ def get_all_asx_prices() -> flask.Response:
     return jsonify(formatted_yh_information)
 
 
-@home_bp.route('/quote/<ticker>')
-def ticker_information(ticker):
-    stmt: select = select(TickerPrice).filter(TickerPrice.symbol == ticker)
-    return jsonify([object_as_dict(element) for element in db.session.execute(stmt).one()])
-
-
 @home_bp.route('/trending-tickers')
 def trending_tickers() -> flask.Response:
     """
@@ -161,6 +153,3 @@ def serve():
     return app.send_static_file('index.html')
 
 
-def object_as_dict(obj):
-    return {c.key: getattr(obj, c.key)
-            for c in inspect(obj).mapper.column_attrs}
