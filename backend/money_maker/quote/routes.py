@@ -1,9 +1,8 @@
-from flask import jsonify, Blueprint
-from sqlalchemy import select
-
+from flask import Blueprint, jsonify
 from money_maker.extensions import db
 from money_maker.helpers import object_as_dict
 from money_maker.models.ticker_prices import TickerPrice
+from sqlalchemy import select
 
 quote_bp = Blueprint('quote_bp', __name__)
 

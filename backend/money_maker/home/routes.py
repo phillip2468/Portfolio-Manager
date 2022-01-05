@@ -1,20 +1,21 @@
 import datetime
-from typing import Any
+from typing import Any, Dict
 
 import flask
-import yahooquery.ticker
 import pytz
-
-from flask import Blueprint, current_app as app, jsonify
-from sqlalchemy import select, bindparam, asc, func
+import yahooquery.ticker
+from flask import Blueprint
+from flask import current_app as app
+from flask import jsonify
+from money_maker.extensions import db
+from money_maker.helpers import market_index_ticker, object_as_dict
+from money_maker.models.ticker_prices import TickerPrice
+from sqlalchemy import asc, bindparam, func, select
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.sql import ColumnElement
 from sqlalchemy.sql.elements import BindParameter
 from sqlalchemy.sql.type_api import TypeEngine
-
-from money_maker.extensions import db
-from money_maker.helpers import object_as_dict, market_index_ticker
 from yahooquery import Ticker
-from sqlalchemy.dialects.postgresql import insert
-from money_maker.models.ticker_prices import TickerPrice
 
 home_bp = Blueprint('home_bp', __name__)
 
@@ -26,7 +27,7 @@ def asx_tickers() -> flask.Response:
     Returns a list of all tickers.
     """
 
-    insert_dictionary = {
+    insert_dictionary: dict[str, ColumnElement[Any]] = {
         'market_state': bindparam('status'),
         'symbol': bindparam('code') + ".AX",
         'stock_name': bindparam('title')
@@ -49,7 +50,7 @@ def get_all_asx_prices() -> flask.Response:
     # https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func
     # https://newbedev.com/sqlalchemy-performing-a-bulk-upsert-if-exists-update-else-insert-in-postgresql
 
-    stmt: select = select(func.max(TickerPrice.last_updated))
+    stmt = select(func.max(TickerPrice.last_updated))
     last_updated_stock = db.session.execute(stmt).one()[0]
 
     # This is so the database isn't queried every time.
@@ -120,10 +121,12 @@ def trending_tickers() -> flask.Response:
     US trending stocks.
     :return: flask.Response
     """
-    data: dict = yahooquery.get_trending()
+    trending_yh_tickers: dict = yahooquery.get_trending()
 
     # This gets rid of crypto related items
-    trending_securities = [element["symbol"] for element in data["quotes"] if "-" not in element["symbol"]]
+    trending_securities = [element["symbol"] for element in
+                           trending_yh_tickers["quotes"] if "-" not in element["symbol"]]
+
     data: yahooquery.ticker.Ticker.__dict__ = Ticker(trending_securities).price
     wanted_keys = ['symbol', 'regularMarketPrice', 'regularMarketChange',
                    'regularMarketDayHigh', 'regularMarketDayLow', 'marketCap', 'shortName']
