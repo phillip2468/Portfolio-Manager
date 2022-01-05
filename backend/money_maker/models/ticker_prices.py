@@ -31,5 +31,4 @@ class TickerPrice(db.Model):
     market_previous_close = Column(Numeric)
     market_current_price = Column(Numeric)
     market_volume = Column(BigInteger)
-    last_updated = Column(TIMESTAMP, server_default=func.now(), server_onupdate=func.utc_timestamp()) # type: ignore
-
+    last_updated = Column(TIMESTAMP, server_default=func.now(), server_onupdate=func.utc_timestamp())  # type: ignore
