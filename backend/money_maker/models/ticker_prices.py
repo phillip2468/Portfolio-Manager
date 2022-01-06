@@ -36,26 +36,24 @@ class TickerPrice(db.Model):
     last_updated = Column(TIMESTAMP, server_default=func.now(), server_onupdate=func.utc_timestamp())  # type: ignore
 
 
-on_update_function = PGFunction(
-    schema="public",
-    signature="trigger_set_timestamp()",
-    definition="""
+on_update_function = (PGFunction.from_sql(
+    """
+    CREATE OR REPLACE FUNCTION public.trigger_set_timestamp()
     RETURNS TRIGGER AS $$
     BEGIN
-      NEW.last_updated = NOW();
-      RETURN NEW;
+        NEW.last_updated = NOW();
+        RETURN NEW;
     END;
-    $$ LANGUAGE plpgsql;
+    $$ LANGUAGE 'plpgsql';
     """
-)
+))
 
 on_update_trigger = PGTrigger(
     schema="public",
     signature="update_last_updated",
     on_entity="public.ticker_prices",
-    definition=
+    definition="""
+        BEFORE UPDATE ON
+        public.ticker_prices FOR EACH ROW EXECUTE PROCEDURE trigger_set_timestamp();
     """
-    BEFORE INSERT ON public.ticker_prices
-    FOR EACH ROW EXECUTE PROCEDURE public.trigger_set_timestamp();
-    """,
 )
