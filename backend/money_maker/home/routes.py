@@ -50,18 +50,19 @@ def get_all_asx_prices() -> flask.Response:
     # https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func
     # https://newbedev.com/sqlalchemy-performing-a-bulk-upsert-if-exists-update-else-insert-in-postgresql
 
-    stmt = select(func.max(TickerPrice.last_updated))
+    stmt = select(func.min(TickerPrice.last_updated))
     last_updated_stock = db.session.execute(stmt).one()[0]
 
     # This is so the database isn't queried every time.
-    if datetime.datetime.now(pytz.UTC) - pytz.utc.localize(last_updated_stock) > datetime.timedelta(minutes=15):
+    print(datetime.datetime.now(pytz.UTC) - pytz.utc.localize(last_updated_stock))
+    if datetime.datetime.now(pytz.UTC) - pytz.utc.localize(last_updated_stock) < datetime.timedelta(minutes=15):
         return jsonify([object_as_dict(element) for element in db.session.query(TickerPrice).all()])
 
     list_asx_symbols = select(TickerPrice.symbol).order_by(asc(TickerPrice.symbol))
     list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
-        Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),
+        Ticker(list_symbols[:100], formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),
                progress=True,
                country='australia').get_modules('price summaryProfile')
 

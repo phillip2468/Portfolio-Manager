@@ -1,7 +1,9 @@
 # coding: utf-8
 
+from alembic_utils.pg_function import PGFunction
+from alembic_utils.pg_trigger import PGTrigger
 from money_maker.extensions import db
-from sqlalchemy import Column
+from sqlalchemy import DDL, Column, event
 from sqlalchemy.sql import func
 from sqlalchemy.types import (TIMESTAMP, BigInteger, Float, Integer, Numeric,
                               String)
@@ -32,3 +34,28 @@ class TickerPrice(db.Model):
     market_current_price = Column(Numeric)
     market_volume = Column(BigInteger)
     last_updated = Column(TIMESTAMP, server_default=func.now(), server_onupdate=func.utc_timestamp())  # type: ignore
+
+
+on_update_function = PGFunction(
+    schema="public",
+    signature="trigger_set_timestamp()",
+    definition="""
+    RETURNS TRIGGER AS $$
+    BEGIN
+      NEW.last_updated = NOW();
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+    """
+)
+
+on_update_trigger = PGTrigger(
+    schema="public",
+    signature="update_last_updated",
+    on_entity="public.ticker_prices",
+    definition=
+    """
+    BEFORE INSERT ON public.ticker_prices
+    FOR EACH ROW EXECUTE PROCEDURE public.trigger_set_timestamp();
+    """,
+)
