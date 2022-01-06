@@ -1,4 +1,6 @@
 import flask.app
+from flask_debugtoolbar import DebugToolbarExtension
+
 from extensions import celery
 from flask import Flask
 from flask_cors import CORS
@@ -34,6 +36,8 @@ def create_app(testing=False) -> Flask:
 def configure_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
+    toolbar = DebugToolbarExtension()
+    toolbar.init_app(app)
 
 
 def register_blueprints(app: flask.Flask):
