@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify
 from money_maker.extensions import db
 from money_maker.helpers import object_as_dict
 from money_maker.models.ticker_prices import TickerPrice
-from sqlalchemy import alias, func, select, text
+from sqlalchemy import func, select, text
 
 quote_bp = Blueprint('quote_bp', __name__)
 
@@ -19,4 +19,4 @@ def market_change_by_industry(category, order):
     stmt: select = select(industry_sector, func.avg(TickerPrice.market_change_percentage).label("Average"),
                           func.count(industry_sector)).where(industry_sector.is_not(None)) \
         .group_by(industry_sector).order_by(text(f""""Average" {order}"""))
-    return jsonify([element._asdict() for element in db.session.execute(stmt).all()])
+    return jsonify([dict(element) for element in db.session.execute(stmt).all()])

@@ -3,9 +3,13 @@ from __future__ import with_statement
 import logging
 from logging.config import fileConfig
 
-from flask import current_app
-
 from alembic import context
+from alembic_utils.replaceable_entity import register_entities
+from flask import current_app
+from money_maker.models.ticker_prices import (on_update_function,
+                                              on_update_trigger)
+
+register_entities([on_update_function, on_update_trigger])
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
