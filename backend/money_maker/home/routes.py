@@ -45,6 +45,8 @@ def asx_tickers() -> flask.Response:
     return jsonify(result)
 
 
+from sqlalchemy_utils import get_columns
+
 @home_bp.route("/all-asx-prices")
 def get_all_asx_prices() -> flask.Response:
     # https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func

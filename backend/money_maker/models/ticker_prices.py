@@ -3,10 +3,13 @@
 from alembic_utils.pg_function import PGFunction
 from alembic_utils.pg_trigger import PGTrigger
 from money_maker.extensions import db
-from sqlalchemy import DDL, Column, event
+from sqlalchemy import Column
 from sqlalchemy.sql import func
 from sqlalchemy.types import (TIMESTAMP, BigInteger, Float, Integer, Numeric,
                               String)
+from sqlalchemy_utils import force_auto_coercion
+
+force_auto_coercion()
 
 
 class TickerPrice(db.Model):
