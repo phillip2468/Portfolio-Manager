@@ -27,7 +27,7 @@ def asx_tickers() -> flask.Response:
     Inserts asx tickers in the database.
     Returns a list of all tickers.
     """
-    print(add_together.send())
+    print(add_together.delay())
 
     insert_dictionary: dict[str, ColumnElement[Any]] = {
         'market_state': bindparam('status'),
@@ -45,7 +45,6 @@ def asx_tickers() -> flask.Response:
     result = [object_as_dict(element) for element in (db.session.query(TickerPrice).all())]
 
     return jsonify(result)
-
 
 
 @home_bp.route("/all-asx-prices")

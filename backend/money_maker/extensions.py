@@ -1,3 +1,4 @@
+from celery import Celery
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
@@ -7,3 +8,4 @@ db = SQLAlchemy(engine_options={
     "executemany_batch_page_size": 500
 })
 migrate = Migrate()
+celery = Celery()

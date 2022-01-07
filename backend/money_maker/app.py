@@ -1,7 +1,7 @@
 import flask.app
 from flask import Flask
 from flask_cors import CORS
-from money_maker.extensions import db, migrate
+from money_maker.extensions import celery, db, migrate
 from money_maker.home.routes import home_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.trending.routes import trending_bp
@@ -25,6 +25,7 @@ def create_app(testing=False) -> Flask:
     CORS(app)
     if testing is True:
         app.config["TESTING"] = True
+    init_celery(app)
 
     return app
 
@@ -40,5 +41,8 @@ def register_blueprints(app: flask.Flask):
     app.register_blueprint(trending_bp)
 
 
-def init_dramatiq(app: flask.app.Flask = None):
-    pass
+def init_celery(app: flask.app.Flask = None):
+    app = app or create_app()
+    celery.conf.update(app.config.get("CELERY", {}))
+
+    return celery
