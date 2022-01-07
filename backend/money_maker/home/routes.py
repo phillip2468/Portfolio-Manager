@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Dict
+from typing import Any
 
 import flask
 import pytz
@@ -11,11 +11,10 @@ from money_maker.extensions import db
 from money_maker.helpers import market_index_ticker, object_as_dict
 from money_maker.models.ticker_prices import TickerPrice
 from money_maker.tasks.task import add_together
-from sqlalchemy import asc, bindparam, func, select
+from sqlalchemy import asc, bindparam, func, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import ColumnElement
-from sqlalchemy.sql.elements import BindParameter
-from sqlalchemy.sql.type_api import TypeEngine
+from sqlalchemy_utils import get_columns
 from yahooquery import Ticker
 
 home_bp = Blueprint('home_bp', __name__)
@@ -56,63 +55,23 @@ def get_all_asx_prices() -> flask.Response:
     last_updated_stock = db.session.execute(stmt).one()[0]
 
     # This is so the database isn't queried every time.
-    if pytz.utc.localize(last_updated_stock) + datetime.timedelta(minutes=15) > datetime.datetime.now(pytz.utc):
+    if pytz.utc.localize(last_updated_stock) + datetime.timedelta(minutes=1) > datetime.datetime.now(pytz.utc):
         return jsonify([object_as_dict(element) for element in db.session.query(TickerPrice).all()])
 
     list_asx_symbols = select(TickerPrice.symbol).order_by(asc(TickerPrice.symbol))
     list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
-        Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),
+        Ticker(list_symbols, formatted=False, asynchronous=True, max_workers=min(100, len(list_symbols)),
                progress=True,
                country='australia').get_modules('price summaryProfile')
 
-    market_information: dict[str | Any, BindParameter[TypeEngine[Any] | Any] | Any] = {
-        'currency': bindparam('currency', value=None),
-        'city': bindparam('city', value=None),
-        'industry': bindparam('industry', value=None),
-        'zip_code': bindparam('zip', value=None),
-        'sector': bindparam('sector', value=None),
-        'country': bindparam('country', value=None),
-        'exchange': bindparam('exchange', value=None),
-        'stock_name': bindparam('longName', value=None),
-        'market_cap': bindparam('marketCap', value=None),
-        'quote_type': bindparam('quoteType', value=None),
-        'market_change': bindparam('regularMarketChange', value=None),
-        'market_change_percentage': bindparam('regularMarketChangePercent', value=None),
-        'market_high': bindparam('regularMarketDayHigh', value=None),
-        'market_low': bindparam('regularMarketDayLow', value=None),
-        'market_open': bindparam('regularMarketOpen', value=None),
-        'market_previous_close': bindparam('regularMarketPreviousClose', value=None),
-        'market_current_price': bindparam('regularMarketPrice', value=None),
-        'market_volume': bindparam('regularMarketVolume', value=None),
-        'symbol': bindparam('symbol')
-    }
-    statement = insert(TickerPrice).values(market_information)
-
-    upsert_statement = statement.on_conflict_do_update(
-        index_elements=['symbol'],
-        set_=market_information
-    )
-
-    formatted_yh_information = []
-    for stock_ticker in yh_market_information.values():
-        if type(stock_ticker) == dict:
-            new_dictionary = {}
-            for module in stock_ticker.values():
-                for value in module.items():
-                    if type(value[1]) != dict:
-                        new_dictionary[value[0]] = value[1]
-                    elif len(module[value[0]]) > 0:
-                        new_dictionary[value[0]] = value[1]["raw"]
-                    else:
-                        new_dictionary[value[0]] = None
-            formatted_yh_information.append(new_dictionary)
-
-    db.session.execute(upsert_statement, formatted_yh_information)
+    list_of_market_info = [{**element["price"], **element["summaryProfile"]} for element in
+                           yh_market_information.values() if type(element) == dict and element.keys() in "price"]
+    db.session.execute(TickerPrice.__table__.insert(), list_of_market_info)
     db.session.commit()
 
-    return jsonify(formatted_yh_information)
+    return jsonify(list_of_market_info)
 
 
 @home_bp.route('/trending-tickers')
