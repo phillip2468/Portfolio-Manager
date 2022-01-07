@@ -6,6 +6,11 @@ from money_maker.extensions import db, migrate
 from money_maker.home.routes import home_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.trending.routes import trending_bp
+from flask_melodramatiq import RabbitmqBroker
+import dramatiq
+
+broker = RabbitmqBroker()
+dramatiq.set_broker(broker)
 
 
 def create_app(testing=False) -> Flask:
