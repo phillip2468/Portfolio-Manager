@@ -1,13 +1,10 @@
-import dramatiq
 import flask.app
-
 from flask import Flask
 from flask_cors import CORS
 from money_maker.extensions import db, migrate
 from money_maker.home.routes import home_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.trending.routes import trending_bp
-from flask_melodramatiq import RabbitmqBroker
 
 
 def create_app(testing=False) -> Flask:
@@ -33,11 +30,8 @@ def create_app(testing=False) -> Flask:
 
 
 def configure_extensions(app):
-    broker = RabbitmqBroker()
-    dramatiq.set_broker(broker)
     db.init_app(app)
     migrate.init_app(app, db)
-    broker.init_app(app)
 
 
 def register_blueprints(app: flask.Flask):
@@ -47,6 +41,4 @@ def register_blueprints(app: flask.Flask):
 
 
 def init_dramatiq(app: flask.app.Flask = None):
-    app: flask.app.Flask = Flask(__name__, static_folder='../../frontend/build', static_url_path='')
-    broker_1 = RabbitmqBroker(app)
-    return broker_1
+    pass
