@@ -1,9 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 
-import dramatiq
+from celery import shared_task
 
 
-@dramatiq.actor
+@shared_task
 def add_together():
     return 10 + 10000000000
 
