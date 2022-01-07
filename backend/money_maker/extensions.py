@@ -7,4 +7,3 @@ db = SQLAlchemy(engine_options={
     "executemany_batch_page_size": 500
 })
 migrate = Migrate()
-
