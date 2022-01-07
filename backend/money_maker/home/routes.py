@@ -17,6 +17,8 @@ from sqlalchemy.sql.elements import BindParameter
 from sqlalchemy.sql.type_api import TypeEngine
 from yahooquery import Ticker
 
+from money_maker.tasks.task import add_together
+
 home_bp = Blueprint('home_bp', __name__)
 
 
@@ -26,6 +28,7 @@ def asx_tickers() -> flask.Response:
     Inserts asx tickers in the database.
     Returns a list of all tickers.
     """
+    print(add_together.send())
 
     insert_dictionary: dict[str, ColumnElement[Any]] = {
         'market_state': bindparam('status'),
