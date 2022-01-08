@@ -1,4 +1,5 @@
 import datetime
+import sys
 from typing import Any
 
 import flask
@@ -13,7 +14,7 @@ from money_maker.models.ticker_prices import TickerPrice
 from money_maker.tasks.task import add_together
 from sqlalchemy import asc, bindparam, func, select, update
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.sql import ColumnElement
+from sqlalchemy.sql import ColumnCollection, ColumnElement
 from sqlalchemy_utils import get_columns
 from yahooquery import Ticker
 
@@ -55,23 +56,57 @@ def get_all_asx_prices() -> flask.Response:
     last_updated_stock = db.session.execute(stmt).one()[0]
 
     # This is so the database isn't queried every time.
-    if pytz.utc.localize(last_updated_stock) + datetime.timedelta(minutes=1) > datetime.datetime.now(pytz.utc):
+    if pytz.utc.localize(last_updated_stock) + datetime.timedelta(minutes=15) > datetime.datetime.now(pytz.utc):
         return jsonify([object_as_dict(element) for element in db.session.query(TickerPrice).all()])
 
     list_asx_symbols = select(TickerPrice.symbol).order_by(asc(TickerPrice.symbol))
     list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
-        Ticker(list_symbols, formatted=False, asynchronous=True, max_workers=min(100, len(list_symbols)),
+        Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),
                progress=True,
                country='australia').get_modules('price summaryProfile')
 
-    list_of_market_info = [{**element["price"], **element["summaryProfile"]} for element in
-                           yh_market_information.values() if type(element) == dict and element.keys() in "price"]
-    db.session.execute(TickerPrice.__table__.insert(), list_of_market_info)
+    formatted_yh_information = []
+    for element in yh_market_information.values():
+        if type(element) == dict and len(element.keys()) == 2:
+            raw_dictionary = {**element["price"], **element["summaryProfile"]}
+            formatted_yh_information.append({key: value if type(value) != dict else value["raw"] if len(value) > 0
+            else None for (key, value) in raw_dictionary.items()})
+
+    market_information = {
+        'currency': bindparam('currency', value=None),
+        'city': bindparam('city', value=None),
+        'industry': bindparam('industry', value=None),
+        'zip_code': bindparam('zip', value=None),
+        'sector': bindparam('sector', value=None),
+        'country': bindparam('country', value=None),
+        'exchange': bindparam('exchange', value=None),
+        'stock_name': bindparam('longName', value=None),
+        'market_cap': bindparam('marketCap', value=None),
+        'quote_type': bindparam('quoteType', value=None),
+        'market_change': bindparam('regularMarketChange', value=None),
+        'market_change_percentage': bindparam('regularMarketChangePercent', value=None),
+        'market_high': bindparam('regularMarketDayHigh', value=None),
+        'market_low': bindparam('regularMarketDayLow', value=None),
+        'market_open': bindparam('regularMarketOpen', value=None),
+        'market_previous_close': bindparam('regularMarketPreviousClose', value=None),
+        'market_current_price': bindparam('regularMarketPrice', value=None),
+        'market_volume': bindparam('regularMarketVolume', value=None),
+        'symbol': bindparam('symbol')
+    }
+
+    stmt = insert(TickerPrice).values(market_information)
+
+    on_conflict_statement = stmt.on_conflict_do_update(
+        index_elements=['symbol'],
+        set_=market_information
+    )
+
+    db.session.execute(on_conflict_statement, formatted_yh_information)
     db.session.commit()
 
-    return jsonify(list_of_market_info)
+    return jsonify(formatted_yh_information)
 
 
 @home_bp.route('/trending-tickers')
@@ -98,6 +133,14 @@ def trending_tickers() -> flask.Response:
 
     return jsonify(data)
 
+
+@home_bp.route('/past-data')
+def past_data():
+    tickers = Ticker('CBA.AX').history(period='7d')
+    print(tickers)
+    print(tickers.to_dict('list'))
+    print(sys.getsizeof(tickers))
+    return jsonify(tickers.to_dict('records'))
 
 @home_bp.route('/')
 def serve():
