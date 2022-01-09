@@ -3,11 +3,12 @@ import sys
 from typing import Any
 
 import flask
+import matplotlib.pyplot as plt
 import pytz
 import yahooquery.ticker
 from flask import Blueprint
 from flask import current_app as app
-from flask import jsonify
+from flask import json, jsonify
 from money_maker.extensions import db
 from money_maker.helpers import market_index_ticker, object_as_dict
 from money_maker.models.ticker_prices import TickerPrice
@@ -134,13 +135,77 @@ def trending_tickers() -> flask.Response:
     return jsonify(data)
 
 
+import matplotlib.pyplot as plot
+import numpy as np
+import pandas as pd
+import sklearn.preprocessing
+from matplotlib.figure import Figure
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+from tensorflow.keras.models import Sequential
+
+
 @home_bp.route('/past-data')
 def past_data():
-    tickers = Ticker('CBA.AX').history(period='7d')
-    print(tickers)
-    print(tickers.to_dict('list'))
-    print(sys.getsizeof(tickers))
-    return jsonify(tickers.to_dict('records'))
+    period_time = '60d'
+    tickers = Ticker('CBA.AX').history(period=period_time)
+
+    x_values = tickers['adjclose'].values.reshape(-1, 1)
+
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaled_data = scaler.fit_transform(x_values)
+
+    # How many days should i look into the past to predict the next prices?
+    prediction_days = 30
+
+    x_train = []
+    y_train = []
+
+    for x in (prediction_days, len(scaled_data)):
+        x_train.append(scaled_data[x - prediction_days: x, 0])
+        y_train.append(scaled_data[x - 1, 0])
+
+    x_train, y_train = np.array(x_train), np.array(y_train)
+    x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
+
+    model = Sequential()
+    model.add(LSTM(units=50, return_sequences=True, input_shape=(x_train.shape[1], 1)))
+    model.add(Dropout(0.2))
+    model.add(LSTM(units=50, return_sequences=True))
+    model.add(Dropout(0.2))
+    model.add(LSTM(units=50))
+    model.add(Dropout(0.2))
+    model.add(Dense(units=1))  # Prediction of the next closing value
+
+    model.compile(optimizer='adam', loss='mean_squared_error')
+    model.fit(x_train, y_train, epochs=25, batch_size=32)
+
+    test_the_data_tickers = Ticker('CBA.AX').history(period=period_time)
+    actual_test_data_close = test_the_data_tickers['adjclose'].values
+
+    total_dataset = pd.concat((tickers['adjclose'], test_the_data_tickers['adjclose']), axis=0)
+
+    model_inputs = total_dataset[len(total_dataset) - len(test_the_data_tickers) - prediction_days:].values
+    model_inputs = model_inputs.reshape(-1, 1)
+
+    model_inputs = scaler.transform(model_inputs)
+
+    # Make predictions via the test data
+    x_test = []
+
+    for x in range(prediction_days, len(model_inputs)):
+        x_test.append(model_inputs[x-prediction_days: x, 0])
+
+    x_test = np.array(x_test)
+    x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1]))
+
+    predicted_prices = model.predict(x_test)
+    predicted_prices = scaler.inverse_transform(predicted_prices)
+    dictionary = {
+        "actual": [str(element) for element in actual_test_data_close.flat],
+        "predicted": [str(element) for element in predicted_prices.flat]
+    }
+    return jsonify(dictionary)
 
 
 @home_bp.route('/')
