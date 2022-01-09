@@ -149,15 +149,14 @@ from tensorflow.keras.models import Sequential
 
 @home_bp.route('/past-data')
 def past_data():
-    period_time = '1y'
-    original_data_prices = Ticker('CBA.AX').history(period=period_time, interval="1d", start="2020-01-01")
+    original_data_prices = Ticker('CBA.AX').history(interval="1d", start="2020-01-01", end="2020-01-25")
     x_values = original_data_prices['adjclose'].values.reshape(-1, 1)
 
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaled_data = scaler.fit_transform(x_values)
 
     # How many days should i look into the past to predict the next prices?
-    prediction_days = 30
+    prediction_days = 7
 
     x_train = []
     y_train = []
@@ -181,7 +180,7 @@ def past_data():
     model.compile(optimizer='adam', loss='mean_squared_error')
     model.fit(x_train, y_train, epochs=25, batch_size=32, verbose=0)
 
-    test_the_data_tickers = Ticker('CBA.AX').history(period=period_time, interval="1d", start="2021-01-01")
+    test_the_data_tickers = Ticker('CBA.AX').history(interval="1d", start="2021-01-01", end="2021-01-25")
     actual_test_data_close = test_the_data_tickers['adjclose'].values
 
     total_dataset = pd.concat((original_data_prices['adjclose'], test_the_data_tickers['adjclose']), axis=0)
@@ -211,8 +210,8 @@ def past_data():
     prediction = scaler.inverse_transform(prediction)
 
     dictionary = {
-        "actual": [str(element) for element in actual_test_data_close.flat],
-        "predicted": [str(element) for element in predicted_prices.flat],
+        "actual": [{"day": index, "price": str(element)} for index, element in enumerate(actual_test_data_close.flat)],
+        "predicted": [{"day": index, "price": str(element)} for index, element in enumerate(predicted_prices.flat)],
         "next_day": [str(element) for element in prediction.flat]
     }
 
