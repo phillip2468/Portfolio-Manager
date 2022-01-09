@@ -1,9 +1,9 @@
 import datetime
+import os
 import sys
 from typing import Any
 
 import flask
-import matplotlib.pyplot as plt
 import pytz
 import yahooquery.ticker
 from flask import Blueprint
@@ -18,6 +18,8 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import ColumnCollection, ColumnElement
 from sqlalchemy_utils import get_columns
 from yahooquery import Ticker
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 home_bp = Blueprint('home_bp', __name__)
 
@@ -147,10 +149,9 @@ from tensorflow.keras.models import Sequential
 
 @home_bp.route('/past-data')
 def past_data():
-    period_time = '60d'
-    tickers = Ticker('CBA.AX').history(period=period_time)
-
-    x_values = tickers['adjclose'].values.reshape(-1, 1)
+    period_time = '1y'
+    original_data_prices = Ticker('CBA.AX').history(period=period_time, interval="1d", start="2020-01-01")
+    x_values = original_data_prices['adjclose'].values.reshape(-1, 1)
 
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaled_data = scaler.fit_transform(x_values)
@@ -160,14 +161,14 @@ def past_data():
 
     x_train = []
     y_train = []
-
-    for x in (prediction_days, len(scaled_data)):
+    for x in (prediction_days, len(scaled_data) - 1):
         x_train.append(scaled_data[x - prediction_days: x, 0])
-        y_train.append(scaled_data[x - 1, 0])
+        y_train.append(scaled_data[x, 0])
 
     x_train, y_train = np.array(x_train), np.array(y_train)
     x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
 
+    # Build the model
     model = Sequential()
     model.add(LSTM(units=50, return_sequences=True, input_shape=(x_train.shape[1], 1)))
     model.add(Dropout(0.2))
@@ -178,33 +179,43 @@ def past_data():
     model.add(Dense(units=1))  # Prediction of the next closing value
 
     model.compile(optimizer='adam', loss='mean_squared_error')
-    model.fit(x_train, y_train, epochs=25, batch_size=32)
+    model.fit(x_train, y_train, epochs=25, batch_size=32, verbose=0)
 
-    test_the_data_tickers = Ticker('CBA.AX').history(period=period_time)
+    test_the_data_tickers = Ticker('CBA.AX').history(period=period_time, interval="1d", start="2021-01-01")
     actual_test_data_close = test_the_data_tickers['adjclose'].values
 
-    total_dataset = pd.concat((tickers['adjclose'], test_the_data_tickers['adjclose']), axis=0)
+    total_dataset = pd.concat((original_data_prices['adjclose'], test_the_data_tickers['adjclose']), axis=0)
 
     model_inputs = total_dataset[len(total_dataset) - len(test_the_data_tickers) - prediction_days:].values
     model_inputs = model_inputs.reshape(-1, 1)
-
     model_inputs = scaler.transform(model_inputs)
 
     # Make predictions via the test data
     x_test = []
 
     for x in range(prediction_days, len(model_inputs)):
-        x_test.append(model_inputs[x-prediction_days: x, 0])
+        x_test.append(model_inputs[x - prediction_days: x, 0])
 
     x_test = np.array(x_test)
-    x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1]))
+    x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], 1))
 
     predicted_prices = model.predict(x_test)
     predicted_prices = scaler.inverse_transform(predicted_prices)
+    # Predict the next day
+
+    real_data = [model_inputs[len(model_inputs) - prediction_days: len(model_inputs + 1), 0]]
+    real_data = np.array(real_data)
+    real_data = np.reshape(real_data, (real_data.shape[0], real_data.shape[1], 1))
+
+    prediction = model.predict(real_data)
+    prediction = scaler.inverse_transform(prediction)
+
     dictionary = {
         "actual": [str(element) for element in actual_test_data_close.flat],
-        "predicted": [str(element) for element in predicted_prices.flat]
+        "predicted": [str(element) for element in predicted_prices.flat],
+        "next_day": [str(element) for element in prediction.flat]
     }
+
     return jsonify(dictionary)
 
 

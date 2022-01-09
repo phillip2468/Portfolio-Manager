@@ -13,7 +13,6 @@ def create_app(testing=False) -> Flask:
     """
     app: flask.app.Flask = Flask(__name__, static_folder='../../frontend/build', static_url_path='')
     app.config.from_object("money_maker.config")
-    app.config["TESTING"] = True
     app.config["ENV"] = "development"
 
     configure_extensions(app)
