@@ -4,6 +4,8 @@ import logging
 from logging.config import fileConfig
 
 from alembic import context
+from alembic_utils.pg_function import PGFunction
+from alembic_utils.pg_grant_table import PGGrantTable
 from alembic_utils.replaceable_entity import register_entities
 from flask import current_app
 from money_maker.models.ticker_prices import (on_update_function,
@@ -30,6 +32,7 @@ config.set_main_option(
         '%', '%%'))
 target_metadata = current_app.extensions['migrate'].db.metadata
 
+
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
@@ -50,7 +53,7 @@ def run_migrations_offline():
     """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url, target_metadata=target_metadata, literal_binds=True, compare_type=True
+        url=url, target_metadata=target_metadata, literal_binds=True, compare_type=True, include_object=include_object
     )
 
     with context.begin_transaction():
@@ -83,12 +86,20 @@ def run_migrations_online():
             target_metadata=target_metadata,
             compare_type=True,
             process_revision_directives=process_revision_directives,
+            include_object=include_object,
             **current_app.extensions['migrate'].configure_args
         )
 
         with context.begin_transaction():
             context.run_migrations()
 
+
+def include_object(object, name, type_, reflected, compare_to) -> bool:
+    if isinstance(object, PGFunction):
+        return False
+    elif isinstance(object, PGGrantTable):
+        return False
+    return True
 
 if context.is_offline_mode():
     run_migrations_offline()
