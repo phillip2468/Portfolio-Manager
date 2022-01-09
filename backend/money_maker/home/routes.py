@@ -142,6 +142,7 @@ def past_data():
     print(sys.getsizeof(tickers))
     return jsonify(tickers.to_dict('records'))
 
+
 @home_bp.route('/')
 def serve():
     return app.send_static_file('index.html')
