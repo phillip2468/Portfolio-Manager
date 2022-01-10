@@ -1,4 +1,5 @@
 import datetime
+import os
 from typing import Any
 
 import flask
@@ -6,7 +7,7 @@ import pytz
 import yahooquery.ticker
 from flask import Blueprint
 from flask import current_app as app
-from flask import jsonify
+from flask import jsonify, request, send_from_directory
 from money_maker.extensions import db
 from money_maker.helpers import market_index_ticker, object_as_dict
 from money_maker.models.ticker_prices import TickerPrice
@@ -134,6 +135,25 @@ def trending_tickers() -> flask.Response:
     return jsonify(data)
 
 
-@home_bp.route('/')
+@home_bp.route("/")
 def serve():
-    return app.send_static_file('index.html')
+    """serves React App"""
+    print("HERE")
+    return send_from_directory(app.static_folder, "index.html")
+
+
+@home_bp.route("/<path:path>")
+def static_proxy(path):
+    """static folder serve"""
+    print("HERE")
+    file_name = path.split("/")[-1]
+    dir_name = os.path.join(app.static_folder, "/".join(path.split("/")[:-1]))
+    return send_from_directory(dir_name, file_name)
+
+
+@home_bp.errorhandler(404)
+def handle_404(e):
+    print(e)
+    if request.path.startswith("/api/"):
+        return jsonify(message="Resource not found"), 404
+    return send_from_directory(app.static_folder, "index.html")

@@ -12,7 +12,7 @@ def create_app(testing=False) -> Flask:
     """Application factory, used to create application
     https://stackoverflow.com/questions/33089144/flask-sqlalchemy-setup-engine-configuration
     """
-    app: flask.app.Flask = Flask(__name__, static_folder='../../frontend/build', static_url_path='')
+    app: flask.app.Flask = Flask(__name__, static_folder='../../frontend/build', static_url_path='', template_folder="../../frontend/build")
     app.config.from_object("money_maker.config")
     app.config["ENV"] = "development"
 
