@@ -20,12 +20,17 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 def past_data():
     stock = "CBA.AX"
     training_data_prices = Ticker(stock).history(interval="1d", start="2020-01-01", end="2020-6-30")
-    test_data_prices = Ticker(stock).history(interval="1d", start="2021-01-01", end="2021-6-30")
+    test_data_prices = Ticker(stock).history(interval="1d", start="2022-01-01", end="2022-6-30")
+
+    print(test_data_prices.info())
+    print(test_data_prices.index[0])
+    print(test_data_prices["date"][0])
 
     with tf.device('/cpu:0'):
         tf.get_logger().setLevel(logging.ERROR)
 
-        x_values = training_data_prices['close'].values.reshape(-1, 1)
+        price_to_obtain = 'close'
+        x_values = training_data_prices[price_to_obtain].values.reshape(-1, 1)
 
         # Prepare data
         scaler = MinMaxScaler(feature_range=(0, 1))
@@ -61,12 +66,12 @@ def past_data():
 
         model: Sequential = keras.models.load_model('./models')
 
-        model.fit(x_train, y_train, epochs=50, batch_size=32, verbose=False)
+        model.fit(x_train, y_train, epochs=100, batch_size=32, verbose=False)
 
         # Test the model
-        actual_test_data_close = test_data_prices['close'].values
+        actual_test_data_close = test_data_prices[price_to_obtain].values
 
-        total_dataset = pd.concat((training_data_prices['close'], test_data_prices['close']), axis=0)
+        total_dataset = pd.concat((training_data_prices[price_to_obtain], test_data_prices[price_to_obtain]), axis=0)
 
         model_inputs = total_dataset[len(total_dataset) - len(test_data_prices) - prediction_days:].values
         model_inputs = model_inputs.reshape(-1, 1)
