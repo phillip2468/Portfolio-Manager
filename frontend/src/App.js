@@ -1,5 +1,5 @@
 import './App.css';
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Homepage from "./pages/Homepage";
 import {createTheme, Paper, ThemeProvider} from "@mui/material";
 import {useMemo} from "react";
@@ -19,12 +19,12 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <Paper style={{minHeight: "150vh"}}>
-                <Router>
+                <BrowserRouter>
                     <Routes>
                         <Route exact path={'/'} element={<Homepage/>}/>
-                        <Route exact path={'/predict'} element={<PredictorPage/>}/>
+                        <Route path={'/predict'} element={<PredictorPage/>}/>
                     </Routes>
-                </Router>
+                </BrowserRouter>
             </Paper>
         </ThemeProvider>
     );

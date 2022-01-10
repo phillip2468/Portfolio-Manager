@@ -11,7 +11,7 @@ const PredictorPage = () => {
     const [predictedPrices, setPredictedPrices] = useState([])
 
     useEffect( ()=> {
-        fetch("/past-data")
+        fetch("/ai-data")
             .then(res => res.json())
             .then(res => {
                 setActualPrices(res["actual"])

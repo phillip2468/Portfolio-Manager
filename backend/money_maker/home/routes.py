@@ -133,27 +133,3 @@ def trending_tickers() -> flask.Response:
         data[key] = new_dict
 
     return jsonify(data)
-
-
-@home_bp.route("/")
-def serve():
-    """serves React App"""
-    print("HERE")
-    return send_from_directory(app.static_folder, "index.html")
-
-
-@home_bp.route("/<path:path>")
-def static_proxy(path):
-    """static folder serve"""
-    print("HERE")
-    file_name = path.split("/")[-1]
-    dir_name = os.path.join(app.static_folder, "/".join(path.split("/")[:-1]))
-    return send_from_directory(dir_name, file_name)
-
-
-@home_bp.errorhandler(404)
-def handle_404(e):
-    print(e)
-    if request.path.startswith("/api/"):
-        return jsonify(message="Resource not found"), 404
-    return send_from_directory(app.static_folder, "index.html")

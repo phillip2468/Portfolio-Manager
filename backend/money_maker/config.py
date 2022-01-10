@@ -6,12 +6,13 @@ load_dotenv()
 
 
 uri = os.getenv("DATABASE_URL")
-if uri is not None:
-    if uri.startswith("postgres://"):
-        uri = uri.replace("postgres://", "postgresql://", 1)
+if uri is not None and uri.startswith("postgres://"):
+    uri = uri.replace("postgres://", "postgresql://", 1)
+print(uri)
 
 SQLALCHEMY_DATABASE_URI = uri
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+ENV = "development"
 
 CELERY = {
     "broker_url": os.getenv("REDIS_URL"),
