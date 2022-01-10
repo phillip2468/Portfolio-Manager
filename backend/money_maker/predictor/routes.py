@@ -1,43 +1,60 @@
-import keras.models
+import logging
+import os
+
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 from flask import Blueprint, jsonify
 from sklearn.preprocessing import MinMaxScaler
+from tensorflow import keras
 from tensorflow.python.keras import Sequential
 from tensorflow.python.keras.layers import LSTM, Dense, Dropout
 from yahooquery import Ticker
-
-import tensorflow as tf
-import logging
-import os
 
 predictor_bp = Blueprint("predictor_bp", __name__)
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
+def create_model(size_of_model):
+    model = Sequential()
+    # Some-how feeds information back into itself with Long-short term memory???
+    model.add(LSTM(units=50, return_sequences=True, input_shape=(size_of_model, 1)))
+    model.add(Dropout(0.2))
+    model.add(LSTM(units=50, return_sequences=True))
+    model.add(Dropout(0.2))
+    model.add(LSTM(units=50))
+    model.add(Dropout(0.2))
+    model.add(Dense(units=1))  # Prediction of the next closing value
+
+    model.compile(optimizer='adam', loss='mean_squared_error')
+    model.save('./models')
+    return model
+
+
 @predictor_bp.route("/ai-data")
 def past_data():
     stock = "CBA.AX"
-    training_data_prices = Ticker(stock).history(interval="1d", start="2020-01-01", end="2020-6-30")
-    test_data_prices = Ticker(stock).history(interval="1d", start="2022-01-01", end="2022-6-30")
+    training_data_prices = Ticker(stock).history(interval="1d", start="2015-01-01", end="2020-6-30")
+    test_data_prices = Ticker(stock).history(interval="1d", start="2021-01-01", end="2021-6-30")
+    price_to_obtain = 'close'
 
-    print(test_data_prices.info())
-    print(test_data_prices.index[0])
-    print(test_data_prices["date"][0])
+    # How many days should I look into the past to predict the next prices?
+    prediction_days = 60
 
+    # Build the model, neural networks
+    if os.path.exists("./models") is False:
+        create_model(prediction_days)
+
+    model: Sequential = keras.models.load_model('./models')
     with tf.device('/cpu:0'):
         tf.get_logger().setLevel(logging.ERROR)
 
-        price_to_obtain = 'close'
         x_values = training_data_prices[price_to_obtain].values.reshape(-1, 1)
 
         # Prepare data
         scaler = MinMaxScaler(feature_range=(0, 1))
         scaled_data = scaler.fit_transform(x_values)
-
-        # How many days should I look into the past to predict the next prices?
-        prediction_days = 60
 
         x_train, y_train = [], []
         for x in (prediction_days, len(scaled_data) - 1):
@@ -48,27 +65,9 @@ def past_data():
         x_train, y_train = np.array(x_train), np.array(y_train)
         x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
 
-        # Build the model, neural networks
-        if os.path.exists("./models") is False:
-            print("HERE")
-            model = Sequential()
-            # Some-how feeds information back into itself with Long-short term memory???
-            model.add(LSTM(units=50, return_sequences=True, input_shape=(x_train.shape[1], 1)))
-            model.add(Dropout(0.2))
-            model.add(LSTM(units=50, return_sequences=True))
-            model.add(Dropout(0.2))
-            model.add(LSTM(units=50))
-            model.add(Dropout(0.2))
-            model.add(Dense(units=1))  # Prediction of the next closing value
+        model.fit(x_train, y_train, epochs=25, batch_size=32, verbose=False)
 
-            model.compile(optimizer='adam', loss='mean_squared_error')
-            model.save('./models')
-
-        model: Sequential = keras.models.load_model('./models')
-
-        model.fit(x_train, y_train, epochs=100, batch_size=32, verbose=False)
-
-        # Test the model
+        # Train the model
         actual_test_data_close = test_data_prices[price_to_obtain].values
 
         total_dataset = pd.concat((training_data_prices[price_to_obtain], test_data_prices[price_to_obtain]), axis=0)
@@ -88,6 +87,9 @@ def past_data():
 
         predicted_prices = model.predict(x_test)
         predicted_prices = scaler.inverse_transform(predicted_prices)
+
+        rmse = np.sqrt(((predicted_prices - actual_test_data_close)**2).mean())
+        print(rmse)
 
         # Predict the next day
         real_data = [model_inputs[len(model_inputs) - prediction_days: len(model_inputs + 1), 0]]
