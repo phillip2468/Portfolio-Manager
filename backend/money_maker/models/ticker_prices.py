@@ -37,6 +37,7 @@ class TickerPrice(db.Model):
     market_current_price = Column(Numeric)
     market_volume = Column(BigInteger)
     last_updated = Column(TIMESTAMP, server_default=func.now(), server_onupdate=func.utc_timestamp())  # type: ignore
+    root_mean_squared_score = Column(Numeric)
 
 
 on_update_function = (PGFunction.from_sql(

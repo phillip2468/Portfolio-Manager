@@ -6,10 +6,14 @@ import pandas as pd
 import tensorflow as tf
 from flask import Blueprint, jsonify
 from sklearn.preprocessing import MinMaxScaler
+from sqlalchemy import update, select
 from tensorflow import keras
 from tensorflow.python.keras import Sequential
 from tensorflow.python.keras.layers import LSTM, Dense, Dropout
 from yahooquery import Ticker
+
+from money_maker.extensions import db
+from money_maker.models.ticker_prices import TickerPrice
 
 predictor_bp = Blueprint("predictor_bp", __name__)
 
@@ -41,6 +45,9 @@ def past_data():
 
     # How many days should I look into the past to predict the next prices?
     prediction_days = 60
+
+    stmt = select(TickerPrice.root_mean_squared_score).where(TickerPrice.symbol == stock)
+    previous_rmse = [dict(element) for element in db.session.execute(stmt)][0]['root_mean_squared_score']
 
     # Build the model, neural networks
     if os.path.exists("./models") is False:
@@ -88,8 +95,14 @@ def past_data():
         predicted_prices = model.predict(x_test)
         predicted_prices = scaler.inverse_transform(predicted_prices)
 
-        rmse = np.sqrt(((predicted_prices - actual_test_data_close)**2).mean())
+        rmse = np.sqrt(((predicted_prices - actual_test_data_close) ** 2).mean())
         print(rmse)
+        if previous_rmse is None or rmse < previous_rmse:
+            db.session.query(TickerPrice) \
+                .filter(TickerPrice.symbol == stock) \
+                .update({TickerPrice.root_mean_squared_score: rmse})
+            db.session.commit()
+            model.save('./models')
 
         # Predict the next day
         real_data = [model_inputs[len(model_inputs) - prediction_days: len(model_inputs + 1), 0]]
@@ -99,7 +112,6 @@ def past_data():
         prediction = model.predict(real_data)
         prediction = scaler.inverse_transform(prediction)
 
-        model.save('./models')
         dictionary = {
             "actual": [{"day": index, "price": str(element)} for index, element in
                        enumerate(actual_test_data_close.flat)],
