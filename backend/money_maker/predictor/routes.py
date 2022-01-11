@@ -40,7 +40,7 @@ def create_model(size_of_model):
 def past_data():
     stock = "CBA.AX"
     training_data_prices = Ticker(stock).history(interval="1d", start="2015-01-01", end="2020-6-30")
-    test_data_prices = Ticker(stock).history(interval="1d", start="2021-01-01", end="2021-6-30")
+    test_data_prices = Ticker(stock).history(interval="1d", start="2021-01-01", end="2021-12-31")
     price_to_obtain = 'close'
 
     # How many days should I look into the past to predict the next prices?
@@ -72,10 +72,10 @@ def past_data():
         x_train, y_train = np.array(x_train), np.array(y_train)
         x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
 
-        model.fit(x_train, y_train, epochs=25, batch_size=32, verbose=False)
+        model.fit(x_train, y_train, epochs=1, batch_size=32, verbose=False)
 
         # Train the model
-        actual_test_data_close = test_data_prices[price_to_obtain].values
+        actual_test_data_prices = test_data_prices[price_to_obtain].values
 
         total_dataset = pd.concat((training_data_prices[price_to_obtain], test_data_prices[price_to_obtain]), axis=0)
 
@@ -95,7 +95,7 @@ def past_data():
         predicted_prices = model.predict(x_test)
         predicted_prices = scaler.inverse_transform(predicted_prices)
 
-        rmse = np.sqrt(((predicted_prices - actual_test_data_close) ** 2).mean())
+        rmse = np.sqrt(((predicted_prices - actual_test_data_prices) ** 2).mean())
         print(rmse)
         if previous_rmse is None or rmse < previous_rmse:
             db.session.query(TickerPrice) \
@@ -113,10 +113,10 @@ def past_data():
         prediction = scaler.inverse_transform(prediction)
 
         dictionary = {
-            "actual": [{"day": index, "price": str(element)} for index, element in
-                       enumerate(actual_test_data_close.flat)],
-            "predicted": [{"day": index, "price": str(element)} for index, element in
-                          enumerate(predicted_prices.flat)],
+            "actual": [{"day": key[1], "price": value} for key, value in
+                       test_data_prices[price_to_obtain].to_dict().items()],
+            "predicted": [{"day": day[1], "price": float(price)} for day, price in
+                          zip(test_data_prices[price_to_obtain].to_dict().keys(), predicted_prices.flat)],
             "next_day": [str(element) for element in prediction.flat]
         }
 

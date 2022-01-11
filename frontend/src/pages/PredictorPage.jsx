@@ -4,6 +4,7 @@ import {Container, Grid} from "@mui/material";
 import Header from "../components/Header";
 import Button from "@mui/material/Button";
 import {Typography} from "@material-ui/core";
+import moment from "moment";
 
 const PredictorPage = () => {
 
@@ -13,6 +14,10 @@ const PredictorPage = () => {
 
     const [errorMessage, setErrorMessage] = useState('')
 
+    const dateFormatter = date => {
+        return moment(date).format('DD/MM/YY HH:mm');
+    };
+
     useEffect( ()=> {}
     , [])
 
@@ -20,6 +25,14 @@ const PredictorPage = () => {
         fetch("/ai-data")
             .then(res => res.json())
             .then(res => {
+                console.log(res)
+                res["predicted"].forEach(d => {
+                    d["day"] = moment(d["day"]).valueOf();
+                })
+                res["actual"].forEach(d => {
+                    d["day"] = moment(d["day"]).valueOf();
+                })
+                console.log(res)
                 setActualPrices(res["actual"])
                 setPredictedPrices(res["predicted"])
                 setData(res["next_day"])
@@ -46,7 +59,7 @@ const PredictorPage = () => {
 
                 <ResponsiveContainer height={500}>
                     <LineChart height={300} >
-                        <XAxis type="number" dataKey={"day"} domain={['auto', 'auto']}/>
+                        <XAxis dataKey={"day"} scale="time" type="number" domain={['auto', 'auto']} tickFormatter={dateFormatter}/>
                         <YAxis domain={[50, 'auto']}/>
                         <CartesianGrid strokeDasharray="3 3"/>
                         <Tooltip/>
