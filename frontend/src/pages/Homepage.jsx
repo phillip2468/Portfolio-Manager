@@ -6,7 +6,7 @@ import styled from "styled-components"
 
 const StyledInput = styled(TextField)`
   fieldset {
-    border-radius: 50px;
+    border-radius: 2em;
   }
 `
 
@@ -43,10 +43,9 @@ const Homepage = () => {
                 <Container maxWidth={'xs'}>
                     <StyledInput
                         placeholder={"Search for stocks"}
-                        inputAdorement={<SearchIcon/>}
                         fullWidth={true}
                         InputProps={{
-                            startAdornment: <SearchIcon position="start"/>,
+                            startAdornment: <SearchIcon position="start" style={{paddingRight: "10px"}}/>,
                         }}
                     />
                 </Container>
