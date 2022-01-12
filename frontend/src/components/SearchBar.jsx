@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from "styled-components"
 import SearchIcon from "@material-ui/icons/Search";
 
@@ -6,11 +6,15 @@ import SearchIcon from "@material-ui/icons/Search";
 const SearchDivBox = styled.div`
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
 `
 
 const SearchBox = styled.div`
   display: flex;
   position: relative;
+  justify-content: center;
 `
 
 const SearchInput = styled.input`
@@ -29,25 +33,55 @@ const SearchIconBox = styled.div`
   width: 40px;
   background-color: black;
   position: absolute;
-  right: 10px;
-  top: 8px;
   border-radius: 15px;
+  top: 7px;
+  right: 10px;
+`
+
+// noinspection CssUnknownProperty
+const DataResult = styled.div`
+  justify-items: center;
+  display: grid;
+  background-color: black;
+  color: white;
+  width: 500px;
+  overflow-y: auto;
+  height: 100px;
+  scrollbar-width: none;
+  position: absolute;
+  border-top: 100px;
 `
 
 const SearchBar = ({placeholder, data}) => {
+
+    const [searchWord, setSearchWord] = useState("");
+
+    const handleSearch = (event) => {
+        const searchTerm = event.target.value;
+        setSearchWord(searchTerm);
+    }
+
     return (
         <SearchDivBox>
             <SearchBox>
                 <SearchInput
                     type={"text"}
                     placeholder={placeholder}
+                    value={searchWord}
+                    onChange={handleSearch}
                 />
                 <SearchIconBox>
                     <SearchIcon/>
                 </SearchIconBox>
             </SearchBox>
-            <div className={"DropDownMenu"}>
-            </div>
+            {searchWord.length === 0 && (
+                    <DataResult>
+                        {data.map((value, key)=> {
+                            return <p>{value.value}</p>
+                        })}
+                    </DataResult>
+                )
+            }
         </SearchDivBox>
     );
 };

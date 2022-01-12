@@ -30,6 +30,7 @@ const Homepage = () => {
                 <Container>
                     <SearchBar
                         placeholder={"Search for stocks"}
+                        data={data}
                     />
                 </Container>
             </Grid>
