@@ -49,7 +49,7 @@ const DataResult = styled.div`
   height: 100px;
   scrollbar-width: none;
   position: absolute;
-  border-top: 100px;
+  z-index: 1000;
 `
 
 const SearchBar = ({placeholder, data}) => {
@@ -74,14 +74,16 @@ const SearchBar = ({placeholder, data}) => {
                     <SearchIcon/>
                 </SearchIconBox>
             </SearchBox>
-            {searchWord.length === 0 && (
+            <div style={{position: "relative", right: "250px"}}>
+                {searchWord.length === 0 && (
                     <DataResult>
                         {data.map((value, key)=> {
-                            return <p>{value.value}</p>
+                            return <p key={key}>{value.value}</p>
                         })}
                     </DataResult>
                 )
-            }
+                }
+            </div>
         </SearchDivBox>
     );
 };
