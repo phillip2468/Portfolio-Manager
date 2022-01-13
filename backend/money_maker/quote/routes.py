@@ -7,6 +7,7 @@ from sqlalchemy import func, select, text
 quote_bp = Blueprint('quote_bp', __name__)
 
 
+# noinspection PyTypeChecker
 @quote_bp.route("/quote/<ticker>")
 def ticker_information(ticker):
     stmt: select = select(TickerPrice).filter(TickerPrice.symbol == ticker)
@@ -20,3 +21,9 @@ def market_change_by_industry(category, order):
                           func.count(industry_sector)).where(industry_sector.is_not(None)) \
         .group_by(industry_sector).order_by(text(f""""Average" {order}"""))
     return jsonify([dict(element) for element in db.session.execute(stmt).all()])
+
+
+@quote_bp.route("/quote/search")
+def get_all_companies():
+    results = db.session.query(TickerPrice.stock_id.label("key"), TickerPrice.stock_name.label("value")).all()
+    return jsonify([dict(element) for element in results])
