@@ -15,6 +15,7 @@ const SearchBox = styled.div`
   display: flex;
   position: relative;
   justify-content: center;
+  border-radius: 10px;
 `
 
 const SearchInput = styled.input`
@@ -22,8 +23,8 @@ const SearchInput = styled.input`
   color: white;
   font-size: 1.3rem;
   padding: 0.5em;
-  border-radius: 1em;
   width: 500px;
+  border-radius: 1em 1em 0 0;
 `
 
 const SearchIconBox = styled.div`
@@ -44,12 +45,13 @@ const DataResult = styled.div`
   display: grid;
   background-color: black;
   color: white;
-  width: 500px;
+  width: 525px;
   overflow-y: auto;
-  height: 100px;
+  height: 200px;
   scrollbar-width: none;
+  z-index: 2;
   position: absolute;
-  z-index: 1000;
+  right: -262px;
 `
 
 const SearchBar = ({placeholder, data}) => {
@@ -74,8 +76,8 @@ const SearchBar = ({placeholder, data}) => {
                     <SearchIcon/>
                 </SearchIconBox>
             </SearchBox>
-            <div style={{position: "relative", right: "250px"}}>
-                {searchWord.length === 0 && (
+            <div style={{position: "relative"}}>
+                {searchWord.length !== 0 && (
                     <DataResult>
                         {data.map((value, key)=> {
                             return <p key={key}>{value.value}</p>
