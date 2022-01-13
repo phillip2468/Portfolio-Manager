@@ -5,6 +5,10 @@ from money_maker.app import create_app
 app = create_app()
 
 
+if __name__ == '__main__':
+    app.run()
+
+
 @app.route('/', defaults={'path': ''})  # homepage
 @app.route('/<path:path>')  # any other path
 def catch_all(path):
