@@ -1,13 +1,9 @@
-import {Container, Grid, TextField} from "@mui/material";
+import {Container, Grid} from "@mui/material";
 import Header from "../components/Header";
 import TrendingTable from "../components/TrendingTable";
 import SearchBar from "../components/SearchBar";
 
-const StyledInput = styled(TextField)`
-  fieldset {
-    border-radius: 2em;
-  }
-`
+const Homepage = () => {
     const data = [
         {
             key: "Hi",
@@ -28,26 +24,11 @@ const StyledInput = styled(TextField)`
                 <Header/>
             </Grid>
 
-            <Grid item>
-                <Container maxWidth={'xs'}>
-                    <StyledInput
-                        placeholder={"Search for stocks"}
-                        fullWidth={true}
-                        InputProps={{
-                            startAdornment: <SearchIcon position="start" style={{paddingRight: "10px"}}/>,
-                        }}
-                    />
-                </Container>
-
-            </Grid>
-
-            <Grid item>
-                <Container>
-                    <SearchBar
-                        placeholder={"Search for stocks"}
-                        data={data}
-                    />
-                </Container>
+            <Grid item sx={{position: "relative"}}>
+                <SearchBar
+                    placeholder={"Search for stocks"}
+                    data={data}
+                />
             </Grid>
 
             <Grid item>
