@@ -2,22 +2,21 @@ import {Container, Grid} from "@mui/material";
 import Header from "../components/Header";
 import TrendingTable from "../components/TrendingTable";
 import SearchBar from "../components/SearchBar";
+import {useEffect, useState} from "react";
 
 const Homepage = () => {
-    const data = [
-        {
-            key: "Hi",
-            value: "there",
-        },
-        {
-            key: "John",
-            value: "Smite"
-        },
-        {
-            key: "Sam",
-            value: "Meloma"
+    const [allStocks, setAllStocks] = useState([])
+
+    useEffect(()=> {
+            fetch('/quote/search')
+                .then((res) => res.json())
+                .then((res) => {
+                    console.log(res)
+                    setAllStocks(Object.values(res))
+                })
         }
-    ]
+    , [])
+
     return (
         <Grid container spacing={2} direction={"column"}>
             <Grid item>
@@ -27,7 +26,7 @@ const Homepage = () => {
             <Grid item sx={{position: "relative"}}>
                 <SearchBar
                     placeholder={"Search for stocks"}
-                    data={data}
+                    data={allStocks}
                 />
             </Grid>
 
