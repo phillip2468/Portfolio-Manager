@@ -1,38 +1,27 @@
 import {Container, Grid, TextField} from "@mui/material";
 import Header from "../components/Header";
 import TrendingTable from "../components/TrendingTable";
-import SearchIcon from '@mui/icons-material/Search';
-import styled from "styled-components"
+import SearchBar from "../components/SearchBar";
 
 const StyledInput = styled(TextField)`
   fieldset {
     border-radius: 2em;
   }
 `
-
-const Homepage = () => {
     const data = [
         {
-            key: "john",
-            value: "John Doe",
+            key: "Hi",
+            value: "there",
         },
         {
-            key: "jane",
-            value: "Jane Doe",
+            key: "John",
+            value: "Smite"
         },
         {
-            key: "mary",
-            value: "Mary Phillips",
-        },
-        {
-            key: "robert",
-            value: "Robert",
-        },
-        {
-            key: "karius",
-            value: "Karius",
-        },
-    ];
+            key: "Sam",
+            value: "Meloma"
+        }
+    ]
     return (
         <Grid container spacing={2} direction={"column"}>
             <Grid item>
@@ -54,7 +43,15 @@ const Homepage = () => {
 
             <Grid item>
                 <Container>
+                    <SearchBar
+                        placeholder={"Search for stocks"}
+                        data={data}
+                    />
+                </Container>
+            </Grid>
 
+            <Grid item>
+                <Container>
                    <TrendingTable/>
                 </Container>
             </Grid>
