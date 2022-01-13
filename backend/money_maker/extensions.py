@@ -10,4 +10,8 @@ db = SQLAlchemy(engine_options={
 })
 migrate = Migrate()
 celery = Celery()
-cache = Cache(config={"CACHE_TYPE": "RedisCache", "CACHE_REDIS_URL": "redis://:p4f59a8e2e5f342d5eba3e0f0c6d7e2248726b02b3ebf626676b67d2982281882@ec2-18-207-70-186.compute-1.amazonaws.com:24039"})
+cache = Cache(config={"CACHE_TYPE": "RedisCache",
+                      "CACHE_REDIS_HOST": "redis-15988.c84.us-east-1-2.ec2.cloud.redislabs.com",
+                      "CACHE_REDIS_PORT": "15988",
+                      "CACHE_REDIS_DB": "0",
+                      "CACHE_REDIS_PASSWORD": "2nVsLWNYq4qeEGU48zDgOQjRLHkk0PcB"})
