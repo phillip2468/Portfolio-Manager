@@ -35,7 +35,7 @@ const SearchIconBox = styled.div`
   background-color: black;
   position: absolute;
   border-radius: 15px;
-  top: 7px;
+  top: 10px;
   right: 10px;
 `
 
