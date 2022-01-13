@@ -8,7 +8,7 @@ import yahooquery.ticker
 from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify
-from money_maker.extensions import db
+from money_maker.extensions import cache, db
 from money_maker.helpers import market_index_ticker, object_as_dict
 from money_maker.models.ticker_prices import TickerPrice
 from money_maker.tasks.task import add_together
@@ -48,10 +48,11 @@ def asx_tickers() -> flask.Response:
 
 
 @home_bp.route("/all-asx-prices")
+@cache.cached(timeout=15*60)
 def get_all_asx_prices() -> flask.Response:
     # https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func
     # https://newbedev.com/sqlalchemy-performing-a-bulk-upsert-if-exists-update-else-insert-in-postgresql
-
+    print("HERE")
     stmt = select(func.max(TickerPrice.last_updated))
     last_updated_stock = db.session.execute(stmt).one()[0]
 

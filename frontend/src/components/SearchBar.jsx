@@ -41,7 +41,6 @@ const SearchIconBox = styled.div`
 
 // noinspection CssUnknownProperty
 const DataResult = styled.div`
-  justify-items: center;
   display: grid;
   background-color: black;
   color: white;
@@ -52,15 +51,26 @@ const DataResult = styled.div`
   z-index: 2;
   position: absolute;
   right: -262px;
+  justify-items: center;
 `
 
 const SearchBar = ({placeholder, data}) => {
 
     const [searchWord, setSearchWord] = useState("");
+    const [filteredData, setFilteredData] = useState([]);
 
     const handleSearch = (event) => {
         const searchTerm = event.target.value;
         setSearchWord(searchTerm);
+
+        const newFilter = data.filter((value) => {
+            return value.value.toLowerCase().includes(searchWord.toLowerCase())
+        })
+        if (searchWord === "") {
+            setFilteredData([]);
+        } else {
+            setFilteredData(newFilter);
+        }
     }
 
     return (
@@ -79,8 +89,21 @@ const SearchBar = ({placeholder, data}) => {
             <div style={{position: "relative"}}>
                 {searchWord.length !== 0 && (
                     <DataResult>
-                        {data.map((value, key)=> {
-                            return <p key={key}>{value.value}</p>
+                        {filteredData.map((value, key)=> {
+                            return <div
+                                key={key}
+                                style={{outline: "2px solid white",
+                                    width: "100%",
+                                    height: "50px",
+                                    backgroundColor: "blue",
+                                    textAlign: "center",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                            }}>
+                                {value.value}
+                                {value.symbol}
+                            </div>
                         })}
                     </DataResult>
                 )
