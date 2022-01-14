@@ -10,9 +10,9 @@ from flask import current_app as app
 from flask import jsonify
 from money_maker.extensions import cache, db
 from money_maker.helpers import market_index_ticker, object_as_dict
-from money_maker.models.ticker_prices import TickerPrice
-from money_maker.tasks.task import add_together
-from sqlalchemy import asc, bindparam, func, select, update
+from money_maker.models.ticker_prices import TickerPrice as tP
+# from money_maker.tasks.task import add_together
+from sqlalchemy import asc, bindparam, desc, func, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import ColumnCollection, ColumnElement
 from sqlalchemy_utils import get_columns
@@ -27,7 +27,6 @@ def asx_tickers() -> flask.Response:
     Inserts asx tickers in the database.
     Returns a list of all tickers.
     """
-    print(add_together.delay())
 
     insert_dictionary: dict[str, ColumnElement[Any]] = {
         'market_state': bindparam('status'),
@@ -35,32 +34,31 @@ def asx_tickers() -> flask.Response:
         'stock_name': bindparam('title')
     }
 
-    stmt = insert(TickerPrice).values(insert_dictionary).on_conflict_do_update(
+    stmt = insert(tP).values(insert_dictionary).on_conflict_do_update(
         index_elements=['symbol'],
         set_=insert_dictionary
     )
 
     db.session.execute(stmt, market_index_ticker())
     db.session.commit()
-    result = [object_as_dict(element) for element in (db.session.query(TickerPrice).all())]
+    result = [object_as_dict(element) for element in (db.session.query(tP).all())]
 
     return jsonify(result)
 
 
 @home_bp.route("/all-asx-prices")
-@cache.cached(timeout=15*60)
+@cache.cached(timeout=15 * 60)
 def get_all_asx_prices() -> flask.Response:
     # https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func
     # https://newbedev.com/sqlalchemy-performing-a-bulk-upsert-if-exists-update-else-insert-in-postgresql
-    print("HERE")
-    stmt = select(func.max(TickerPrice.last_updated))
+    stmt = select(func.max(tP.last_updated))
     last_updated_stock = db.session.execute(stmt).one()[0]
 
     # This is so the database isn't queried every time.
     if pytz.utc.localize(last_updated_stock) + datetime.timedelta(minutes=15) > datetime.datetime.now(pytz.utc):
-        return jsonify([object_as_dict(element) for element in db.session.query(TickerPrice).all()])
+        return jsonify([object_as_dict(element) for element in db.session.query(tP).all()])
 
-    list_asx_symbols = select(TickerPrice.symbol).order_by(asc(TickerPrice.symbol))
+    list_asx_symbols = select(tP.symbol).order_by(asc(tP.symbol))
     list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
@@ -97,7 +95,7 @@ def get_all_asx_prices() -> flask.Response:
         'symbol': bindparam('symbol')
     }
 
-    stmt = insert(TickerPrice).values(market_information)
+    stmt = insert(tP).values(market_information)
 
     on_conflict_statement = stmt.on_conflict_do_update(
         index_elements=['symbol'],
@@ -142,6 +140,17 @@ def past_data():
     print(tickers.to_dict('list'))
     print(sys.getsizeof(tickers))
     return jsonify(tickers.to_dict('records'))
+
+
+@home_bp.route("/actively-traded")
+def most_actively_traded_stocks():
+    result = db.session.query(tP.symbol, ((tP.market_volume * tP.market_current_price) / tP.market_cap).label("volume"),
+                              tP.market_change_percentage).filter(tP.market_current_price.is_not(None))\
+        .filter(tP.market_volume.is_not(None)).filter(tP.market_current_price.is_not(None)).\
+        filter(tP.market_cap.is_not(None), tP.market_cap > 10000000).filter(tP.market_change_percentage > 0)\
+        .order_by(desc("volume")).limit(5).all()
+    return jsonify([dict(element) for element in result])
+
 
 
 @home_bp.route('/')

@@ -24,7 +24,7 @@ def market_change_by_industry(category, order):
 
 
 @quote_bp.route("/quote/search")
-@cache.cached(timeout=60)
+@cache.cached(timeout=600)
 def get_all_companies():
     results = db.session.query(tP.stock_id.label("key"), tP.stock_name.label("value"), tP.symbol,
                                tP.market_current_price.label("price"), tP.market_change_percentage.label("change")).\

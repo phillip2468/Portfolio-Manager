@@ -11,7 +11,6 @@ const Homepage = () => {
             fetch('/quote/search')
                 .then((res) => res.json())
                 .then((res) => {
-                    console.log(res)
                     setAllStocks(Object.values(res))
                 })
         }
