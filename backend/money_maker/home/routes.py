@@ -145,13 +145,13 @@ def past_data():
 @home_bp.route("/actively-traded")
 def most_actively_traded_stocks():
     result = db.session.query(tP.symbol, ((tP.market_volume * tP.market_current_price) / tP.market_cap).label("volume"),
-                              tP.market_change_percentage, tP.market_change_percentage, tP.market_current_price, tP.stock_name)\
-        .filter(tP.market_current_price.is_not(None)).filter(tP.market_volume.is_not(None))\
-        .filter(tP.market_current_price.is_not(None)).\
-        filter(tP.market_cap.is_not(None), tP.market_cap > 10000000).filter(tP.market_change_percentage > 0)\
+                              tP.market_change_percentage, tP.market_change_percentage, tP.market_current_price,
+                              tP.stock_name) \
+        .filter(tP.market_current_price.is_not(None)).filter(tP.market_volume.is_not(None)) \
+        .filter(tP.market_current_price.is_not(None)). \
+        filter(tP.market_cap.is_not(None), tP.market_cap > 10000000).filter(tP.market_change_percentage > 0) \
         .order_by(desc("volume")).limit(5).all()
     return jsonify([dict(element) for element in result])
-
 
 
 @home_bp.route('/')

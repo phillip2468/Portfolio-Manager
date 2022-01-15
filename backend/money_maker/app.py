@@ -2,6 +2,7 @@ import flask.app
 from flask import Flask
 from flask_cors import CORS
 from money_maker.extensions import cache, celery, db, migrate
+from money_maker.home.on_first_load import on_first_load_bp
 from money_maker.home.routes import home_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.trending.routes import trending_bp
@@ -38,6 +39,7 @@ def register_blueprints(app: flask.Flask):
     app.register_blueprint(home_bp)
     app.register_blueprint(quote_bp)
     app.register_blueprint(trending_bp)
+    app.register_blueprint(on_first_load_bp)
 
 
 def init_celery(app: flask.app.Flask = None):
