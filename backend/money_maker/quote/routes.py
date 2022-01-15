@@ -21,9 +21,8 @@ def market_change_by_industry(category, order):
 
 
 @quote_bp.route("/search")
-@cache.cached(timeout=600)
 def get_all_companies():
-    results = db.session.query(tP.stock_id.label("key"), tP.stock_name.label("value"), tP.symbol,
+    results = db.session.query(tP.stock_id.label("key"), tP.stock_name, tP.symbol,
                                tP.market_current_price.label("price"), tP.market_change_percentage.label("change")).\
         order_by(tP.stock_name).filter(tP.market_current_price.isnot(None)).all()
     return jsonify([dict(element) for element in results])

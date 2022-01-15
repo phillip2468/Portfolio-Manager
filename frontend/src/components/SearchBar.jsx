@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from "styled-components"
 import SearchIcon from "@material-ui/icons/Search";
 
 
-const SearchDivBox = styled.div`
+const OuterContainer = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -46,27 +46,49 @@ const DataResult = styled.div`
   color: white;
   width: 525px;
   overflow-y: auto;
-  height: 200px;
+  height: 250px;
   scrollbar-width: none;
   z-index: 2;
   position: absolute;
   right: -262px;
-  justify-items: center;
 `
+
+const SearchResultsGrid = styled.div`
+  display: inline-grid;
+  grid-template-columns: 70% 20% 10%;
+  grid-template-rows: 100%;
+  grid-auto-flow: row;
+  justify-items: stretch;
+  grid-template-areas: ". . .";
+  border: 2px solid #072f34;
+  font-family: Arial, Helvetica, sans-serif;;
+`
+
 
 const SearchBar = ({placeholder, data}) => {
 
-    const [searchWord, setSearchWord] = useState("");
+    const [typedInput, setTypedInput] = useState("");
     const [filteredData, setFilteredData] = useState([]);
+    const [searchable, setSearchable] = useState([])
+
+    useEffect(()=> {
+            fetch('/quote/search')
+                .then((res) => res.json())
+                .then((res) => {
+                    setSearchable(Object.values(res))
+                })
+        }
+        , [])
+
 
     const handleSearch = (event) => {
         const searchTerm = event.target.value;
-        setSearchWord(searchTerm);
+        setTypedInput(searchTerm);
 
-        const newFilter = data.filter((value) => {
-            return value.value.toLowerCase().includes(searchWord.toLowerCase())
+        const newFilter = searchable.filter((value) => {
+            return value.stock_name.toLowerCase().includes(typedInput.toLowerCase())
         })
-        if (searchWord === "") {
+        if (typedInput === "") {
             setFilteredData([]);
         } else {
             setFilteredData(newFilter);
@@ -74,12 +96,12 @@ const SearchBar = ({placeholder, data}) => {
     }
 
     return (
-        <SearchDivBox>
+        <OuterContainer>
             <SearchBox>
                 <SearchInput
                     type={"text"}
                     placeholder={placeholder}
-                    value={searchWord}
+                    value={typedInput}
                     onChange={handleSearch}
                 />
                 <SearchIconBox>
@@ -87,29 +109,28 @@ const SearchBar = ({placeholder, data}) => {
                 </SearchIconBox>
             </SearchBox>
             <div style={{position: "relative"}}>
-                {searchWord.length !== 0 && (
+                {typedInput.length !== 0 && (
                     <DataResult>
                         {filteredData.map((value, key)=> {
-                            return <div
-                                key={key}
-                                style={{outline: "2px solid white",
-                                    width: "100%",
-                                    height: "50px",
-                                    backgroundColor: "blue",
-                                    textAlign: "center",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center"
-                            }}>
-                                {value.value}
-                                {value.symbol}
-                            </div>
+                            return <SearchResultsGrid
+                                key={key}>
+                                <div style={{display: "flex", flexDirection: "column", paddingLeft: "5%", justifyContent: "center"}}>
+                                    <div>{value.stock_name}</div>
+                                    <div>{value.symbol}</div>
+                                </div>
+                                <div style={{display: "flex", alignItems: "center"}}>
+                                    ${value.price}
+                                </div>
+                                <div style={{display: "flex", alignItems: "center"}}>
+                                    {value.change.toFixed(2)}
+                                </div>
+                            </SearchResultsGrid>
                         })}
                     </DataResult>
                 )
                 }
             </div>
-        </SearchDivBox>
+        </OuterContainer>
     );
 };
 
