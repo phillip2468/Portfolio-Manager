@@ -22,6 +22,8 @@ config = context.config
 fileConfig(config.config_file_name)
 logger = logging.getLogger('alembic.env')
 
+from money_maker.models import news_stories, ticker_prices
+
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
