@@ -10,8 +10,7 @@ quote_bp = Blueprint('quote_bp', __name__)
 # noinspection PyTypeChecker
 @quote_bp.route("/quote/<ticker>")
 def ticker_information(ticker):
-    stmt: select = select(tP).filter(tP.symbol == ticker)
-    return jsonify([object_as_dict(element) for element in db.session.execute(stmt).one()])
+    return jsonify([dict(element) for element in db.session.query(tP.symbol).filter(tP.symbol == ticker).one()])
 
 
 @quote_bp.route("/quote/<category>/market-change/<order>")
