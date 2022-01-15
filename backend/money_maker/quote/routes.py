@@ -1,16 +1,14 @@
 from flask import Blueprint, jsonify
 from money_maker.extensions import cache, db
-from money_maker.helpers import object_as_dict
 from money_maker.models.ticker_prices import TickerPrice as tP
 from sqlalchemy import func, select, text
 
 quote_bp = Blueprint('quote_bp', __name__)
 
 
-# noinspection PyTypeChecker
 @quote_bp.route("/quote/<ticker>")
 def ticker_information(ticker):
-    return jsonify([dict(element) for element in db.session.query(tP.symbol).filter(tP.symbol == ticker).one()])
+    return jsonify([dict(element) for element in db.session.query(tP.symbol).filter(tP.symbol == ticker).all()])
 
 
 @quote_bp.route("/quote/<category>/market-change/<order>")
