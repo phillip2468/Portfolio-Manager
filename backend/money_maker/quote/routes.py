@@ -3,15 +3,15 @@ from money_maker.extensions import cache, db
 from money_maker.models.ticker_prices import TickerPrice as tP
 from sqlalchemy import func, select, text
 
-quote_bp = Blueprint('quote_bp', __name__)
+quote_bp = Blueprint("quote_bp", __name__, url_prefix="/quote")
 
 
-@quote_bp.route("/quote/<ticker>")
+@quote_bp.route("/<ticker>")
 def ticker_information(ticker):
     return jsonify([dict(element) for element in db.session.query(tP.symbol).filter(tP.symbol == ticker).all()])
 
 
-@quote_bp.route("/quote/<category>/market-change/<order>")
+@quote_bp.route("/<category>/market-change/<order>")
 def market_change_by_industry(category, order):
     industry_sector = getattr(tP, category)
     stmt: select = select(industry_sector, func.avg(tP.market_change_percentage).label("Average"),
@@ -20,7 +20,7 @@ def market_change_by_industry(category, order):
     return jsonify([dict(element) for element in db.session.execute(stmt).all()])
 
 
-@quote_bp.route("/quote/search")
+@quote_bp.route("/search")
 @cache.cached(timeout=600)
 def get_all_companies():
     results = db.session.query(tP.stock_id.label("key"), tP.stock_name.label("value"), tP.symbol,
