@@ -3,7 +3,7 @@ import Header from "../components/Header";
 //import TrendingTable from "../components/TrendingTable";
 import SearchBar from "../components/SearchBar/SearchBar";
 //import {useEffect, useState} from "react";
-import PopularStocksTable from "../components/PopularStocksTable";
+import PopularStocksTable from "../components/PopularStocksTable/PopularStocksTable";
 
 
 const Homepage = () => {

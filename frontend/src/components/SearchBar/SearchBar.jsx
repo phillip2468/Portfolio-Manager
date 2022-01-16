@@ -17,13 +17,13 @@ const SearchBar = ({placeholder}) => {
 
     const [typedInput, setTypedInput] = useState("");
     const [filteredData, setFilteredData] = useState([]);
-    const [searchable, setSearchable] = useState([])
+    const [allStocksInfo, setAllStocksInfo] = useState([])
 
     useEffect(()=> {
             fetch('/quote/search')
                 .then((res) => res.json())
                 .then((res) => {
-                    setSearchable(Object.values(res))
+                    setAllStocksInfo(Object.values(res))
                 })
         }
     , [])
@@ -33,7 +33,7 @@ const SearchBar = ({placeholder}) => {
         const searchTerm = event.target.value;
         setTypedInput(searchTerm);
 
-        const newFilter = searchable.filter((value) => {
+        const newFilter = allStocksInfo.filter((value) => {
             return value.stock_name.toLowerCase().includes(typedInput.toLowerCase())
         })
         if (typedInput === "") {
