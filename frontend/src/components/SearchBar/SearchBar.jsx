@@ -20,7 +20,7 @@ const SearchBar = ({placeholder}) => {
     const [allStocksInfo, setAllStocksInfo] = useState([])
 
     useEffect(()=> {
-            fetch('/quote/search')
+            fetch('/search')
                 .then((res) => res.json())
                 .then((res) => {
                     setAllStocksInfo(Object.values(res))

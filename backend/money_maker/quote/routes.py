@@ -6,11 +6,6 @@ from sqlalchemy import func, select, text
 quote_bp = Blueprint("quote_bp", __name__, url_prefix="/quote")
 
 
-@quote_bp.route("/<ticker>")
-def ticker_information(ticker):
-    return jsonify([dict(element) for element in db.session.query(tP.symbol).filter(tP.symbol == ticker).all()])
-
-
 @quote_bp.route("/<category>/market-change/<order>")
 def market_change_by_industry(category, order):
     industry_sector = getattr(tP, category)
@@ -20,9 +15,7 @@ def market_change_by_industry(category, order):
     return jsonify([dict(element) for element in db.session.execute(stmt).all()])
 
 
-@quote_bp.route("/search")
-def get_all_companies():
-    results = db.session.query(tP.stock_id.label("key"), tP.stock_name, tP.symbol,
-                               tP.market_current_price.label("price"), tP.market_change_percentage.label("change")).\
-        order_by(tP.stock_name).filter(tP.market_current_price.isnot(None)).all()
-    return jsonify([dict(element) for element in results])
+@quote_bp.route("/<stock_name>")
+def get_stock_info(stock_name):
+    stmt = select(tP.__table__.columns).where(tP.symbol == stock_name)
+    return jsonify([dict(element) for element in db.session.execute(stmt).all()])
