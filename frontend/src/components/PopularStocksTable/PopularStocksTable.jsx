@@ -1,14 +1,16 @@
 import DataTable from "react-data-table-component";
 import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 const PopularStocksTable = () => {
+    const navigate = useNavigate()
 
     const [popularStocks, setPopularStocks] = useState([])
 
-    useEffect(()=> {
+    useEffect(() => {
         fetch('/actively-traded')
             .then((res) => res.json())
-            .then((res)=> {
+            .then((res) => {
                 setPopularStocks(res)
             })
     }, [])
@@ -51,6 +53,8 @@ const PopularStocksTable = () => {
                 theme={"dark"}
                 columns={columns}
                 data={popularStocks}
+                onRowClicked={(row, e) => navigate(`/${row.symbol}`)}
+                pointerOnHover={true}
             />
         </>
     )
