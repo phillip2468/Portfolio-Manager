@@ -21,7 +21,7 @@ function App() {
         <Router>
             <ThemeProvider theme={theme}>
                 <Paper style={{minHeight: "150vh"}}>
-                    <Grid container spacing={2} direction={"column"}>
+                    <Grid container spacing={4} direction={"column"}>
                         <Grid item>
                             <Header/>
                         </Grid>
