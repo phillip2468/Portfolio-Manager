@@ -1,7 +1,7 @@
 import './App.css';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Homepage from "./pages/Homepage";
-import StockPage from "./pages/StockPage"
+import StockPage from "./pages/StockPage/StockPage"
 import {createTheme, Grid, Paper, ThemeProvider} from "@mui/material";
 import {useMemo} from "react";
 import Header from "./components/Header/Header";
