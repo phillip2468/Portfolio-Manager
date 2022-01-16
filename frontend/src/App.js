@@ -2,8 +2,9 @@ import './App.css';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Homepage from "./pages/Homepage";
 import StockPage from "./pages/StockPage"
-import {createTheme, Paper, ThemeProvider} from "@mui/material";
+import {createTheme, Grid, Paper, ThemeProvider} from "@mui/material";
 import {useMemo} from "react";
+import Header from "./components/Header/Header";
 
 function App() {
 
@@ -20,10 +21,16 @@ function App() {
         <Router>
             <ThemeProvider theme={theme}>
                 <Paper style={{minHeight: "150vh"}}>
+                    <Grid container spacing={2} direction={"column"}>
+                        <Grid item>
+                            <Header/>
+                        </Grid>
+
                         <Routes>
                             <Route exact path={'/'} element={<Homepage/>}/>
                             <Route path={'/:stockName'} element={<StockPage/>}/>
                         </Routes>
+                    </Grid>
                 </Paper>
             </ThemeProvider>
         </Router>
