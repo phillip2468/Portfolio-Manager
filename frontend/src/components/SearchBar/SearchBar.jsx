@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import styled from "styled-components"
 import SearchIcon from "@material-ui/icons/Search";
 import {
     DataResult,
@@ -7,7 +6,7 @@ import {
     SearchBox,
     SearchIconBox,
     SearchInput,
-    SearchResultsGrid,
+    SearchResultsGrid, StocksNameTicker, StocksPercentage, StocksPrice,
     TriangleSymbol
 } from "./styled";
 //https://stackoverflow.com/questions/42987939/styled-components-organization
@@ -27,7 +26,7 @@ const SearchBar = ({placeholder}) => {
                     setSearchable(Object.values(res))
                 })
         }
-        , [])
+    , [])
 
 
     const handleSearch = (event) => {
@@ -63,17 +62,17 @@ const SearchBar = ({placeholder}) => {
                         {filteredData.map((item, key)=> {
                             return <SearchResultsGrid
                                 key={key}>
-                                <div style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
+                                <StocksNameTicker>
                                     <div>{item.stock_name}</div>
                                     <div>{item.symbol}</div>
-                                </div>
-                                <div style={{display: "flex", alignItems: "center"}}>
+                                </StocksNameTicker>
+                                <StocksPrice>
                                     ${parseFloat(item.price).toFixed(2)}
-                                </div>
-                                <div style={{display: "flex", alignItems: "center", backgroundColor: "red", borderRadius: "5px", marginTop: "40%", marginBottom: "40%"}}>
+                                </StocksPrice>
+                                <StocksPercentage percentageChange={item.change}>
                                     {item.change > 0 ? <TriangleSymbol>&#x25B2;</TriangleSymbol> : <TriangleSymbol>&#x25BC;</TriangleSymbol>}
-                                    {item.change.toFixed(2)}
-                                </div>
+                                    {(parseFloat(item.change) * 100).toFixed(2)}
+                                </StocksPercentage>
                             </SearchResultsGrid>
                         })}
                     </DataResult>

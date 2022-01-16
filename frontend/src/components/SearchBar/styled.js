@@ -68,3 +68,23 @@ export const TriangleSymbol = styled.div`
   border-right: 2px solid transparent;
   align-self: center;
 `
+
+export const StocksNameTicker = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`
+
+export const StocksPrice = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+export const StocksPercentage = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: ${props => (props.percentageChange > 0 ? "green" : "red")};
+  border-radius: 5px;
+  margin-top: 40%;
+  margin-bottom: 40%;
+`
