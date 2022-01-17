@@ -2,21 +2,29 @@ import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {Container, Divider, Grid} from "@mui/material";
 import {TriangleSymbol} from "../../components/SearchBar/styled";
-import {StockPercentageChange} from "./styled";
+import {MiscDetailsStock, StockInfoContainer, StockPercentageChange} from "./styled";
+import Button from "@mui/material/Button";
 const { DateTime } = require("luxon");
 
 const StockPage = () => {
     const {stockName} = useParams()
     const [stockInfo, setStockInfo] = useState([]);
+    const last_updated_fmt = DateTime.fromHTTP(stockInfo.last_updated).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS);
+    const list_of_periods = ['1d', '5d', '7d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max'];
+    const [historicalData, setHistoricalData] = useState([]);
 
     useEffect(()=> {
         fetch(`/quote/${stockName}`)
             .then(res => res.json())
             .then(res => setStockInfo(res[0]))
-    }, [])
+    }, [stockName])
 
-    const thing = DateTime.fromFormat("Sat, 15 Jan 2022 13:07:04", "EEE, dd MMM yyyy TT", {locale: 'en-AU'})
-    console.log(thing)
+    const handleGetHistoricalData = (period) => {
+        fetch(`/?${stockName}&period=${period}&interval=30m`)
+            .then(res => res.json())
+            .then(res => setHistoricalData(res))
+    }
+
 
     return (
         <Grid item>
@@ -32,21 +40,37 @@ const StockPage = () => {
                     </Grid>
                     <Divider light={true}/>
                     <Grid item>
-                        <div style={{display: "flex", columnGap: "2%", alignItems: "center"}}>
+                        <StockInfoContainer>
                             <div style={{fontSize: "2em"}}>
                                 ${stockInfo.market_current_price}
                             </div>
                             <div style={{fontSize: "1.2em"}}>
                                 <StockPercentageChange percentageChange={stockInfo.market_change_percentage}>
-                                    {stockInfo.market_change_percentage > 0 ? <TriangleSymbol>&#x25B2;</TriangleSymbol> : <TriangleSymbol>&#x25BC;</TriangleSymbol>}
-                                    {(parseFloat(stockInfo.market_change_percentage) * 100).toFixed(2)}
+                                    {stockInfo.market_change_percentage > 0 ?
+                                        <TriangleSymbol>&#x25B2;</TriangleSymbol> :
+                                        <TriangleSymbol>&#x25BC;</TriangleSymbol>}
+                                    {(parseFloat(stockInfo.market_change_percentage) * 100).toFixed(2)}%
                                 </StockPercentageChange>
                             </div>
                             <div>
-                                {thing.toString()}
+                                {stockInfo.market_change > 0 ? ("+") : ("-")}
+                                {parseFloat(stockInfo.market_change).toFixed(3)}
                             </div>
-                            {stockInfo.market_change} last updated at {stockInfo.last_updated}
-                        </div>
+                        </StockInfoContainer>
+                        <MiscDetailsStock>
+                             {last_updated_fmt} {stockInfo.currency} {stockInfo.exchange}
+                        </MiscDetailsStock>
+                    </Grid>
+                    <Grid item>
+                        <Grid container>
+                            {list_of_periods.map((element, index) => {
+                                return (
+                                    <Button key={index} size={"small"} onClick={() => console.log(element)}>
+                                        {element}
+                                    </Button>
+                                )
+                            })}
+                        </Grid>
                     </Grid>
                 </Grid>
 
