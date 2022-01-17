@@ -17,7 +17,10 @@ const StockPage = () => {
     useEffect(()=> {
         fetch(`/quote/${stockName}`)
             .then(res => res.json())
-            .then(res => setStockInfo(res[0]))
+            .then(res => setStockInfo(res[0]));
+        fetch(`/quote/${stockName}&period=1d&interval=30m`)
+            .then(res => res.json())
+            .then(res => setHistoricalData(res));
     }, [stockName])
 
     const handleGetHistoricalData = (period) => {
