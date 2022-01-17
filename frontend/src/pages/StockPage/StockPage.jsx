@@ -79,12 +79,12 @@ const StockPage = () => {
                     <Grid item>
                         <ResponsiveContainer height={500}>
                             <LineChart height={500} data={historicalData}>
-                                <XAxis dataKey={"time"} domain={['dataMin', 'dataMax']} tickCount={3} interval={"preserveStartEnd"} tickFormatter={dateFormatter}/>
-                                <YAxis domain={['auto', 'auto']}/>
                                 <CartesianGrid strokeDasharray="2 2"/>
+                                <XAxis dataKey={"time"} domain={['dataMin', 'dataMax']} interval={"preserveStartEnd"} tickFormatter={dateFormatter}/>
+                                <YAxis domain={['auto', 'auto']}/>
                                 <Legend/>
-                                <Tooltip/>
-                                <Line type="monotone" dataKey={"open"} activeDot={{r: 4}} stroke="#8884d8" name={"Price"}/>
+                                <Tooltip active={true}/>
+                                <Line type="monotone" dataKey={"open"} activeDot={{r: 3}} stroke="#8884d8"/>
                             </LineChart>
                         </ResponsiveContainer>
                     </Grid>
