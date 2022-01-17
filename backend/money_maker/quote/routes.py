@@ -24,6 +24,6 @@ def get_stock_info(stock_name):
 
 @quote_bp.route("/<stock_name>&period=<period>&interval=<interval>")
 def get_historical_data(stock_name, period, interval):
-    result = yahooquery.Ticker(stock_name).history(period=period, interval=interval).to_dict(orient='split')
-    print(result)
-    return jsonify(result)
+    result = yahooquery.Ticker(stock_name).history(period=period, interval=interval, adj_timezone=False)
+    this_result = [{"time": key[1], "open": value} for key, value in result['open'].to_dict().items()]
+    return jsonify(this_result)
