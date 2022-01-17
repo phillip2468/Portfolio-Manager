@@ -20,7 +20,8 @@ const StockPage = () => {
     }, [stockName])
 
     const handleGetHistoricalData = (period) => {
-        fetch(`/?${stockName}&period=${period}&interval=30m`)
+        console.log(period)
+        fetch(`/quote/${stockName}&period=${period}&interval=30m`)
             .then(res => res.json())
             .then(res => setHistoricalData(res))
     }
@@ -65,12 +66,13 @@ const StockPage = () => {
                         <Grid container>
                             {list_of_periods.map((element, index) => {
                                 return (
-                                    <Button key={index} size={"small"} onClick={() => console.log(element)}>
+                                    <Button key={index} size={"small"} onClick={() => handleGetHistoricalData(element)}>
                                         {element}
                                     </Button>
                                 )
                             })}
                         </Grid>
+
                     </Grid>
                 </Grid>
 
