@@ -1,3 +1,4 @@
+import yahooquery
 from flask import Blueprint, jsonify
 from money_maker.extensions import cache, db
 from money_maker.models.ticker_prices import TickerPrice as tP
@@ -19,3 +20,9 @@ def market_change_by_industry(category, order):
 def get_stock_info(stock_name):
     stmt = select(tP.__table__.columns).where(tP.symbol == stock_name)
     return jsonify([dict(element) for element in db.session.execute(stmt).all()])
+
+
+@quote_bp.route("/?<stock_name>&period=<period>&interval=<interval>")
+def get_historical_data(stock_name, period, interval):
+    result = yahooquery.Ticker(stock_name).history(period=period, interval=interval)
+    print(result)
