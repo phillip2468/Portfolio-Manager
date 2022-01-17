@@ -4,6 +4,7 @@ import {Container, Divider, Grid} from "@mui/material";
 import {TriangleSymbol} from "../../components/SearchBar/styled";
 import {MiscDetailsStock, StockInfoContainer, StockPercentageChange} from "./styled";
 import Button from "@mui/material/Button";
+import {ResponsiveContainer, LineChart, Line, Tooltip, Legend, XAxis, CartesianGrid, YAxis} from "recharts";
 const { DateTime } = require("luxon");
 
 const StockPage = () => {
@@ -20,12 +21,14 @@ const StockPage = () => {
     }, [stockName])
 
     const handleGetHistoricalData = (period) => {
-        console.log(period)
         fetch(`/quote/${stockName}&period=${period}&interval=30m`)
             .then(res => res.json())
             .then(res => setHistoricalData(res))
     }
 
+    const dateFormatter = date => {
+        return DateTime.fromHTTP(date).toLocaleString(DateTime.DATETIME_SHORT);
+    };
 
     return (
         <Grid item>
@@ -72,7 +75,18 @@ const StockPage = () => {
                                 )
                             })}
                         </Grid>
-
+                    </Grid>
+                    <Grid item>
+                        <ResponsiveContainer height={500}>
+                            <LineChart height={500} data={historicalData}>
+                                <XAxis dataKey={"time"} domain={['dataMin', 'dataMax']} tickCount={3} interval={"preserveStartEnd"} tickFormatter={dateFormatter}/>
+                                <YAxis domain={['auto', 'auto']}/>
+                                <CartesianGrid strokeDasharray="2 2"/>
+                                <Legend/>
+                                <Tooltip/>
+                                <Line type="monotone" dataKey={"open"} activeDot={{r: 4}} stroke="#8884d8" name={"Price"}/>
+                            </LineChart>
+                        </ResponsiveContainer>
                     </Grid>
                 </Grid>
 
