@@ -1,6 +1,6 @@
 import {Grid} from "@mui/material";
-import {MiscDetailsStock, StockInfoContainer, StockPercentageChange} from "../../styled";
-import {TriangleSymbol} from "../../../../components/SearchBar/styled";
+import {MiscDetailsStock, StockInfoContainer, StockPercentageChange} from "../styled";
+import {TriangleSymbol} from "../../../components/SearchBar/styled";
 import * as PropTypes from "prop-types";
 import React from "react";
 
