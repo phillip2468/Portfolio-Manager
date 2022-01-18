@@ -4,7 +4,7 @@ import {Container, Divider, Grid} from "@mui/material";
 import {TriangleSymbol} from "../../components/SearchBar/styled";
 import {MiscDetailsStock, StockInfoContainer, StockPercentageChange} from "./styled";
 import Button from "@mui/material/Button";
-import StockPriceChart from "./components/StockPriceCharts";
+import StockPriceChart from "../../components/StockPriceChart/StockPriceCharts";
 const { DateTime } = require("luxon");
 
 
@@ -88,7 +88,7 @@ const StockPage = () => {
                         </Grid>
                     </Grid>
 
-                    <StockPriceChart historicalData={historicalData} tickFormatter={dateFormatter}/>
+                    <StockPriceChart historicalData={historicalData} formatTime={dateFormatter}/>
 
                 </Grid>
             </Container>
