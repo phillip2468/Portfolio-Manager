@@ -1,8 +1,12 @@
 import {AppBar, Box, IconButton, Toolbar, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import MenuIcon from '@mui/icons-material/Menu';
+import {useNavigate} from "react-router-dom";
 
 const Header = () => {
+
+    const navigate = useNavigate();
+
     return (<>
             <Box>
                 <AppBar position="static">
@@ -17,7 +21,7 @@ const Header = () => {
                             <MenuIcon/>
                         </IconButton>
 
-                        <div onClick={()=> console.log("ASDSA")}>
+                        <div onClick={()=> navigate('/')}>
                             <IconButton>
                                 Money maker
                             </IconButton>

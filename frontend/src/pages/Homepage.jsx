@@ -12,17 +12,11 @@ const Homepage = () => {
             </Grid>
 
             <Grid item>
-                <Container sx={{width: "600px"}}>
+                <Container sx={{width: "52%"}}>
                     <PopularStocksTable/>
                 </Container>
             </Grid>
-
-            <Grid item>
-                <Container>
-                </Container>
-            </Grid>
         </>
-
     )
 }
 

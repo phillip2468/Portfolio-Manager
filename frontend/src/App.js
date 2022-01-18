@@ -2,7 +2,7 @@ import './App.css';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Homepage from "./pages/Homepage";
 import StockPage from "./pages/StockPage/StockPage"
-import {createTheme, Grid, Paper, ThemeProvider} from "@mui/material";
+import {Container, createTheme, Grid, Paper, ThemeProvider} from "@mui/material";
 import {useMemo} from "react";
 import Header from "./components/Header/Header";
 
@@ -26,10 +26,18 @@ function App() {
                             <Header/>
                         </Grid>
 
-                        <Routes>
-                            <Route exact path={'/'} element={<Homepage/>}/>
-                            <Route path={'/:stockName'} element={<StockPage/>}/>
-                        </Routes>
+                        <Grid item>
+                            <Container maxWidth={"lg"} sx={{border: "1px solid white"}}>
+                                <Grid container spacing={4} direction={"column"}>
+                                    <Routes>
+                                        <Route exact path={'/'} element={<Homepage/>}/>
+                                        <Route path={'/:stockName'} element={<StockPage/>}/>
+                                    </Routes>
+                                </Grid>
+                            </Container>
+                        </Grid>
+
+
                     </Grid>
                 </Paper>
             </ThemeProvider>
