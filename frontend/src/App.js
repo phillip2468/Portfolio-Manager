@@ -22,6 +22,7 @@ function App() {
             <ThemeProvider theme={theme}>
                 <Paper style={{minHeight: "150vh"}}>
                     <Grid container spacing={4} direction={"column"}>
+
                         <Grid item>
                             <Header/>
                         </Grid>
@@ -36,7 +37,6 @@ function App() {
                                 </Grid>
                             </Container>
                         </Grid>
-
 
                     </Grid>
                 </Paper>
