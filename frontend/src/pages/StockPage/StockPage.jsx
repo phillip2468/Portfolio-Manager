@@ -1,11 +1,16 @@
 import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {Container, Divider, Grid} from "@mui/material";
-import {TriangleSymbol} from "../../components/SearchBar/styled";
-import {MiscDetailsStock, StockInfoContainer, StockPercentageChange} from "./styled";
 import Button from "@mui/material/Button";
 import StockPriceChart from "../../components/StockPriceChart/StockPriceCharts";
+import StockIntervals from "./components/IntervalForChart/StockIntervals";
+import StockPriceDetails from "./components/StockPriceDetails/StockPriceDetails";
+
+
 const { DateTime } = require("luxon");
+
+
+
 
 
 const StockPage = () => {
@@ -52,43 +57,25 @@ const StockPage = () => {
                     <Divider light={true}/>
 
 
-                    <Grid item>
-                        <StockInfoContainer>
-                            <div style={{fontSize: "2em"}}>
-                                ${stockInfo.market_current_price}
-                            </div>
-                            <div style={{fontSize: "1.2em"}}>
-                                <StockPercentageChange percentageChange={stockInfo.market_change_percentage}>
-                                    {stockInfo.market_change_percentage > 0 ?
-                                        <TriangleSymbol>&#x25B2;</TriangleSymbol> :
-                                        <TriangleSymbol>&#x25BC;</TriangleSymbol>}
-                                    {(parseFloat(stockInfo.market_change_percentage) * 100).toFixed(2)}%
-                                </StockPercentageChange>
-                            </div>
-                            <div>
-                                {stockInfo.market_change > 0 ? ("+") : ("-")}
-                                {parseFloat(stockInfo.market_change).toFixed(3)}
-                            </div>
-                        </StockInfoContainer>
-                        <MiscDetailsStock>
-                            {last_updated_fmt} {stockInfo.currency} {stockInfo.exchange}
-                        </MiscDetailsStock>
-                    </Grid>
+                    <StockPriceDetails
+                        stockInfo={stockInfo}
+                        lastUpdatedFmt={last_updated_fmt}
+                    />
 
 
-                    <Grid item>
-                        <Grid container>
-                            {list_of_periods.map((element, index) => {
-                                return (
-                                    <Button key={index} size={"small"} onClick={() => handleGetHistoricalData(element)}>
-                                        {element}
-                                    </Button>
-                                )
-                            })}
-                        </Grid>
-                    </Grid>
+                    <StockIntervals listOfIntervals={list_of_periods} callbackfn={(element, index) => {
+                        return (
+                            <Button key={index} size={"small"} onClick={() => handleGetHistoricalData(element)}>
+                                {element}
+                            </Button>
+                        )
+                    }}/>
 
-                    <StockPriceChart historicalData={historicalData} formatTime={dateFormatter}/>
+                    <StockPriceChart
+                        historicalData={historicalData}
+                        formatTime={dateFormatter}
+                        heightOfChart={500}
+                    />
 
                 </Grid>
             </Container>
