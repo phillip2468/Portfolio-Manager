@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import {Container, Divider, Grid} from "@mui/material";
+import {Divider} from "@mui/material";
 import Button from "@mui/material/Button";
 import StockPriceChart from "../../components/StockPriceChart/StockPriceCharts";
 import StockIntervals from "./components/StockIntervals";
@@ -8,7 +8,7 @@ import StockPriceDetails from "./components/StockPriceDetails";
 import StockDetails from "./components/StockDetails";
 
 
-const { DateTime } = require("luxon");
+const {DateTime} = require("luxon");
 
 const StockPage = () => {
     const {stockName} = useParams()
@@ -17,7 +17,7 @@ const StockPage = () => {
     const list_of_periods = ['1d', '5d', '7d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max'];
     const [historicalData, setHistoricalData] = useState([]);
 
-    useEffect(()=> {
+    useEffect(() => {
         fetch(`/quote/${stockName}`)
             .then(res => res.json())
             .then(res => setStockInfo(res[0]));
@@ -38,39 +38,32 @@ const StockPage = () => {
 
 
     return (
-        <Grid item>
-            <Container maxWidth={"lg"} sx={{border: "1px solid white"}}>
-                <Grid container spacing={2} direction={"column"}>
+        <>
+            <StockDetails
+                stockInfo={stockInfo}
+            />
 
+            <Divider light={true}/>
 
-                    <StockDetails
-                        stockInfo={stockInfo}
-                    />
+            <StockPriceDetails
+                stockInfo={stockInfo}
+                lastUpdatedFmt={last_updated_fmt}
+            />
 
-                    <Divider light={true}/>
+            <StockIntervals listOfIntervals={list_of_periods} callbackfn={(element, index) => {
+                return (
+                    <Button key={index} size={"small"} onClick={() => handleGetHistoricalData(element)}>
+                        {element}
+                    </Button>
+                )
+            }}/>
 
-                    <StockPriceDetails
-                        stockInfo={stockInfo}
-                        lastUpdatedFmt={last_updated_fmt}
-                    />
-
-                    <StockIntervals listOfIntervals={list_of_periods} callbackfn={(element, index) => {
-                        return (
-                            <Button key={index} size={"small"} onClick={() => handleGetHistoricalData(element)}>
-                                {element}
-                            </Button>
-                        )
-                    }}/>
-
-                    <StockPriceChart
-                        historicalData={historicalData}
-                        formatTime={dateFormatter}
-                        heightOfChart={500}
-                    />
-
-                </Grid>
-            </Container>
-        </Grid>
+            <StockPriceChart
+                historicalData={historicalData}
+                formatTime={dateFormatter}
+                heightOfChart={500}
+            />
+        </>
     )
 }
 
