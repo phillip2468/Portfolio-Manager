@@ -33,6 +33,19 @@ const StockPage = () => {
         return DateTime.fromHTTP(date).toLocaleString(DateTime.DATETIME_SHORT);
     };
 
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            return (
+                <div className="custom-tooltip">
+                    <p className="label">{`${dateFormatter(label)}`}</p>
+                    <p>${parseFloat(payload[0].value).toFixed(2)}</p>
+                </div>
+            );
+        }
+
+        return null;
+    };
+
     return (
         <Grid item>
             <Container maxWidth={"md"} sx={{border: "1px solid white"}}>
@@ -80,13 +93,13 @@ const StockPage = () => {
                         </Grid>
                     </Grid>
                     <Grid item>
-                        <ResponsiveContainer height={500}>
-                            <LineChart height={500} data={historicalData}>
-                                <CartesianGrid strokeDasharray="2 2"/>
+                        <ResponsiveContainer height={500} >
+                            <LineChart data={historicalData}>
                                 <XAxis dataKey={"time"} domain={['dataMin', 'dataMax']} interval={"preserveStartEnd"} tickFormatter={dateFormatter}/>
                                 <YAxis domain={['auto', 'auto']}/>
+                                <CartesianGrid strokeDasharray="2 2"/>
+                                <Tooltip content={<CustomTooltip/>}/>
                                 <Legend/>
-                                <Tooltip active={true}/>
                                 <Line type="monotone" dataKey={"open"} activeDot={{r: 3}} stroke="#8884d8"/>
                             </LineChart>
                         </ResponsiveContainer>
