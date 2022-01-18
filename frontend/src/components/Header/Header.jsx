@@ -14,11 +14,15 @@ const Header = () => {
                             aria-label="menu"
                             sx={{mr: 2}}
                         >
-                        <MenuIcon/>
+                            <MenuIcon/>
                         </IconButton>
-                        <Typography variant="h5" component="div" sx={{flexGrow: 1}}>
-                            Money maker
-                        </Typography>
+
+                        <div onClick={()=> console.log("ASDSA")}>
+                            <IconButton>
+                                Money maker
+                            </IconButton>
+                        </div>
+
                         <Button color="inherit">Login</Button>
                     </Toolbar>
                 </AppBar>
