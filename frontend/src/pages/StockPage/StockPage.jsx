@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import StockPriceChart from "../../components/StockPriceChart/StockPriceCharts";
 import StockIntervals from "./components/StockIntervals";
 import StockPriceDetails from "./components/StockPriceDetails";
+import StockDetails from "./components/StockDetails";
 
 
 const { DateTime } = require("luxon");
@@ -38,26 +39,20 @@ const StockPage = () => {
 
     return (
         <Grid item>
-            <Container maxWidth={"md"} sx={{border: "1px solid white"}}>
+            <Container maxWidth={"lg"} sx={{border: "1px solid white"}}>
                 <Grid container spacing={2} direction={"column"}>
 
 
-                    <Grid item>
-                        <div>
-                            {stockInfo.symbol}
-                        </div>
-                        <div style={{fontSize: "2em"}}>
-                            {stockInfo !== [] && stockInfo.stock_name}
-                        </div>
-                    </Grid>
-                    <Divider light={true}/>
+                    <StockDetails
+                        stockInfo={stockInfo}
+                    />
 
+                    <Divider light={true}/>
 
                     <StockPriceDetails
                         stockInfo={stockInfo}
                         lastUpdatedFmt={last_updated_fmt}
                     />
-
 
                     <StockIntervals listOfIntervals={list_of_periods} callbackfn={(element, index) => {
                         return (

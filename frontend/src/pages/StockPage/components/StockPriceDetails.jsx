@@ -8,7 +8,7 @@ const StockPriceDetails = (props) => {
     return <Grid item>
         <StockInfoContainer>
             <div style={{fontSize: "2em"}}>
-                ${props.stockInfo.market_current_price}
+                ${parseFloat(props.stockInfo.market_current_price).toFixed(2)}
             </div>
             <div style={{fontSize: "1.2em"}}>
                 <StockPercentageChange percentageChange={props.stockInfo.market_change_percentage}>
@@ -30,7 +30,7 @@ const StockPriceDetails = (props) => {
 }
 
 StockPriceDetails.propTypes = {
-    stockInfo: PropTypes.arrayOf(PropTypes.any),
+    stockInfo: PropTypes.any,
     lastUpdatedFmt: PropTypes.string
 };
 
