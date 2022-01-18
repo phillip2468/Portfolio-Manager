@@ -3,15 +3,11 @@ import React, {useEffect, useState} from "react";
 import {Container, Divider, Grid} from "@mui/material";
 import Button from "@mui/material/Button";
 import StockPriceChart from "../../components/StockPriceChart/StockPriceCharts";
-import StockIntervals from "./components/IntervalForChart/StockIntervals";
-import StockPriceDetails from "./components/StockPriceDetails/StockPriceDetails";
+import StockIntervals from "./components/StockIntervals";
+import StockPriceDetails from "./components/StockPriceDetails";
 
 
 const { DateTime } = require("luxon");
-
-
-
-
 
 const StockPage = () => {
     const {stockName} = useParams()
