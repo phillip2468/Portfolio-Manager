@@ -1,6 +1,5 @@
 from money_maker.app import init_celery
 from money_maker.tasks.task import update_asx_prices, add_together
-from money_maker.extensions import celery
 
 app = init_celery()
 
