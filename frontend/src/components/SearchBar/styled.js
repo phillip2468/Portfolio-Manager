@@ -49,6 +49,7 @@ export const DataResult = styled.div`
   z-index: 2;
   position: absolute;
   right: -262px;
+  cursor: pointer;
 `
 
 export const SearchResultsGrid = styled.div`
