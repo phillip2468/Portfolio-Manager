@@ -9,12 +9,14 @@ import {
     SearchResultsGrid, StocksNameTicker, StocksPercentage, StocksPrice,
     TriangleSymbol
 } from "./styled";
+import {useNavigate} from "react-router-dom";
 //https://stackoverflow.com/questions/42987939/styled-components-organization
 
 
 
 const SearchBar = ({placeholder}) => {
 
+    const navigate = useNavigate();
     const [typedInput, setTypedInput] = useState("");
     const [filteredData, setFilteredData] = useState([]);
     const [allStocksInfo, setAllStocksInfo] = useState([])
@@ -61,7 +63,7 @@ const SearchBar = ({placeholder}) => {
                     <DataResult>
                         {filteredData.map((item, key)=> {
                             return <SearchResultsGrid
-                                key={key}>
+                                key={key} onClick={() => navigate(`/${item.symbol}`)}>
                                 <StocksNameTicker>
                                     <div>{item.stock_name}</div>
                                     <div>{item.symbol}</div>
