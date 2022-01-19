@@ -13,7 +13,8 @@ def create_app(testing=False) -> Flask:
     """Application factory, used to create application
     https://stackoverflow.com/questions/33089144/flask-sqlalchemy-setup-engine-configuration
     """
-    app: flask.app.Flask = Flask(__name__, static_folder='../../frontend/build', static_url_path='', template_folder="../../frontend/build")
+    app: flask.app.Flask = Flask(__name__, static_folder='../../frontend/build', static_url_path='',
+                                 template_folder="../../frontend/build")
     app.config.from_object("money_maker.config")
 
     configure_extensions(app)
@@ -42,10 +43,18 @@ def register_blueprints(app: flask.Flask):
     app.register_blueprint(trending_bp)
     app.register_blueprint(on_first_load_bp)
     app.register_blueprint(search_bp)
-    
+
 
 def init_celery(app: flask.app.Flask = None):
     app = app or create_app()
     celery.conf.update(app.config.get("CELERY", {}))
 
+    class ContextTask(celery.Task):
+        """Make celery tasks work with Flask app context"""
+
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery.Task = ContextTask
     return celery
