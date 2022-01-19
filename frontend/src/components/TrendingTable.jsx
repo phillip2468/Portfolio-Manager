@@ -34,7 +34,8 @@ const TrendingTable = () => {
                     return (
                         <>
                             <PercentageText changePercentage={value}>
-                                {value > 0 ? <TriangleSymbol>&#x25B2;</TriangleSymbol> : <TriangleSymbol>&#x25BC;</TriangleSymbol>}
+                                {value > 0 ? <TriangleSymbol>&#x25B2;</TriangleSymbol> :
+                                    <TriangleSymbol>&#x25BC;</TriangleSymbol>}
                                 <Typography align={"center"}>{value.toFixed(2)}</Typography>
                             </PercentageText>
                         </>
@@ -42,17 +43,19 @@ const TrendingTable = () => {
                 }
             }
         },
-        {name: 'marketCap', label: 'Market cap', options: {
-            customBodyRender: (value, tableMeta, updateValue) => {
-                return (
-                    <>
-                        {value && millify(value, {
-                            precision: 3
-                        })}
-                    </>
-                )
+        {
+            name: 'marketCap', label: 'Market cap', options: {
+                customBodyRender: (value, tableMeta, updateValue) => {
+                    return (
+                        <>
+                            {value && millify(value, {
+                                precision: 3
+                            })}
+                        </>
+                    )
+                }
             }
-            }},
+        },
     ]
 
     useEffect(() => {

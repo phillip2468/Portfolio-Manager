@@ -8,30 +8,30 @@ const Header = () => {
     const navigate = useNavigate();
 
     return (<>
-            <Box>
-                <AppBar position="static">
-                    <Toolbar sx={{justifyContent: "space-between"}}>
-                        <IconButton
-                            size="large"
-                            edge="start"
-                            color="inherit"
-                            aria-label="menu"
-                            sx={{mr: 2}}
-                        >
-                            <MenuIcon/>
+        <Box>
+            <AppBar position="static">
+                <Toolbar sx={{justifyContent: "space-between"}}>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        sx={{mr: 2}}
+                    >
+                        <MenuIcon/>
+                    </IconButton>
+
+                    <div onClick={() => navigate('/')}>
+                        <IconButton>
+                            Money maker
                         </IconButton>
+                    </div>
 
-                        <div onClick={()=> navigate('/')}>
-                            <IconButton>
-                                Money maker
-                            </IconButton>
-                        </div>
-
-                        <Button color="inherit">Login</Button>
-                    </Toolbar>
-                </AppBar>
-            </Box>
-        </>)
+                    <Button color="inherit">Login</Button>
+                </Toolbar>
+            </AppBar>
+        </Box>
+    </>)
 }
 
 export default Header;
