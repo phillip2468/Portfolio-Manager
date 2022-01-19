@@ -11,12 +11,6 @@ from money_maker.models.ticker_prices import TickerPrice as tP
 
 
 @shared_task
-def add_together():
-    print("HERE")
-    return 10 + 10000000000
-
-
-@shared_task
 def update_asx_prices():
     list_asx_symbols = select(tP.symbol).order_by(asc(tP.symbol))
     list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
