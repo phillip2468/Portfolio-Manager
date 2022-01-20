@@ -22,7 +22,10 @@ export const SearchInput = styled.input`
   font-size: 1.3rem;
   padding: 0.5em;
   width: 500px;
-  border-radius: 1em 1em 0 0;
+  &:focus {
+    border-radius: 1em 1em 0 0;
+  }
+  border-radius: 1em 1em 1em 1em;
 `
 
 export const SearchIconBox = styled.div`
