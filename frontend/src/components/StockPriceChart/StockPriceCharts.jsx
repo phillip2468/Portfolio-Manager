@@ -28,7 +28,6 @@ const StockPriceChart = (props) => {
                     <YAxis domain={["auto", "auto"]}/>
                     <CartesianGrid strokeDasharray="2 2"/>
                     <Tooltip content={<CustomTooltip/>}/>
-                    <Legend/>
                     <Line type="monotone" dataKey={"open"} activeDot={{r: 3}} stroke="#8884d8"/>
                 </LineChart>
             </ResponsiveContainer>

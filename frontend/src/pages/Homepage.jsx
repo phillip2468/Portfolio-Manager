@@ -29,8 +29,6 @@ const Homepage = () => {
         })
     }
 
-    console.log(historicalData)
-
     const dateFormatter = date => {
         return DateTime.fromHTTP(date).toLocaleString(DateTime.DATETIME_SHORT);
     };
@@ -46,14 +44,22 @@ const Homepage = () => {
                     <PopularStocksTable/>
                 </Container>
             </Grid>
-            <Grid item>
-                <StockPriceChart
-                    heightOfChart={200}
-                    widthOfChart={250}
-                    historicalData={historicalData["^AXJO"]}
-                    formatTime={dateFormatter}
-                />
+            <Grid container direction={"row"}>
+                    {Object.keys(historicalData).map(function(key) {
+                        return (
+                            <div key={key} style={{textAlign: "center"}}>
+                                {key}
+                                <StockPriceChart
+                                    heightOfChart={200}
+                                    widthOfChart={230}
+                                    historicalData={historicalData[key]}
+                                    formatTime={dateFormatter}
+                                />
+                            </div>
+                        )
+                    })}
             </Grid>
+
         </>
     )
 }
