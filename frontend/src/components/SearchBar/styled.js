@@ -36,7 +36,7 @@ export const SearchIconBox = styled.div`
   background-color: black;
   position: absolute;
   border-radius: 15px;
-  top: 10px;
+  top: 8px;
   right: 10px;
 `
 
