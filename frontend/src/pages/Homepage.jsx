@@ -35,16 +35,8 @@ const Homepage = () => {
 
     return (
         <>
-            <Grid item sx={{position: "relative"}}>
-                <SearchBar placeholder={"Search for stocks"}/>
-            </Grid>
-
             <Grid item>
-                <Container sx={{width: "52%"}}>
-                    <PopularStocksTable/>
-                </Container>
-            </Grid>
-            <Grid container direction={"row"}>
+                <Grid container direction={"row"}>
                     {Object.keys(historicalData).map(function(key) {
                         return (
                             <div key={key} style={{textAlign: "center"}}>
@@ -58,8 +50,18 @@ const Homepage = () => {
                             </div>
                         )
                     })}
+                </Grid>
             </Grid>
 
+            <Grid item sx={{position: "relative"}}>
+                <SearchBar placeholder={"Search for stocks"}/>
+            </Grid>
+
+            <Grid item>
+                <Container sx={{width: "52%"}}>
+                    <PopularStocksTable/>
+                </Container>
+            </Grid>
         </>
     )
 }
