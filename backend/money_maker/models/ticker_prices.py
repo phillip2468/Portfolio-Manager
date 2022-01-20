@@ -14,7 +14,7 @@ force_auto_coercion()
 
 class TickerPrice(db.Model):
     __tablename__ = 'ticker_prices'
-
+    
     stock_id = Column(Integer, primary_key=True, autoincrement=True)
     symbol = Column(String(10), unique=True)
     city = Column(String(20))

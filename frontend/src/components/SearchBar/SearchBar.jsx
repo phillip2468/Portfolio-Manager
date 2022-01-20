@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
     DataResult,
     OuterContainer,
@@ -17,32 +17,17 @@ const SearchBar = ({placeholder}) => {
 
     const navigate = useNavigate();
     const [typedInput, setTypedInput] = useState("");
-    const [filteredData, setFilteredData] = useState([]);
-    const [allStocksInfo, setAllStocksInfo] = useState([])
     const [showResults, setShowResults] = useState(false);
 
-    useEffect(() => {
-            fetch('/search')
-                .then((res) => res.json())
-                .then((res) => {
-                    setAllStocksInfo(Object.values(res))
-                })
-        }
-        , [])
-
+    const [otherData, setOtherData] = useState([]);
 
     const handleSearch = (event) => {
         const searchTerm = event.target.value;
         setTypedInput(searchTerm);
 
-        const newFilter = allStocksInfo.filter((value) => {
-            return value.stock_name.toLowerCase().includes(typedInput.toLowerCase())
-        })
-        if (typedInput === "") {
-            setFilteredData([]);
-        } else {
-            setFilteredData(newFilter);
-        }
+        fetch(`/search/${typedInput}`)
+            .then((res) => res.json())
+            .then((res) => setOtherData(res))
     }
 
     return (
@@ -52,7 +37,7 @@ const SearchBar = ({placeholder}) => {
             <div style={{position: "relative", display: showResults === false ? "none" : "block"}}>
                 {typedInput.length !== 0 && (
                     <DataResult>
-                        {filteredData.map((item, key) => {
+                        {otherData.map((item, key) => {
                             return <SearchResultsGrid
                                 key={key}
                                 onClick={() => navigate(`/${item.symbol}`)}

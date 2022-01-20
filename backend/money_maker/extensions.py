@@ -22,3 +22,4 @@ cache = Cache(config={"CACHE_TYPE": "RedisCache",
                       "CACHE_REDIS_PORT": url.port,
                       "CACHE_REDIS_DB": "0",
                       "CACHE_REDIS_PASSWORD": url.password})
+
