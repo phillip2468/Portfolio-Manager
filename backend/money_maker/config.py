@@ -9,7 +9,7 @@ if uri is not None and uri.startswith("postgres://"):
     uri = uri.replace("postgres://", "postgresql://", 1)
 
 SQLALCHEMY_DATABASE_URI = uri
-SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_TRACK_MODIFICATIONS = True
 ENV = "development"
 CELERY = {
     "broker_url": os.getenv("REDIS_URL"),
