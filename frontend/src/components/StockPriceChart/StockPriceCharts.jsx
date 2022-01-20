@@ -21,7 +21,7 @@ const StockPriceChart = (props) => {
 
     return (
         <Grid item>
-            <ResponsiveContainer height={props.heightOfChart}>
+            <ResponsiveContainer height={props.heightOfChart} width={props.widthOfChart}>
                 <LineChart data={props.historicalData}>
                     <XAxis dataKey={"time"} domain={["dataMin", "dataMax"]} interval={"preserveStartEnd"}
                            tickFormatter={props.formatTime}/>
@@ -39,7 +39,8 @@ const StockPriceChart = (props) => {
 StockPriceChart.propTypes = {
     historicalData: PropTypes.arrayOf(PropTypes.any),
     formatTime: PropTypes.func,
-    heightOfChart: PropTypes.number
+    heightOfChart: PropTypes.number,
+    widthOfChart: PropTypes.number,
 };
 
 export default StockPriceChart;
