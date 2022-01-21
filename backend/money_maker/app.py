@@ -1,13 +1,12 @@
 import flask.app
 from flask import Flask
 from flask_cors import CORS
-from money_maker.extensions import cache, celery, db, migrate
+from money_maker.extensions import cache, celery, db, migrate, csrf, talisman
 from money_maker.home.routes import home_bp
 from money_maker.news.routes import news_stories_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.search.routes import search_bp
 from money_maker.trending.routes import trending_bp
-from flask_talisman import Talisman
 
 
 def create_app(testing=False) -> Flask:
@@ -36,7 +35,8 @@ def configure_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     cache.init_app(app)
-    Talisman(app)
+    csrf.init_app(app)
+    talisman.init_app(app)
 
 
 def register_blueprints(app: flask.Flask):
