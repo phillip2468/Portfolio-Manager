@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from flask_caching import Cache
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_seasurf import SeaSurf
+from flask_talisman import Talisman
 
 load_dotenv()
 
@@ -22,4 +24,5 @@ cache = Cache(config={"CACHE_TYPE": "RedisCache",
                       "CACHE_REDIS_PORT": url.port,
                       "CACHE_REDIS_DB": "0",
                       "CACHE_REDIS_PASSWORD": url.password})
-
+csrf = SeaSurf()
+talisman = Talisman()

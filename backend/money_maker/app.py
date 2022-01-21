@@ -1,9 +1,9 @@
 import flask.app
 from flask import Flask
 from flask_cors import CORS
-from money_maker.extensions import cache, celery, db, migrate
-from money_maker.home.on_first_load import on_first_load_bp
+from money_maker.extensions import cache, celery, db, migrate, csrf, talisman
 from money_maker.home.routes import home_bp
+from money_maker.news.routes import news_stories_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.search.routes import search_bp
 from money_maker.trending.routes import trending_bp
@@ -35,13 +35,15 @@ def configure_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     cache.init_app(app)
+    csrf.init_app(app)
+    talisman.init_app(app)
 
 
 def register_blueprints(app: flask.Flask):
     app.register_blueprint(home_bp)
     app.register_blueprint(quote_bp)
     app.register_blueprint(trending_bp)
-    app.register_blueprint(on_first_load_bp)
+    app.register_blueprint(news_stories_bp)
     app.register_blueprint(search_bp)
 
 

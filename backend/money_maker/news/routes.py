@@ -7,13 +7,13 @@ from money_maker.extensions import cache, db
 from money_maker.models.news_stories import NewsStories
 from sqlalchemy import insert
 
-on_first_load_bp = Blueprint('on_first_load_bp', __name__)
+news_stories_bp = Blueprint('news_stories_bp', __name__)
 
 
-@on_first_load_bp.route("/news-stories")
+@news_stories_bp.route("/news-stories")
 @cache.cached(timeout=15 * 60)
 def load_stories():
-    result = get_html_text()
+    result = get_stories_afr()
     soup = BeautifulSoup(result, 'html.parser')
     main_section = (soup.find("main", {"id": "content", "class": "-rwd1"}))
     main_stores_list = main_section.find("div", {"class": "_23cgh"})
@@ -43,10 +43,10 @@ def load_stories():
     stmt = insert(NewsStories)
     db.session.execute(stmt, unique_stories)
     db.session.commit()
-    
+
     return jsonify(unique_stories)
 
 
-def get_html_text():
+def get_stories_afr():
     response = requests.get("https://www.afr.com/markets/currencies").text
     return response
