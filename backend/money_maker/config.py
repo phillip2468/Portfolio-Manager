@@ -1,6 +1,8 @@
 import os
 
+import dramatiq
 from dotenv import load_dotenv
+from dramatiq.brokers.redis import RedisBroker
 
 load_dotenv()
 
@@ -22,4 +24,5 @@ SQLALCHEMY_ENGINE_OPTIONS = {
     "executemany_values_page_size": 10000
 }
 SECRET_KEY = os.getenv("SECRET_KEY")
-
+DRAMATIQ_BROKER = RedisBroker
+DRAMATIQ_BROKER_URL = os.getenv("REDIS_URL")
