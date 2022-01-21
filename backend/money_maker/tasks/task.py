@@ -6,11 +6,11 @@ from sqlalchemy import select, bindparam, asc
 from sqlalchemy.dialects.postgresql import insert
 from yahooquery import Ticker
 
-from money_maker.extensions import db
+from money_maker.extensions import db, dramatiq
 from money_maker.models.ticker_prices import TickerPrice as tP
 
 
-@shared_task
+@dramatiq.actor()
 def update_asx_prices():
     list_asx_symbols = select(tP.symbol).order_by(asc(tP.symbol))
     list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]

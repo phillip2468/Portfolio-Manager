@@ -8,6 +8,8 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_seasurf import SeaSurf
 from flask_talisman import Talisman
+from flask_dramatiq import Dramatiq
+from periodiq import PeriodiqMiddleware
 
 load_dotenv()
 
@@ -26,3 +28,5 @@ cache = Cache(config={"CACHE_TYPE": "RedisCache",
                       "CACHE_REDIS_PASSWORD": url.password})
 csrf = SeaSurf()
 talisman = Talisman()
+dramatiq = Dramatiq()
+dramatiq.middleware.append(PeriodiqMiddleware())
