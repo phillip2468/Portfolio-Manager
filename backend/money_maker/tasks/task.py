@@ -1,9 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 
 import yahooquery
-from money_maker.extensions import db, dramatiq
+from celery import shared_task
+from money_maker.extensions import db
 from money_maker.models.ticker_prices import TickerPrice as tP
-from periodiq import cron
 from sqlalchemy import asc, bindparam, select
 from sqlalchemy.dialects.postgresql import insert
 from yahooquery import Ticker
@@ -11,8 +11,8 @@ from yahooquery import Ticker
 
 @dramatiq.actor(periodic=cron('1 * * * *'))
 def update_asx_prices():
-    list_asx_symbols = select(tP.symbol).order_by(asc(tP.symbol))
-    list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
+    list_asx_symbol = select(tP.symbol).order_by(asc(tP.symbol))
+    list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbol)]
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
         Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),
