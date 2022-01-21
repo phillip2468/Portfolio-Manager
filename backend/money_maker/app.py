@@ -1,7 +1,7 @@
 import flask.app
 from flask import Flask
 from flask_cors import CORS
-from money_maker.extensions import cache, csrf, db, dramatiq, migrate, talisman
+from money_maker.extensions import cache, celery, db, migrate, csrf, talisman
 from money_maker.home.routes import home_bp
 from money_maker.news.routes import news_stories_bp
 from money_maker.quote.routes import quote_bp
@@ -26,6 +26,7 @@ def create_app(testing=False) -> Flask:
     CORS(app)
     if testing is True:
         app.config["TESTING"] = True
+    init_celery(app)
 
     return app
 
@@ -36,7 +37,6 @@ def configure_extensions(app):
     cache.init_app(app)
     csrf.init_app(app)
     talisman.init_app(app)
-    dramatiq.init_app(app)
 
 
 def register_blueprints(app: flask.Flask):
@@ -45,3 +45,18 @@ def register_blueprints(app: flask.Flask):
     app.register_blueprint(trending_bp)
     app.register_blueprint(news_stories_bp)
     app.register_blueprint(search_bp)
+
+
+def init_celery(app: flask.app.Flask = None):
+    app = app or create_app()
+    celery.conf.update(app.config.get("CELERY", {}))
+
+    class ContextTask(celery.Task):
+        """Make celery tasks work with Flask app context"""
+
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery.Task = ContextTask
+    return celery
