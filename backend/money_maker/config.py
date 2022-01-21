@@ -21,3 +21,4 @@ SQLALCHEMY_ENGINE_OPTIONS = {
     "executemany_mode": 'values',
     "executemany_values_page_size": 10000
 }
+SECRET_KEY = "donotsteal"
