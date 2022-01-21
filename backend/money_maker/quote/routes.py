@@ -1,6 +1,7 @@
 import yahooquery
 from flask import Blueprint, jsonify
 from money_maker.extensions import cache, db
+from money_maker.helpers import object_as_dict
 from money_maker.models.ticker_prices import TickerPrice as tP
 from sqlalchemy import func, select, text
 
@@ -16,10 +17,10 @@ def market_change_by_industry(category, order):
     return jsonify([dict(element) for element in db.session.execute(stmt).all()])
 
 
-@quote_bp.route("/<stock_name>")
-def get_stock_info(stock_name):
-    stmt = select(tP.__table__.columns).where(tP.symbol == stock_name)
-    return jsonify([dict(element) for element in db.session.execute(stmt).all()])
+@quote_bp.route("/<stock_symbol>")
+def get_stock_info(stock_symbol):
+    results = db.session.query(tP).filter(tP.symbol == stock_symbol).all()
+    return jsonify([object_as_dict(element) for element in results])
 
 
 @quote_bp.route("/<stock_name>&period=<period>&interval=<interval>")
