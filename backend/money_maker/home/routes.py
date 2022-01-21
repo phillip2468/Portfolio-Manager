@@ -78,15 +78,6 @@ def trending_tickers() -> flask.Response:
     return jsonify(data)
 
 
-@home_bp.route('/past-data')
-def past_data():
-    tickers = Ticker('CBA.AX').history(period='7d')
-    print(tickers)
-    print(tickers.to_dict('list'))
-    print(sys.getsizeof(tickers))
-    return jsonify(tickers.to_dict('records'))
-
-
 @home_bp.route("/actively-traded")
 def most_actively_traded_stocks():
     result = db.session.query(tP.symbol, ((tP.market_volume * tP.market_current_price) / tP.market_cap).label("volume"),

@@ -18,7 +18,7 @@ def market_change_by_industry(category, order):
 
 
 @quote_bp.route("/<stock_symbol>")
-def get_stock_info(stock_symbol):
+def get_stock_info_from_database(stock_symbol):
     results = db.session.query(tP).filter(tP.symbol == stock_symbol).all()
     return jsonify([object_as_dict(element) for element in results])
 
