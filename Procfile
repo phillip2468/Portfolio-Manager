@@ -1,2 +1,2 @@
 web: gunicorn --chdir ./backend run:app
-worker: cd backend && flask worker --processes=4 periodiq
+worker: cd backend && celery -A money_maker.celery_app:app worker -l info --concurrency=4 -E --beat
