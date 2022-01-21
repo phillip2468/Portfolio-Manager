@@ -1,11 +1,15 @@
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
+from alembic_utils.pg_function import PGFunction
+from alembic_utils.pg_grant_table import PGGrantTable
+from alembic_utils.replaceable_entity import register_entities
 from money_maker.app import create_app
+from money_maker.models.ticker_prices import (on_update_function,
+                                              on_update_trigger)
+from sqlalchemy import engine_from_config, pool
 
+register_entities([on_update_function, on_update_trigger])
 
 # There's no access to current_app here so we must create our own app.
 app = create_app()
@@ -42,6 +46,8 @@ def run_migrations_offline():
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        compare_type=True,
+        include_object=include_object
     )
 
     with context.begin_transaction():
@@ -74,11 +80,20 @@ def run_migrations_online():
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            process_revision_directives=process_revision_directives
+            process_revision_directives=process_revision_directives,
+            compare_type=True,
+            include_object=include_object
         )
 
         with context.begin_transaction():
             context.run_migrations()
+
+def include_object(object, name, type_, reflected, compare_to) -> bool:
+    if isinstance(object, PGFunction):
+        return False
+    elif isinstance(object, PGGrantTable):
+        return False
+    return True
 
 
 if context.is_offline_mode():
