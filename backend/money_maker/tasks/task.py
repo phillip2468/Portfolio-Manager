@@ -9,7 +9,7 @@ from sqlalchemy.dialects.postgresql import insert
 from yahooquery import Ticker
 
 
-@shared_task
+@dramatiq.actor(periodic=cron('1 * * * *'))
 def update_asx_prices():
     list_asx_symbol = select(tP.symbol).order_by(asc(tP.symbol))
     list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbol)]
