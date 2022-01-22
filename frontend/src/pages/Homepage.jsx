@@ -54,7 +54,7 @@ const Homepage = () => {
             </Grid>
 
             <Grid item sx={{position: "relative"}}>
-                <SearchBar placeholder={"Search for stocks"}/>
+                <SearchBar placeholder={"Search by stock symbols or company names"}/>
             </Grid>
 
             <Grid item>
