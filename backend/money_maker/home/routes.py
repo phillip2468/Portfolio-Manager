@@ -49,7 +49,7 @@ def asx_tickers() -> flask.Response:
 def get_all_asx_prices() -> flask.Response:
     # https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func
     # https://newbedev.com/sqlalchemy-performing-a-bulk-upsert-if-exists-update-else-insert-in-postgresql
-    result = [dict(element) for element in db.session.query(tP).all()]
+    result = [object_as_dict(element) for element in db.session.query(tP).all()]
     return jsonify(result)
 
 

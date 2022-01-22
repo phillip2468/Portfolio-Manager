@@ -1,7 +1,6 @@
 from logging.config import fileConfig
 
 from alembic import context
-from alembic_utils.pg_function import PGFunction
 from alembic_utils.pg_grant_table import PGGrantTable
 from alembic_utils.replaceable_entity import register_entities
 from money_maker.app import create_app
@@ -25,6 +24,7 @@ fileConfig(config.config_file_name)
 # Sets up metadata for autogenerate support,
 config.set_main_option("sqlalchemy.url", db_uri)
 target_metadata = db.metadata
+
 
 # Configure anything else you deem important, example:
 # my_important_option = config.get_main_option("my_important_option")
@@ -61,6 +61,7 @@ def run_migrations_online():
     In this scenario we need to create an Engine and associate a connection
     with the context.
     """
+
     # If you use Alembic revision's --autogenerate flag this function will
     # prevent Alembic from creating an empty migration file if nothing changed.
     # Source: https://alembic.sqlalchemy.org/en/latest/cookbook.html
@@ -88,10 +89,9 @@ def run_migrations_online():
         with context.begin_transaction():
             context.run_migrations()
 
+
 def include_object(object, name, type_, reflected, compare_to) -> bool:
-    if isinstance(object, PGFunction):
-        return False
-    elif isinstance(object, PGGrantTable):
+    if isinstance(object, PGGrantTable):
         return False
     return True
 
