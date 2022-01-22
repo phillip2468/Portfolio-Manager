@@ -33,14 +33,14 @@ const SearchBar = ({placeholder}) => {
     return (
         <OuterContainer>
             <SearchInputBox placeholder={placeholder} value={typedInput} onChange={handleSearch}
-                            onBlur={() => setShowResults(false)} onFocus={() => setShowResults(true)}/>
+                            onBlur={() => setShowResults(false)} onFocus={() => {setShowResults(true)}}/>
             <div style={{position: "relative", display: showResults === false ? "none" : "block"}}>
                 {typedInput.length !== 0 && (
                     <DataResult>
                         {otherData.map((item, key) => {
                             return <SearchResultsGrid
                                 key={key}
-                                onClick={() => navigate(`/${item.symbol}`)}
+                                onMouseDown={() => navigate(`/${item.symbol}`)}
                             >
                                 <StocksNameTicker>
                                     <div>{item.stock_name}</div>
