@@ -4,11 +4,10 @@ from urllib.parse import urlparse
 from celery import Celery
 from dotenv import load_dotenv
 from flask_caching import Cache
-from flask_seasurf import SeaSurf
+from flask_cors import CORS
+from flask_praetorian import Praetorian
 from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
-from flask_praetorian import Praetorian
-from flask_cors import CORS
 
 load_dotenv()
 
@@ -24,7 +23,6 @@ cache = Cache(config={"CACHE_TYPE": "RedisCache",
                       "CACHE_REDIS_PORT": url.port,
                       "CACHE_REDIS_DB": "0",
                       "CACHE_REDIS_PASSWORD": url.password})
-csrf = SeaSurf()
 talisman = Talisman()
 praetorian = Praetorian()
 cors = CORS()
