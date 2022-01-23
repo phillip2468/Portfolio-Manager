@@ -2,23 +2,22 @@ from __future__ import absolute_import, unicode_literals
 
 import yahooquery
 from celery import shared_task
-from sqlalchemy import select, bindparam, asc
+from money_maker.extensions import db
+from money_maker.models.ticker_prices import TickerPrice as tP
+from pytickersymbols import PyTickerSymbols
+from sqlalchemy import asc, bindparam, insert, select
 from sqlalchemy.dialects.postgresql import insert
 from yahooquery import Ticker
 
-from money_maker.extensions import db
-from money_maker.models.ticker_prices import TickerPrice as tP
-
 
 @shared_task
-def update_asx_prices():
+def update_yh_stocks():
     list_asx_symbols = select(tP.symbol).order_by(asc(tP.symbol))
     list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
         Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),
-               progress=True,
-               country='australia').get_modules('price summaryProfile')
+               progress=True).get_modules('price summaryProfile')
 
     formatted_yh_information = []
     for element in yh_market_information.values():
@@ -57,4 +56,26 @@ def update_asx_prices():
     )
 
     db.session.execute(on_conflict_statement, formatted_yh_information)
+    db.session.commit()
+
+
+# noinspection PyTypeChecker
+@shared_task
+def get_american_yh_stocks():
+    stock_data = PyTickerSymbols()
+
+    sp500_yahoo = stock_data.get_sp_500_nyc_yahoo_tickers()
+    nasdaq_yahoo = stock_data.get_nasdaq_100_nyc_yahoo_tickers()
+    dow_jones = stock_data.get_dow_jones_nyc_yahoo_tickers()
+
+    result = sp500_yahoo + nasdaq_yahoo + dow_jones
+    result_set = ([{"symbol": element} for element in (set(result))])
+
+    stmt = insert(tP).values(result_set)
+
+    on_conflict_ignore = stmt.on_conflict_do_nothing(
+        index_elements=['symbol']
+    )
+
+    db.session.execute(on_conflict_ignore)
     db.session.commit()
