@@ -11,14 +11,13 @@ from yahooquery import Ticker
 
 
 @shared_task
-def update_asx_prices():
+def update_yh_stocks():
     list_asx_symbols = select(tP.symbol).order_by(asc(tP.symbol))
     list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
         Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),
-               progress=True,
-               country='australia').get_modules('price summaryProfile')
+               progress=True).get_modules('price summaryProfile')
 
     formatted_yh_information = []
     for element in yh_market_information.values():
@@ -60,6 +59,7 @@ def update_asx_prices():
     db.session.commit()
 
 
+# noinspection PyTypeChecker
 @shared_task
 def get_american_yh_stocks():
     stock_data = PyTickerSymbols()
