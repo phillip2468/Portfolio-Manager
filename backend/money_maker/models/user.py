@@ -2,6 +2,9 @@ from sqlalchemy import Column, Integer, Text, Boolean, TIMESTAMP, func
 
 from money_maker.extensions import db
 
+# This model inspired by below link
+# https://flask-praetorian.readthedocs.io/en/latest/notes.html#requirements-for-the-user-class
+
 
 class User(db.Model):
     __tablename__ = 'user'
