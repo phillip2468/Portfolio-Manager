@@ -70,6 +70,12 @@ def get_american_yh_stocks():
 
     result = sp500_yahoo + nasdaq_yahoo + dow_jones
     result_set = ([{"symbol": element} for element in (set(result))])
-    stmt = insert(tP)
-    db.session.execute(stmt, result_set)
+
+    stmt = insert(tP).values(result_set)
+
+    on_conflict_ignore = stmt.on_conflict_do_nothing(
+        index_elements=['symbol']
+    )
+
+    db.session.execute(on_conflict_ignore)
     db.session.commit()
