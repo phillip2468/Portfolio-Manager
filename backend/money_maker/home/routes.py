@@ -1,12 +1,8 @@
-import datetime
-import sys
 from typing import Any
 
 import flask
-import pytz
 import yahooquery.ticker
 from flask import Blueprint
-from flask import current_app as app
 from flask import jsonify
 from money_maker.extensions import cache, db
 from money_maker.helpers import market_index_ticker, object_as_dict
