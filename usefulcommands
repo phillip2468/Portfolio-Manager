@@ -6,3 +6,6 @@ worker: celery -A backend.money_maker.worker:celery worker -l info -P gevent
 
 python manage.py runserver
 celery -A money_maker.celery_app beat -l info
+
+flask db migrate revision -m "Added a new table" --autogenerate
+flask db migrate
