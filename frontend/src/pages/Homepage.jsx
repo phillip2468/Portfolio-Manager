@@ -42,7 +42,7 @@ const Homepage = () => {
                                 {key}
                                 <StockPriceChart
                                     heightOfChart={'100%'}
-                                    widthOfChart={230}
+                                    widthOfChart={220}
                                     historicalData={historicalData[key]}
                                     formatTime={dateFormatter}
                                 />

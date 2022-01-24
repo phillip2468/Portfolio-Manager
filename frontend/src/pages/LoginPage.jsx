@@ -19,8 +19,7 @@ const LoginPage = () => {
         }
         try {
             const response = await FetchFunction('POST', 'auth/login', null, body)
-            const jwt_token = jwt_decode(response['access_token']).toString()
-            localStorage.setItem('token_jwt', jwt_token)
+            localStorage.setItem('token_jwt', response['access_token'])
             navigate('/')
         } catch (error) {
             alert(error)
