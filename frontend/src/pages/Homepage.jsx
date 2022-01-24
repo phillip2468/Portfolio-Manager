@@ -3,7 +3,8 @@ import SearchBar from "../components/SearchBar/SearchBar";
 import PopularStocksTable from "../components/PopularStocksTable/PopularStocksTable";
 import StockPriceChart from "../components/StockPriceChart/StockPriceCharts";
 import {DateTime} from "luxon";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
+import {ClientContext} from "../store/StoreCredentials";
 
 
 const Homepage = () => {
@@ -16,6 +17,8 @@ const Homepage = () => {
     useEffect(()=> {
         handleGetHistoricalData("1d")
     }, [])
+
+    let {jwt} = useContext(ClientContext)
 
 
     const handleGetHistoricalData = (period) => {
@@ -32,6 +35,8 @@ const Homepage = () => {
     const dateFormatter = date => {
         return DateTime.fromHTTP(date).toLocaleString(DateTime.DATETIME_SHORT);
     };
+
+    console.log(jwt)
 
     return (
         <>
