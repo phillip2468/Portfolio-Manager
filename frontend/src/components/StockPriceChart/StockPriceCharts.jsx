@@ -38,7 +38,7 @@ const StockPriceChart = (props) => {
 StockPriceChart.propTypes = {
     historicalData: PropTypes.arrayOf(PropTypes.any),
     formatTime: PropTypes.func,
-    heightOfChart: PropTypes.number,
+    heightOfChart: PropTypes.any,
     widthOfChart: PropTypes.number,
 };
 

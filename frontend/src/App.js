@@ -6,7 +6,6 @@ import {Container, createTheme, Grid, Paper, ThemeProvider} from "@mui/material"
 import {useMemo} from "react";
 import Header from "./components/Header/Header";
 import LoginPage from "./pages/LoginPage";
-import {ClientWrapper} from "./store/StoreCredentials";
 
 function App() {
 
@@ -20,7 +19,6 @@ function App() {
         [],
     );
     return (
-        <ClientWrapper>
             <Router>
                 <ThemeProvider theme={theme}>
                     <Paper style={{minHeight: "150vh"}}>
@@ -46,7 +44,6 @@ function App() {
                     </Paper>
                 </ThemeProvider>
             </Router>
-        </ClientWrapper>
     );
 }
 
