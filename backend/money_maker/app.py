@@ -1,8 +1,7 @@
 import flask.app
 from flask import Flask
 from money_maker.auth.routes import auth_bp
-from money_maker.extensions import (cache, celery, cors, db, praetorian,
-                                    talisman)
+from money_maker.extensions import cache, celery, cors, db, guard, talisman
 from money_maker.home.routes import home_bp
 from money_maker.models.user import User
 from money_maker.news.routes import news_stories_bp
@@ -36,7 +35,7 @@ def configure_extensions(app):
     db.init_app(app)
     cache.init_app(app)
     talisman.init_app(app)
-    praetorian.init_app(app, User)
+    guard.init_app(app, User)
     cors.init_app(app)
 
 

@@ -5,6 +5,7 @@ import StockPage from "./pages/StockPage/StockPage"
 import {Container, createTheme, Grid, Paper, ThemeProvider} from "@mui/material";
 import {useMemo} from "react";
 import Header from "./components/Header/Header";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
                                     <Routes>
                                         <Route exact path={'/'} element={<Homepage/>}/>
                                         <Route path={'/:stockName'} element={<StockPage/>}/>
+                                        <Route path={'/login'} element={<LoginPage/>}/>
                                     </Routes>
                                 </Grid>
                             </Container>
