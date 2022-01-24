@@ -3,13 +3,10 @@ import Button from "@mui/material/Button";
 import {useState} from "react";
 import {FetchFunction} from "../components/FetchFunction";
 import {useNavigate} from "react-router-dom";
-import {useCookies} from "react-cookie";
 import jwt_decode from "jwt-decode";
 
 
 const LoginPage = () => {
-
-    const [cookies, setCookies] = useCookies(['money_maker_token'])
 
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
@@ -20,27 +17,13 @@ const LoginPage = () => {
             email: email,
             password: password,
         }
-
-
         try {
             const response = await FetchFunction('POST', 'auth/login', null, body)
-            console.log(jwt_decode(response['access_token']))
-            const jwt_token = jwt_decode(response['access_token'])
-            setCookies('money_maker_token', response["access_token"],
-                {path: '/', sameSite: 'strict', expires: new Date(jwt_token['exp'] * 1000)});
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const handleProtectedRoute = async () => {
-
-        try {
-            const response = await FetchFunction('GET', 'auth/protected', null, null)
+            const jwt_token = jwt_decode(response['access_token']).toString()
+            localStorage.setItem('token_jwt', jwt_token)
             navigate('/')
-            console.log(response)
-        } catch (e) {
-            console.log(e)
+        } catch (error) {
+            alert(error)
         }
     }
 
@@ -85,10 +68,6 @@ const LoginPage = () => {
                     <Grid item>
                         <Button variant={"contained"} onClick={handleLogIn}>
                             Sign in
-                        </Button>
-
-                        <Button variant={"contained"} onClick={handleProtectedRoute}>
-                            Protected
                         </Button>
                     </Grid>
                 </Grid>
