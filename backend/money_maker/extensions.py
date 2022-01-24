@@ -24,5 +24,5 @@ cache = Cache(config={"CACHE_TYPE": "RedisCache",
                       "CACHE_REDIS_DB": "0",
                       "CACHE_REDIS_PASSWORD": url.password})
 talisman = Talisman()
-praetorian = Praetorian()
+guard = Praetorian()
 cors = CORS()
