@@ -3,8 +3,7 @@ import SearchBar from "../components/SearchBar/SearchBar";
 import PopularStocksTable from "../components/PopularStocksTable/PopularStocksTable";
 import StockPriceChart from "../components/StockPriceChart/StockPriceCharts";
 import {DateTime} from "luxon";
-import {useContext, useEffect, useState} from "react";
-import {ClientContext} from "../store/StoreCredentials";
+import {useEffect, useState} from "react";
 
 
 const Homepage = () => {
@@ -17,9 +16,6 @@ const Homepage = () => {
     useEffect(()=> {
         handleGetHistoricalData("1d")
     }, [])
-
-    let {jwt} = useContext(ClientContext)
-
 
     const handleGetHistoricalData = (period) => {
         listOfData.map(async (thisElement, index, array) => {
@@ -36,8 +32,6 @@ const Homepage = () => {
         return DateTime.fromHTTP(date).toLocaleString(DateTime.DATETIME_SHORT);
     };
 
-    console.log(jwt)
-
     return (
         <>
             <Grid item>
@@ -47,7 +41,7 @@ const Homepage = () => {
                             <div key={key} style={{textAlign: "center"}}>
                                 {key}
                                 <StockPriceChart
-                                    heightOfChart={200}
+                                    heightOfChart={'100%'}
                                     widthOfChart={230}
                                     historicalData={historicalData[key]}
                                     formatTime={dateFormatter}

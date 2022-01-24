@@ -1,17 +1,19 @@
-import {Container, Grid, TextField, Typography} from "@mui/material";
+import {Grid, TextField, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
-import {useContext, useState} from "react";
+import {useState} from "react";
 import {FetchFunction} from "../components/FetchFunction";
-import {ClientContext} from "../store/StoreCredentials";
 import {useNavigate} from "react-router-dom";
+import {useCookies} from "react-cookie";
+import jwt_decode from "jwt-decode";
+
 
 const LoginPage = () => {
+
+    const [cookies, setCookies] = useCookies(['money_maker_token'])
 
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    let {jwt, setJWT} = useContext(ClientContext)
 
     const handleLogIn = async () => {
         const body = {
@@ -22,17 +24,18 @@ const LoginPage = () => {
 
         try {
             const response = await FetchFunction('POST', 'auth/login', null, body)
-            setJWT(response["access_token"])
+            console.log(jwt_decode(response['access_token']))
+            const jwt_token = jwt_decode(response['access_token'])
+            setCookies('money_maker_token', response["access_token"], {path: '/', sameSite: 'strict', expires: new Date(jwt_token['exp'] * 1000)});
         } catch (error) {
             console.log(error)
         }
     }
 
     const handleProtectedRoute = async () => {
-        console.log(jwt)
 
         try {
-            const response = await FetchFunction('GET', 'auth/protected', jwt, null)
+            const response = await FetchFunction('GET', 'auth/protected', null, null)
             navigate('/')
             console.log(response)
         } catch (e) {
