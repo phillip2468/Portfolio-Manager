@@ -26,7 +26,8 @@ const LoginPage = () => {
             const response = await FetchFunction('POST', 'auth/login', null, body)
             console.log(jwt_decode(response['access_token']))
             const jwt_token = jwt_decode(response['access_token'])
-            setCookies('money_maker_token', response["access_token"], {path: '/', sameSite: 'strict', expires: new Date(jwt_token['exp'] * 1000)});
+            setCookies('money_maker_token', response["access_token"],
+                {path: '/', sameSite: 'strict', expires: new Date(jwt_token['exp'] * 1000)});
         } catch (error) {
             console.log(error)
         }

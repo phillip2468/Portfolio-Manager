@@ -1,6 +1,6 @@
+import flask_praetorian
 from flask import Blueprint, jsonify, request
 from money_maker.extensions import guard
-import flask_praetorian
 
 auth_bp = Blueprint("auth_bp", __name__, url_prefix="/auth")
 
@@ -18,7 +18,7 @@ def login():
     email = req.get("email", None)
     password = req.get("password", None)
     user = guard.authenticate(email, password)
-    ret = {"access_token": guard.encode_jwt_token(user)}
+    ret = {"access_token": guard.encode_jwt_token(user, custom_claims='')}
     return jsonify(ret), 200
 
 
