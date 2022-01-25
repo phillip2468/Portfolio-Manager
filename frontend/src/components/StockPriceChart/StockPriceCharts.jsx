@@ -1,5 +1,5 @@
 import {Grid} from "@mui/material";
-import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
+import {CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
 import * as PropTypes from "prop-types";
 import React from "react";
 

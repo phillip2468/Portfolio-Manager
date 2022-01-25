@@ -18,6 +18,7 @@ def login():
     email = req.get("email", None)
     password = req.get("password", None)
     user = guard.authenticate(email, password)
+    print(user)
     ret = {"access_token": guard.encode_jwt_token(user, custom_claims='')}
     return jsonify(ret), 200
 
@@ -53,4 +54,12 @@ def refresh():
     ret = {'access_token': new_token}
     return jsonify(ret), 200
 
+
+@auth_bp.route("/user-details", methods=["GET"])
+def get_details():
+    req = request.get_json(force=True)
+    email = req.get("email", None)
+    password = req.get("password", None)
+    guard.authenticate()
+    pass
 
