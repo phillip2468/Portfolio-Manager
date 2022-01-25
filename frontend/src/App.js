@@ -6,6 +6,7 @@ import {Container, createTheme, Grid, Paper, ThemeProvider} from "@mui/material"
 import {useMemo} from "react";
 import Header from "./components/Header/Header";
 import LoginPage from "./pages/LoginPage";
+import {ClientWrapper} from "./store/StoreCredentials";
 
 function App() {
 
@@ -20,29 +21,31 @@ function App() {
     );
     return (
             <Router>
-                <ThemeProvider theme={theme}>
-                    <Paper style={{minHeight: "150vh"}}>
-                        <Grid container spacing={4} direction={"column"}>
+                <ClientWrapper>
+                    <ThemeProvider theme={theme}>
+                        <Paper style={{minHeight: "150vh"}}>
+                            <Grid container spacing={4} direction={"column"}>
 
-                            <Grid item>
-                                <Header/>
+                                <Grid item>
+                                    <Header/>
+                                </Grid>
+
+                                <Grid item>
+                                    <Container maxWidth={"lg"} sx={{border: "1px solid white"}}>
+                                        <Grid container spacing={4} direction={"column"}>
+                                            <Routes>
+                                                <Route exact path={'/'} element={<Homepage/>}/>
+                                                <Route path={'/:stockName'} element={<StockPage/>}/>
+                                                <Route path={'/login'} element={<LoginPage/>}/>
+                                            </Routes>
+                                        </Grid>
+                                    </Container>
+                                </Grid>
+
                             </Grid>
-
-                            <Grid item>
-                                <Container maxWidth={"lg"} sx={{border: "1px solid white"}}>
-                                    <Grid container spacing={4} direction={"column"}>
-                                        <Routes>
-                                            <Route exact path={'/'} element={<Homepage/>}/>
-                                            <Route path={'/:stockName'} element={<StockPage/>}/>
-                                            <Route path={'/login'} element={<LoginPage/>}/>
-                                        </Routes>
-                                    </Grid>
-                                </Container>
-                            </Grid>
-
-                        </Grid>
-                    </Paper>
-                </ThemeProvider>
+                        </Paper>
+                    </ThemeProvider>
+                </ClientWrapper>
             </Router>
     );
 }
