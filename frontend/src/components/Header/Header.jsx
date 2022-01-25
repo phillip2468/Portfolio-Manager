@@ -31,10 +31,10 @@ const Header = () => {
                     </div>
 
                     <div>
-                        {console.log(token)}
-                        {token ? <Button color="inherit" onClick={() => {
-                            logoutUser()
-                        }}>Logout</Button> : <Button color="inherit" onClick={() => navigate('/login')}>Login</Button>}
+                        {token ?
+                            <Button color="inherit" onClick={() => {logoutUser()}}>Logout</Button> :
+                            <Button color="inherit" onClick={() => navigate('/login')}>Login</Button>
+                        }
                     </div>
                 </Toolbar>
             </AppBar>

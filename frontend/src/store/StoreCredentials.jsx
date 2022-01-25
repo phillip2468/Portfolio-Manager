@@ -45,7 +45,6 @@ export const ClientWrapper = ({children}) => {
     }
 
     const logoutUser = () => {
-        console.log("HERE")
         localStorage.removeItem('token')
         contextData.setToken(null)
         navigate('/login')
