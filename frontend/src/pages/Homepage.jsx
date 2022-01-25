@@ -41,7 +41,7 @@ const Homepage = () => {
                             <div key={key} style={{textAlign: "center"}}>
                                 {key}
                                 <StockPriceChart
-                                    heightOfChart={'100%'}
+                                    heightOfChart={200}
                                     widthOfChart={220}
                                     historicalData={historicalData[key]}
                                     formatTime={dateFormatter}
