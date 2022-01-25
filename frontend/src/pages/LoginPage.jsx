@@ -8,25 +8,13 @@ import {ClientContext} from "../store/StoreCredentials";
 
 const LoginPage = () => {
 
-    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    let {setToken} = useContext(ClientContext);
+    let {loginUser} = useContext(ClientContext);
 
-    const handleLogIn = async () => {
-        const body = {
-            email: email,
-            password: password,
-        }
-        try {
-            const response = await FetchFunction('POST', 'auth/login', null, body)
-            localStorage.setItem('token', response['access_token'])
-            setToken(localStorage.getItem('token'))
-            navigate('/')
-        } catch (error) {
-            alert(error)
-        }
+    const handleLogIn = () => {
+        loginUser(email, password);
     }
 
     return (

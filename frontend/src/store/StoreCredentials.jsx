@@ -1,52 +1,72 @@
 import {createContext, useEffect, useMemo, useState} from "react";
 import {FetchFunction} from "../components/FetchFunction";
+import {useNavigate} from "react-router-dom";
 
 export const ClientContext = createContext(null);
 
 export const ClientWrapper = ({children}) => {
-    const [token, setToken] = useState(()=> localStorage.getItem('token') ? localStorage.getItem('token') : null);
-    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true)
 
-    const providerValue = useMemo(() => ({token, setToken}), [token, setToken])
+    const [token, setToken] = useState(()=> localStorage.getItem('token') ? localStorage.getItem('token') : null);
 
     const refreshToken = () => {
         if (token) {
             FetchFunction('GET', '/auth/refresh', token, null)
                 .then(response => {
-                    console.log(response)
                     localStorage.setItem('token', response["access_token"])
-                    setToken(localStorage.getItem('token'))
+                    contextData.setToken(localStorage.getItem('token'))
                 })
                 .catch(error => {
-                    alert(error)
-                    //localStorage.removeItem('token');
+                    //console.log(error)
                 })
         }
-
         if (loading) {
-            setLoading(false);
+            setLoading(false)
         }
     }
 
-    useEffect( () => {
-        if (loading) {
-            refreshToken()
+    const loginUser = (email, password) => {
+        const body = {
+            email: email,
+            password: password,
         }
+        FetchFunction('POST', 'auth/login', null, body)
+            .then(response => {
+                localStorage.setItem('token', response['access_token'])
+                contextData.setToken(localStorage.getItem('token'))
+                navigate('/')
+            })
+            .catch(e => console.log(e))
+    }
 
-        refreshToken();
+    const logoutUser = () => {
+        localStorage.removeItem('token')
+        navigate('/')
+    }
+
+    let contextData = {
+        token, setToken, refreshToken, loginUser, logoutUser
+    }
+
+    useEffect( () => {
+
+        if (loading) {
+            refreshToken();
+        }
         // eslint-disable-next-line
         let interval = setInterval(()=> {
-            if (token) {
+            if (contextData.token) {
                 refreshToken();
             }
-        }, 100000000)
+        }, 1000 * 60 * 2)
         return () => clearInterval(interval)
 
-    }, [token, loading])
+    }, [contextData.token])
     
     return (
-        <ClientContext.Provider value={providerValue}>
-            {loading ? null : children}
+        <ClientContext.Provider value={contextData}>
+            {children}
         </ClientContext.Provider>
     )
 }
