@@ -4,32 +4,49 @@ import {FetchFunction} from "../components/FetchFunction";
 export const ClientContext = createContext(null);
 
 export const ClientWrapper = ({children}) => {
-    const [token, setToken] = useState(null);
+    const [token, setToken] = useState(()=> localStorage.getItem('token') ? localStorage.getItem('token') : null);
+    const [loading, setLoading] = useState(true);
 
     const providerValue = useMemo(() => ({token, setToken}), [token, setToken])
 
-    const refreshToken = async () => {
-        try {
-            const response = await FetchFunction('GET', '/auth/refresh', token, null);
-            localStorage.setItem('token', response["access_token"])
-            setToken(localStorage.getItem('token'))
-        } catch (e) {
-            console.log(e)
+    const refreshToken = () => {
+        if (token) {
+            FetchFunction('GET', '/auth/refresh', token, null)
+                .then(response => {
+                    console.log(response)
+                    localStorage.setItem('token', response["access_token"])
+                    setToken(localStorage.getItem('token'))
+                })
+                .catch(error => {
+                    alert(error)
+                    //localStorage.removeItem('token');
+                })
         }
 
+        if (loading) {
+            setLoading(false);
+        }
     }
 
-    useEffect(async () => {
-        if (token !== null) {
-            setTimeout(async () => {
-                await refreshToken();
-            }, 10000)
+    useEffect( () => {
+        if (loading) {
+            refreshToken()
         }
 
-    }, [token])
+        refreshToken();
+        // eslint-disable-next-line
+        let interval = setInterval(()=> {
+            if (token) {
+                refreshToken();
+            }
+        }, 100000000)
+        return () => clearInterval(interval)
+
+    }, [token, loading])
+    
     return (
         <ClientContext.Provider value={providerValue}>
-            {children}
+            {loading ? null : children}
         </ClientContext.Provider>
     )
 }
