@@ -2,10 +2,13 @@ import {AppBar, Box, IconButton, Toolbar} from "@mui/material";
 import Button from "@mui/material/Button";
 import MenuIcon from '@mui/icons-material/Menu';
 import {useNavigate} from "react-router-dom";
+import {useContext} from "react";
+import {ClientContext} from "../../store/StoreCredentials";
 
 const Header = () => {
 
     const navigate = useNavigate();
+    let {token, logoutUser} = useContext(ClientContext);
 
     return (<>
         <Box>
@@ -27,7 +30,12 @@ const Header = () => {
                         </IconButton>
                     </div>
 
-                    <Button color="inherit">Login</Button>
+                    <div>
+                        {token ?
+                            <Button color="inherit" onClick={() => {logoutUser()}}>Logout</Button> :
+                            <Button color="inherit" onClick={() => navigate('/login')}>Login / Register</Button>
+                        }
+                    </div>
                 </Toolbar>
             </AppBar>
         </Box>

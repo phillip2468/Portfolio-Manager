@@ -1,8 +1,9 @@
 import flask.app
 from flask import Flask
-from flask_cors import CORS
-from money_maker.extensions import cache, celery, csrf, db, talisman
+from money_maker.auth.routes import auth_bp
+from money_maker.extensions import cache, celery, cors, db, guard, talisman
 from money_maker.home.routes import home_bp
+from money_maker.models.user import User
 from money_maker.news.routes import news_stories_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.search.routes import search_bp
@@ -23,7 +24,6 @@ def create_app(testing=False) -> Flask:
 
     app.app_context().push()
 
-    CORS(app)
     if testing is True:
         app.config["TESTING"] = True
     init_celery(app)
@@ -34,8 +34,9 @@ def create_app(testing=False) -> Flask:
 def configure_extensions(app):
     db.init_app(app)
     cache.init_app(app)
-    csrf.init_app(app)
     talisman.init_app(app)
+    guard.init_app(app, User)
+    cors.init_app(app)
 
 
 def register_blueprints(app: flask.Flask):
@@ -44,6 +45,7 @@ def register_blueprints(app: flask.Flask):
     app.register_blueprint(trending_bp)
     app.register_blueprint(news_stories_bp)
     app.register_blueprint(search_bp)
+    app.register_blueprint(auth_bp)
 
 
 def init_celery(app: flask.app.Flask = None):

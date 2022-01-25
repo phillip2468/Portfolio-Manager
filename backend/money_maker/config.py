@@ -22,4 +22,7 @@ SQLALCHEMY_ENGINE_OPTIONS = {
     "executemany_values_page_size": 10000
 }
 SECRET_KEY = os.getenv("SECRET_KEY")
+SESSION_COOKIE_SECURE = True
 
+JWT_ACCESS_LIFESPAN = {"hours": 1}
+JWT_REFRESH_LIFESPAN = {"hours": 8}
