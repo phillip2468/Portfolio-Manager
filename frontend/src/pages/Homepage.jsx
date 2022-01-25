@@ -41,11 +41,19 @@ const Homepage = () => {
                     {Object.keys(historicalData).map(function(key) {
                         return (
                             <div key={key} style={{textAlign: "center"}}>
-                                {key}
+                                <div>
+                                    {key}
+                                </div>
+                                <div>
+                                    {parseFloat(historicalData[key]['market_change_perc']).toFixed(2)}%
+                                </div>
+                                <div>
+                                    {historicalData[key]['currency_symbol']}{historicalData[key]['price_now']}
+                                </div>
                                 <StockPriceChart
                                     heightOfChart={200}
                                     widthOfChart={220}
-                                    historicalData={historicalData[key]}
+                                    historicalData={historicalData[key]['priceList']}
                                     formatTime={dateFormatter}
                                 />
                             </div>
