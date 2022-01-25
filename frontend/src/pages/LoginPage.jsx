@@ -1,9 +1,9 @@
 import {Grid, TextField, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {FetchFunction} from "../components/FetchFunction";
 import {useNavigate} from "react-router-dom";
-import jwt_decode from "jwt-decode";
+import {ClientContext} from "../store/StoreCredentials";
 
 
 const LoginPage = () => {
@@ -12,6 +12,8 @@ const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    let {setToken} = useContext(ClientContext);
+
     const handleLogIn = async () => {
         const body = {
             email: email,
@@ -19,7 +21,8 @@ const LoginPage = () => {
         }
         try {
             const response = await FetchFunction('POST', 'auth/login', null, body)
-            localStorage.setItem('token_jwt', response['access_token'])
+            localStorage.setItem('token', response['access_token'])
+            setToken(localStorage.getItem('token'))
             navigate('/')
         } catch (error) {
             alert(error)
