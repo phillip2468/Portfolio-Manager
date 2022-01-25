@@ -1,5 +1,5 @@
 import {Grid} from "@mui/material";
-import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
+import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
 import * as PropTypes from "prop-types";
 import React from "react";
 
@@ -21,8 +21,7 @@ const StockPriceChart = (props) => {
 
     return (
         <Grid item>
-            <ResponsiveContainer height={props.heightOfChart} width={props.widthOfChart}>
-                <LineChart data={props.historicalData}>
+                <LineChart data={props.historicalData} height={props.heightOfChart} width={props.widthOfChart}>
                     <XAxis dataKey={"time"} domain={["dataMin", "dataMax"]} interval={"preserveStartEnd"}
                            tickFormatter={props.formatTime}/>
                     <YAxis domain={["auto", "auto"]}/>
@@ -30,7 +29,6 @@ const StockPriceChart = (props) => {
                     <Tooltip content={<CustomTooltip/>}/>
                     <Line type="monotone" dataKey={"open"} activeDot={{r: 3}} stroke="#8884d8"/>
                 </LineChart>
-            </ResponsiveContainer>
         </Grid>
     );
 }

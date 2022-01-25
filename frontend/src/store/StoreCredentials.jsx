@@ -1,6 +1,8 @@
-import {createContext, useEffect, useMemo, useState} from "react";
+import {createContext, useEffect, useState} from "react";
 import {FetchFunction} from "../components/FetchFunction";
 import {useNavigate} from "react-router-dom";
+
+// https://www.youtube.com/watch?v=xjMP0hspNLE
 
 export const ClientContext = createContext(null);
 
@@ -18,7 +20,9 @@ export const ClientWrapper = ({children}) => {
                     contextData.setToken(localStorage.getItem('token'))
                 })
                 .catch(error => {
-                    //console.log(error)
+                    if (error !== "EarlyRefreshError") {
+                        logoutUser()
+                    }
                 })
         }
         if (loading) {
