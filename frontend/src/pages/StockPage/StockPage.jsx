@@ -62,6 +62,7 @@ const StockPage = () => {
                 historicalData={historicalData}
                 formatTime={dateFormatter}
                 heightOfChart={500}
+                widthOfChart={1000}
             />
         </>
     )
