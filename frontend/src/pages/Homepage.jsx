@@ -11,10 +11,12 @@ const Homepage = () => {
     const listOfData = ['^AXJO', '^GSPC', '^IXIC', 'AUDUSD=X', 'AUDJPY=X']
 
     const [historicalData, setHistoricalData] = useState(listOfData
+        // eslint-disable-next-line
         .reduce((acc, curr) => (acc[curr] = [] , acc), {}))
 
     useEffect(()=> {
         handleGetHistoricalData("1d")
+        // eslint-disable-next-line
     }, [])
 
     const handleGetHistoricalData = (period) => {

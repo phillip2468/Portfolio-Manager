@@ -45,8 +45,10 @@ export const ClientWrapper = ({children}) => {
     }
 
     const logoutUser = () => {
+        console.log("HERE")
         localStorage.removeItem('token')
-        navigate('/')
+        contextData.setToken(null)
+        navigate('/login')
     }
 
     let contextData = {
@@ -65,8 +67,8 @@ export const ClientWrapper = ({children}) => {
             }
         }, 1000 * 60 * 2)
         return () => clearInterval(interval)
-
-    }, [contextData.token])
+        // eslint-disable-next-line
+    }, [contextData.token, loading])
     
     return (
         <ClientContext.Provider value={contextData}>
