@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from money_maker.extensions import jwt_manager, db, bcrypt
 from money_maker.models.user import User
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, create_refresh_token
 
 auth_bp = Blueprint("auth_bp", __name__, url_prefix="/auth")
 
@@ -26,9 +26,18 @@ def login():
 
     if bcrypt.check_password_hash(user.hashed_password, password):
         access_token = create_access_token(identity=user)
-        return jsonify(access_token=access_token), 200
+        refresh_token = create_refresh_token(identity=user)
+        return jsonify(access_token=access_token, refresh_token=refresh_token), 200
     else:
         return jsonify(error="Invalid login details"), 400
+
+
+@auth_bp.route("/refresh", methods=["GET"])
+@jwt_required(refresh=True)
+def refresh_tokens():
+    identity = get_jwt_identity()
+    access_token = create_access_token(identity=db.session.query(User).filter(User.user_id == identity).one())
+    return jsonify(access_token=access_token)
 
 
 @jwt_manager.user_identity_loader
