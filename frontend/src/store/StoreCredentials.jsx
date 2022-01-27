@@ -11,12 +11,14 @@ export const ClientWrapper = ({children}) => {
     const [loading, setLoading] = useState(true)
 
     const [token, setToken] = useState(()=> localStorage.getItem('token') ? localStorage.getItem('token') : null);
+    const [refreshToken, setRefreshToken] = useState(()=> localStorage.getItem('refreshToken') ? localStorage.getItem('refreshToken') : null)
 
-    const refreshToken = () => {
+    const replaceRefreshToken = () => {
+        console.log(refreshToken)
         if (token) {
-            FetchFunction('GET', '/auth/refresh', token, null)
+            FetchFunction('GET', '/auth/refresh', refreshToken, null)
                 .then(response => {
-                    localStorage.setItem('token', response["access_token"])
+                    localStorage.setItem('token', response['access_token'])
                     contextData.setToken(localStorage.getItem('token'))
                 })
                 .catch(error => {
@@ -38,7 +40,9 @@ export const ClientWrapper = ({children}) => {
         FetchFunction('POST', 'auth/login', null, body)
             .then(response => {
                 localStorage.setItem('token', response['access_token'])
+                localStorage.setItem('refreshToken', response['refresh_token'])
                 contextData.setToken(localStorage.getItem('token'))
+                contextData.setRefreshToken(response['refresh_token'])
                 navigate('/')
             })
             .catch(e => {
@@ -49,23 +53,25 @@ export const ClientWrapper = ({children}) => {
 
     const logoutUser = () => {
         localStorage.removeItem('token')
+        localStorage.removeItem('refreshToken')
         contextData.setToken(null)
+        contextData.setRefreshToken(null)
         navigate('/login')
     }
 
     let contextData = {
-        token, setToken, refreshToken, loginUser, logoutUser
+        token, setToken, replaceRefreshToken, loginUser, logoutUser, refreshToken, setRefreshToken
     }
 
     useEffect( () => {
 
         if (loading) {
-            refreshToken();
+            replaceRefreshToken();
         }
         // eslint-disable-next-line
         let interval = setInterval(()=> {
             if (contextData.token) {
-                refreshToken();
+                replaceRefreshToken();
             }
         }, 1000 * 60 * 2)
         return () => clearInterval(interval)
