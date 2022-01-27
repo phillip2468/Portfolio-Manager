@@ -41,7 +41,10 @@ export const ClientWrapper = ({children}) => {
                 contextData.setToken(localStorage.getItem('token'))
                 navigate('/')
             })
-            .catch(e => alert(e))
+            .catch(e => {
+                console.log(e)
+                alert(e)
+            })
     }
 
     const logoutUser = () => {

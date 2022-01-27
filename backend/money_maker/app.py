@@ -7,6 +7,7 @@ from money_maker.news.routes import news_stories_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.search.routes import search_bp
 from money_maker.trending.routes import trending_bp
+#from money_maker.models.user import User
 
 
 def create_app(testing=False) -> Flask:
