@@ -24,7 +24,7 @@ const StockPriceChart = (props) => {
                 <LineChart data={props.historicalData} height={props.heightOfChart} width={props.widthOfChart}>
                     <XAxis dataKey={"time"} domain={["dataMin", "dataMax"]} interval={"preserveStartEnd"}
                            tickFormatter={props.formatTime}/>
-                    <YAxis domain={["auto", "auto"]}/>
+                    <YAxis domain={["auto", "auto"]} width={40}/>
                     <CartesianGrid strokeDasharray="2 2"/>
                     <Tooltip content={<CustomTooltip/>}/>
                     <Line type="monotone" dataKey={"open"} activeDot={{r: 3}} stroke="#8884d8"/>

@@ -25,6 +25,13 @@ def get_stock_info_from_database(stock_symbol):
 
 @quote_bp.route("/<stock_name>&period=<period>&interval=<interval>")
 def get_historical_data(stock_name, period, interval):
-    result = yahooquery.Ticker(stock_name).history(period=period, interval=interval, adj_timezone=False)
-    this_result = [{"time": key[1], "open": value} for key, value in result['open'].to_dict().items()]
+    historical_price = yahooquery.Ticker(stock_name).history(period=period, interval=interval, adj_timezone=False)
+    price_now = yahooquery.Ticker(stock_name).price[stock_name]
+    print(price_now)
+    this_result = {
+        "priceList": [{"time": key[1], "open": value} for key, value in historical_price['open'].to_dict().items()],
+        "price_now": price_now["regularMarketPrice"],
+        "market_change_perc": price_now["regularMarketChangePercent"],
+        "currency_symbol": price_now["currencySymbol"],
+    }
     return jsonify(this_result)
