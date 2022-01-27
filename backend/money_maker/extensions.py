@@ -8,6 +8,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
 from flask_jwt_extended import JWTManager
+from flask_bcrypt import Bcrypt
 
 load_dotenv()
 
@@ -26,3 +27,4 @@ cache = Cache(config={"CACHE_TYPE": "RedisCache",
 talisman = Talisman()
 cors = CORS()
 jwt_manager = JWTManager()
+bcrypt = Bcrypt()

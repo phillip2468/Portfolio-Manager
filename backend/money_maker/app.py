@@ -1,7 +1,7 @@
 import flask.app
 from flask import Flask
 from money_maker.auth.routes import auth_bp
-from money_maker.extensions import cache, celery, cors, db, talisman, jwt_manager
+from money_maker.extensions import cache, celery, cors, db, talisman, jwt_manager, bcrypt
 from money_maker.home.routes import home_bp
 from money_maker.news.routes import news_stories_bp
 from money_maker.quote.routes import quote_bp
@@ -36,6 +36,7 @@ def configure_extensions(app):
     talisman.init_app(app)
     cors.init_app(app)
     jwt_manager.init_app(app)
+    bcrypt.init_app(app)
 
 
 def register_blueprints(app: flask.Flask):
