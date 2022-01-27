@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from dotenv import load_dotenv
 
@@ -23,3 +24,6 @@ SQLALCHEMY_ENGINE_OPTIONS = {
 }
 SECRET_KEY = os.getenv("SECRET_KEY")
 SESSION_COOKIE_SECURE = True
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+
+
