@@ -27,7 +27,6 @@ def get_stock_info_from_database(stock_symbol):
 def get_historical_data(stock_name, period, interval):
     historical_price = yahooquery.Ticker(stock_name).history(period=period, interval=interval, adj_timezone=False)
     price_now = yahooquery.Ticker(stock_name).price[stock_name]
-    print(price_now)
     this_result = {
         "priceList": [{"time": key[1], "open": value} for key, value in historical_price['open'].to_dict().items()],
         "price_now": price_now["regularMarketPrice"],
