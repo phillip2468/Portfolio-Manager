@@ -22,13 +22,13 @@ def login():
     user: User = db.session.query(User).filter(User.email == email).one_or_none()
 
     if not email or not password or not user:
-        return jsonify({"error": "Missing credentials"}), 400
+        return jsonify(error="Missing credentials"), 400
 
     if bcrypt.check_password_hash(user.hashed_password, password):
         access_token = create_access_token(identity=user)
-        return jsonify(access_token), 200
+        return jsonify(access_token=access_token), 200
     else:
-        return jsonify({"error": "Invalid login details"}), 400
+        return jsonify(error="Invalid login details"), 400
 
 
 @jwt_manager.user_identity_loader
