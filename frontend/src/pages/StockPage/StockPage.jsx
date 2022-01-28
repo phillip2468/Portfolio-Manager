@@ -36,9 +36,6 @@ const StockPage = () => {
         return DateTime.fromHTTP(date).toLocaleString(DateTime.DATETIME_SHORT);
     };
 
-    {console.log(last_updated_fmt)}
-    {console.log(typeof stockInfo.last_updated)}
-
     return (
         <>
             <StockDetails
@@ -61,7 +58,7 @@ const StockPage = () => {
             }}/>
 
             <StockPriceChart
-                historicalData={historicalData}
+                historicalData={historicalData['priceList']}
                 formatTime={dateFormatter}
                 heightOfChart={500}
                 widthOfChart={1000}
