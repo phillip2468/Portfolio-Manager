@@ -13,7 +13,7 @@ const {DateTime} = require("luxon");
 const StockPage = () => {
     const {stockName} = useParams()
     const [stockInfo, setStockInfo] = useState([]);
-    const last_updated_fmt = DateTime.fromHTTP(stockInfo.last_updated).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS);
+    const last_updated_fmt = DateTime.fromISO(stockInfo.last_updated).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS);
     const list_of_periods = ['1d', '5d', '7d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max'];
     const [historicalData, setHistoricalData] = useState([]);
 
@@ -36,6 +36,8 @@ const StockPage = () => {
         return DateTime.fromHTTP(date).toLocaleString(DateTime.DATETIME_SHORT);
     };
 
+    {console.log(last_updated_fmt)}
+    {console.log(typeof stockInfo.last_updated)}
 
     return (
         <>
