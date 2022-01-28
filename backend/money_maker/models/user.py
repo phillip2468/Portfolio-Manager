@@ -1,4 +1,4 @@
-from marshmallow import Schema
+from flask_marshmallow import Schema
 from money_maker.extensions import db, marshmallow
 from sqlalchemy import TIMESTAMP, Column, Integer, Text, func
 
