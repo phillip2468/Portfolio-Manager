@@ -3,6 +3,8 @@ from flask import Blueprint, jsonify
 from money_maker.extensions import cache, db
 from money_maker.helpers import object_as_dict
 from money_maker.models.ticker_prices import TickerPrice as tP
+from money_maker.models.ticker_prices import \
+    ticker_price_schema as ticker_schema
 from sqlalchemy import func, select, text
 
 quote_bp = Blueprint("quote_bp", __name__, url_prefix="/quote")
@@ -20,7 +22,7 @@ def market_change_by_industry(category, order):
 @quote_bp.route("/<stock_symbol>")
 def get_stock_info_from_database(stock_symbol):
     results = db.session.query(tP).filter(tP.symbol == stock_symbol).all()
-    return jsonify([object_as_dict(element) for element in results])
+    return ticker_schema.jsonify(results, many=True)
 
 
 @quote_bp.route("/<stock_name>&period=<period>&interval=<interval>")
