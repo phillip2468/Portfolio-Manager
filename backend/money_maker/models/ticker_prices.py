@@ -3,6 +3,7 @@
 from alembic_utils.pg_function import PGFunction
 from alembic_utils.pg_trigger import PGTrigger
 from money_maker.extensions import db
+from safrs import SAFRSBase
 from sqlalchemy import Column
 from sqlalchemy.sql import func
 from sqlalchemy.types import (TIMESTAMP, BigInteger, Float, Integer, Numeric,
@@ -12,7 +13,7 @@ from sqlalchemy_utils import force_auto_coercion
 force_auto_coercion()
 
 
-class TickerPrice(db.Model):
+class TickerPrice(SAFRSBase, db.Model):
     __tablename__ = 'ticker_prices'
     
     stock_id = Column(Integer, primary_key=True, autoincrement=True)
