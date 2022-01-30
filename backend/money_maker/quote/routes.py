@@ -1,3 +1,4 @@
+import flask
 import yahooquery
 from flask import Blueprint, jsonify
 from money_maker.extensions import db
@@ -20,8 +21,17 @@ def market_change_by_industry(category, order):
 
 
 @quote_bp.route("/<stock_symbol>")
-def get_stock_info_from_database(stock_symbol):
-    results = db.session.query(tP).filter(tP.symbol == stock_symbol).all()
+def get_stock_info_from_database(stock_symbol: str) -> flask.Response:
+    """
+    Using the keyword from the url, return the matching information
+    about a certain company from the database. Refer to the TickerPrice
+    model to see which attributes are returned.
+    :param stock_symbol: The ticker for the company
+    :type stock_symbol: str
+    :return: A flask response object (list of dictionaries)
+    :rtype: flask.Response
+    """
+    results: list[tP] = db.session.query(tP).filter(tP.symbol == stock_symbol).all()
     return ticker_schema.jsonify(results, many=True)
 
 
