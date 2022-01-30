@@ -27,41 +27,28 @@ def get_stock_info_from_database(stock_symbol: str) -> flask.Response:
     return ticker_schema.jsonify(results, many=True)
 
 
-@quote_bp.route("/market-change/industry/<order>", methods=["GET"])
-def market_change_by_industry(order: str) -> flask.Response:
+@quote_bp.route("/market-change/<attribute>/<order>", methods=["GET"])
+def market_change_by_attribute(attribute: str, order: str) -> flask.Response:
     """
-    Provides the average performance for tickers within a specific industry,
-    given the order. Note that the order keyword should either be
-    ASC or DESC.
+    Given a speicific field from the TickerPrice database object, find the average
+    perfomance of that specific field. Note that the attribute from TickerPrice should be
+    reasonable as strange results may occur with certain fields. Refer to models/ticker_prices
+    for a list of all avaliable attributes to name.
+    For example a sample query could be "/market-change/sector/ASC" which would find the
+    average performance for all stocks grouped by sector.
+    Note that the "order" keyword should either be ASC or DESC.
 
-
+    :param attribute: A field corresponding to the TickerPrice attributes.
+    :type attribute: str
     :param order: ASC or DESC
     :type order: str
-    :return: A list of dictionaries.
+    :return: A list of json dictionaries.
     :rtype: flask.Response
     """
-    results = db.session.query(tP.industry, func.avg(tP.market_change_percentage).label("Average"),
-                               func.count(tP.industry)).filter(tP.industry.isnot(None))\
-        .group_by(tP.industry).order_by(text(f""""Average" {order.upper()}""")).all()
-    return jsonify([dict(e) for e in results])
-
-
-@quote_bp.route("/market-change/sector/<order>", methods=["GET"])
-def market_change_by_sector(order: str) -> flask.Response:
-    """
-    Provides the average performance for tickers within a specific sector,
-    given the order. Note that the order keyword should either be
-    ASC or DESC.
-
-
-    :param order: ASC or DESC
-    :type order: str
-    :return: A list of dictionaries.
-    :rtype: flask.Response
-    """
-    results = db.session.query(tP.sector, func.avg(tP.market_change_percentage).label("Average"),
-                               func.count(tP.sector)).filter(tP.sector.isnot(None)) \
-        .group_by(tP.sector).order_by(text(f""""Average" {order.upper()}""")).all()
+    ticker_price_field = getattr(tP, attribute)
+    results = db.session.query(ticker_price_field, func.avg(tP.market_change_percentage).label("Average"),
+                               func.count(ticker_price_field)).filter(ticker_price_field.isnot(None)) \
+        .group_by(ticker_price_field).order_by(text(f""""Average" {order.upper()}""")).all()
     return jsonify([dict(e) for e in results])
 
 
