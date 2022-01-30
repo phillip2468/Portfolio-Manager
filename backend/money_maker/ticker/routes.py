@@ -4,9 +4,10 @@ This route should be thought as getting a collection of details from MANY stocks
 import flask
 from flask import Blueprint, jsonify
 from money_maker.extensions import cache, db
+from money_maker.helpers import asx_tickers_json, object_as_dict
 from money_maker.models.ticker_prices import TickerPrice as tP
 from money_maker.models.ticker_prices import ticker_price_schema
-from sqlalchemy import func, text
+from sqlalchemy import bindparam, func, insert, text
 
 ticker_bp = Blueprint("ticker_bp", __name__, url_prefix="/ticker")
 
@@ -48,3 +49,21 @@ def market_change_by_attribute(attribute: str, order: str) -> flask.Response:
                                func.count(ticker_price_field)).filter(ticker_price_field.isnot(None)) \
         .group_by(ticker_price_field).order_by(text(f""""Average" {order.upper()}""")).all()
     return jsonify([dict(_) for _ in results])
+
+
+@ticker_bp.route("/retrieve-asx-tickers-symbols", methods=["GET"])
+def get_au_stocks() -> flask.Response:
+    """
+    Retrieves a list of AU stocks and inserts them into the database.
+    :return:
+    :rtype:
+    """
+    #remove_old = db.session.query(tP).filter(tP.symbol.contains(".AX")).all()
+    #db.session.delete(remove_old)
+
+    result = asx_tickers_json()
+    print(len(result))
+
+    result = [object_as_dict(element) for element in (db.session.query(tP).all())]
+
+    return jsonify(result)
