@@ -1,3 +1,7 @@
+"""
+This route should be thought as getting specific details for ONE
+particular symbol
+"""
 import flask
 import yahooquery
 from flask import Blueprint, jsonify
@@ -5,7 +9,6 @@ from money_maker.extensions import db
 from money_maker.models.ticker_prices import TickerPrice as tP
 from money_maker.models.ticker_prices import \
     ticker_price_schema as ticker_schema
-from sqlalchemy import func, text
 
 quote_bp = Blueprint("quote_bp", __name__, url_prefix="/quote")
 
@@ -25,31 +28,6 @@ def get_stock_info_from_database(stock_symbol: str) -> flask.Response:
     """
     results: list[tP] = db.session.query(tP).filter(tP.symbol == stock_symbol).all()
     return ticker_schema.jsonify(results, many=True)
-
-
-@quote_bp.route("/market-change/<attribute>/<order>", methods=["GET"])
-def market_change_by_attribute(attribute: str, order: str) -> flask.Response:
-    """
-    Given a speicific field from the TickerPrice database object, find the average
-    perfomance of that specific field. Note that the attribute from TickerPrice should be
-    reasonable as strange results may occur with certain fields. Refer to models/ticker_prices
-    for a list of all avaliable attributes to name.
-    For example a sample query could be "/market-change/sector/ASC" which would find the
-    average performance for all stocks grouped by sector.
-    Note that the "order" keyword should either be ASC or DESC.
-
-    :param attribute: A field corresponding to the TickerPrice attributes.
-    :type attribute: str
-    :param order: ASC or DESC
-    :type order: str
-    :return: A list of json dictionaries.
-    :rtype: flask.Response
-    """
-    ticker_price_field = getattr(tP, attribute)
-    results = db.session.query(ticker_price_field, func.avg(tP.market_change_percentage).label("Average"),
-                               func.count(ticker_price_field)).filter(ticker_price_field.isnot(None)) \
-        .group_by(ticker_price_field).order_by(text(f""""Average" {order.upper()}""")).all()
-    return jsonify([dict(_) for _ in results])
 
 
 @quote_bp.route("/<stock_symbol>&period=<period>&interval=<interval>")

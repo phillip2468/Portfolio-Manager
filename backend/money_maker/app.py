@@ -9,6 +9,7 @@ from money_maker.home.routes import home_bp
 from money_maker.news.routes import news_stories_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.search.routes import search_bp
+from money_maker.ticker.routes import ticker_bp
 from money_maker.trending.routes import trending_bp
 
 
@@ -49,6 +50,7 @@ def register_blueprints(app: flask.Flask):
     app.register_blueprint(news_stories_bp)
     app.register_blueprint(search_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(ticker_bp)
 
 
 def init_celery(app: flask.app.Flask = None):
