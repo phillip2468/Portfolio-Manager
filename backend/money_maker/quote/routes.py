@@ -5,27 +5,57 @@ from money_maker.extensions import db
 from money_maker.models.ticker_prices import TickerPrice as tP
 from money_maker.models.ticker_prices import \
     ticker_price_schema as ticker_schema
-from sqlalchemy import func, select, text
+from sqlalchemy import func, text
 
 quote_bp = Blueprint("quote_bp", __name__, url_prefix="/quote")
 
 
-@quote_bp.route("/<category>/market-change/<order>")
-def market_change_by_industry(category, order):
-    # TODO
-    industry_sector = getattr(tP, category)
-    stmt: select = select(industry_sector, func.avg(tP.market_change_percentage).label("Average"),
-                          func.count(industry_sector)).where(industry_sector.is_not(None)) \
-        .group_by(industry_sector).order_by(text(f""""Average" {order}"""))
-    return jsonify([dict(element) for element in db.session.execute(stmt).all()])
+@quote_bp.route("/market-change/industry/<order>", methods=["GET"])
+def market_change_by_industry(order: str) -> flask.Response:
+    """
+    Provides the average performance for tickers within a specific industry,
+    given the order. Note that the order keyword should either be
+    ASC or DESC.
 
 
-@quote_bp.route("/<stock_symbol>")
+    :param order: ASC or DESC
+    :type order: str
+    :return: A list of dictionaries.
+    :rtype: flask.Response
+    """
+    results = db.session.query(tP.industry, func.avg(tP.market_change_percentage).label("Average"),
+                               func.count(tP.industry)).filter(tP.industry.isnot(None))\
+        .group_by(tP.industry).order_by(text(f""""Average" {order.upper()}""")).all()
+    return jsonify([dict(e) for e in results])
+
+
+@quote_bp.route("/market-change/sector/<order>", methods=["GET"])
+def market_change_by_industry(order: str) -> flask.Response:
+    """
+    Provides the average performance for tickers within a specific sector,
+    given the order. Note that the order keyword should either be
+    ASC or DESC.
+
+
+    :param order: ASC or DESC
+    :type order: str
+    :return: A list of dictionaries.
+    :rtype: flask.Response
+    """
+    results = db.session.query(tP.sector, func.avg(tP.market_change_percentage).label("Average"),
+                               func.count(tP.sector)).filter(tP.sector.isnot(None)) \
+        .group_by(tP.sector).order_by(text(f""""Average" {order.upper()}""")).all()
+    return jsonify([dict(e) for e in results])
+
+
+@quote_bp.route("/<stock_symbol>", methods=["GET"])
 def get_stock_info_from_database(stock_symbol: str) -> flask.Response:
     """
     Using the keyword from the url, return the matching information
     about a certain company from the database. Refer to the TickerPrice
     model to see which attributes are returned.
+
+
     :param stock_symbol: The ticker for the company
     :type stock_symbol: str
     :return: A flask response object (list of dictionaries)
