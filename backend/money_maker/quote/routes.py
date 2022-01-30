@@ -10,6 +10,23 @@ from sqlalchemy import func, text
 quote_bp = Blueprint("quote_bp", __name__, url_prefix="/quote")
 
 
+@quote_bp.route("/<stock_symbol>", methods=["GET"])
+def get_stock_info_from_database(stock_symbol: str) -> flask.Response:
+    """
+    Using the keyword from the url, return the matching information
+    about a certain company from the database. Refer to the TickerPrice
+    model to see which attributes are returned.
+
+
+    :param stock_symbol: The ticker for the company
+    :type stock_symbol: str
+    :return: A flask response object (list of dictionaries)
+    :rtype: flask.Response
+    """
+    results: list[tP] = db.session.query(tP).filter(tP.symbol == stock_symbol).all()
+    return ticker_schema.jsonify(results, many=True)
+
+
 @quote_bp.route("/market-change/industry/<order>", methods=["GET"])
 def market_change_by_industry(order: str) -> flask.Response:
     """
@@ -30,7 +47,7 @@ def market_change_by_industry(order: str) -> flask.Response:
 
 
 @quote_bp.route("/market-change/sector/<order>", methods=["GET"])
-def market_change_by_industry(order: str) -> flask.Response:
+def market_change_by_sector(order: str) -> flask.Response:
     """
     Provides the average performance for tickers within a specific sector,
     given the order. Note that the order keyword should either be
@@ -46,23 +63,6 @@ def market_change_by_industry(order: str) -> flask.Response:
                                func.count(tP.sector)).filter(tP.sector.isnot(None)) \
         .group_by(tP.sector).order_by(text(f""""Average" {order.upper()}""")).all()
     return jsonify([dict(e) for e in results])
-
-
-@quote_bp.route("/<stock_symbol>", methods=["GET"])
-def get_stock_info_from_database(stock_symbol: str) -> flask.Response:
-    """
-    Using the keyword from the url, return the matching information
-    about a certain company from the database. Refer to the TickerPrice
-    model to see which attributes are returned.
-
-
-    :param stock_symbol: The ticker for the company
-    :type stock_symbol: str
-    :return: A flask response object (list of dictionaries)
-    :rtype: flask.Response
-    """
-    results: list[tP] = db.session.query(tP).filter(tP.symbol == stock_symbol).all()
-    return ticker_schema.jsonify(results, many=True)
 
 
 @quote_bp.route("/<stock_name>&period=<period>&interval=<interval>")
