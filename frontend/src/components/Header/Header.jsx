@@ -20,7 +20,7 @@ const Header = () => {
             .catch(res => console.log(res))
     }
 
-    const handleLogin = () => {
+    const goToLoginPage = () => {
         navigate('/login')
     }
 
@@ -59,7 +59,7 @@ const Header = () => {
                     </div>
 
                     <div>
-                        { (loggedIn === false) ? (<Button color="inherit" onClick={handleLogin}>Login / Register</Button>) :
+                        { (loggedIn === false) ? (<Button color="inherit" onClick={goToLoginPage}>Login / Register</Button>) :
                             (<Button color="inherit" onClick={handleLogout}>Logout</Button>)
                         }
                     </div>
