@@ -9,39 +9,18 @@ import {FetchFunction} from "../FetchFunction";
 const Header = () => {
 
     const navigate = useNavigate();
-
-    const thisUser = () => {
-        FetchFunction('GET', 'auth/which_user', null, null)
-            .then(res => {
-                return res
-            })
-            .catch(() => {
-                console.log("HERE")
-                return []
-            })
-    }
-
-    const [user, setUser] = useState(thisUser)
-
-
-    const whichUser = () => {
-        FetchFunction('GET', 'auth/which_user', null, null)
-            .then(res => {
-                console.log(res)
-                setUser(res)
-            })
-            .catch(error => console.log(error))
-    }
-
-    let {logoutUser} = useContext(ClientContext);
+    const [user, setUser] = useState(true)
 
     const handleLogout = () => {
-        setUser([])
-        logoutUser();
+        setUser(false)
+    }
+
+    const handleLogin = () => {
+        setUser(true)
     }
 
     useEffect(()=> {
-        whichUser()
+
     }, [user])
 
     return (<>
@@ -65,7 +44,7 @@ const Header = () => {
                     </div>
 
                     <div>
-                        { user ? (<Button color="inherit" onClick={() => navigate('/login')}>Login / Register</Button>) :
+                        { (user === false) ? (<Button color="inherit" onClick={handleLogin}>Login / Register</Button>) :
                             (<Button color="inherit" onClick={handleLogout}>Logout</Button>)
                         }
                     </div>
