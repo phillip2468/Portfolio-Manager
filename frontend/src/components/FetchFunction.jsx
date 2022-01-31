@@ -2,6 +2,7 @@ export const FetchFunction = (method, path, token, body) => {
     const requestOptions = {
         method: method,
         headers: {'Content-Type' : 'application/json'},
+        credentials: 'include'
     }
     if (token !== null) {
         requestOptions.headers.Authorization = `Bearer ${token}`;

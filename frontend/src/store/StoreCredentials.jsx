@@ -18,12 +18,10 @@ export const ClientWrapper = ({children}) => {
         FetchFunction('POST', 'auth/login', null, body)
             .then(response => {
                 console.log(response)
-                alert(response)
                 navigate('/')
             })
             .catch(e => {
                 console.log(e)
-                alert(e)
             })
     }
 
