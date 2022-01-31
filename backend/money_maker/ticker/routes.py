@@ -6,10 +6,9 @@ import csv
 import flask
 import requests
 from flask import Blueprint, jsonify
-from marshmallow import ValidationError
+from pytickersymbols import PyTickerSymbols
 
 from money_maker.extensions import cache, db
-from money_maker.helpers import object_as_dict
 from money_maker.models.ticker_prices import TickerPrice as tP
 from money_maker.models.ticker_prices import ticker_price_schema
 from sqlalchemy import func, text
@@ -57,12 +56,11 @@ def market_change_by_attribute(attribute: str, order: str) -> flask.Response:
 
 
 @ticker_bp.route("/refresh-asx-symbols", methods=["GET"])
-def get_au_stocks() -> flask.Response:
+def refresh_au_symbols() -> flask.Response:
     """
     Retrieves a list of AU stocks and inserts them into the database. Note that this function will remove
     old data associated with the stocks.
-    :return: List of asx only tickers
-    :rtype: flask.Response
+    :return: flask.Response
     """
     db.session.query(tP).filter(tP.symbol.contains(".AX")).delete(synchronize_session="fetch")
 
@@ -82,3 +80,28 @@ def get_au_stocks() -> flask.Response:
     result = db.session.query(tP).filter(tP.symbol.contains(".AX")).all()
 
     return ticker_price_schema.jsonify(result, many=True)
+
+
+@ticker_bp.route("/refresh-us-symbols", methods=["GET"])
+def get_american_yh_stocks():
+    """
+    Retrieves a list of non - AU stocks and inserts them into the database. Note that this function will remove
+    old data associated with the stocks.
+    :return: flask.Response
+    """
+    stock_data = PyTickerSymbols()
+
+    sp500_yahoo = stock_data.get_sp_500_nyc_yahoo_tickers()
+    nasdaq_yahoo = stock_data.get_nasdaq_100_nyc_yahoo_tickers()
+    dow_jones = stock_data.get_dow_jones_nyc_yahoo_tickers()
+
+    db.session.query(tP).filter(~tP.symbol.contains(".AX")).delete(synchronize_session="fetch")
+
+    result = sp500_yahoo + nasdaq_yahoo + dow_jones
+    us_tickers = ticker_price_schema.load([{"symbol": element} for element in (set(result))], many=True, partial=True)
+    db.session.add_all(us_tickers)
+    db.session.commit()
+
+    result = db.session.query(tP).filter(~tP.symbol.contains(".AX")).all()
+    return ticker_price_schema.jsonify(result, many=True)
+
