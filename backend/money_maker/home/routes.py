@@ -36,6 +36,12 @@ def trending_tickers() -> flask.Response:
 
 @home_bp.route("/actively-traded")
 def most_actively_traded_stocks():
+    """
+    Provides a general overview for popular stocks that are traded using a simple
+    formula of volumne * current price / market cap. Only provides the first
+    5 results.
+    :return: flask.Response
+    """
     result = db.session.query(tP.symbol, ((tP.market_volume * tP.market_current_price) / tP.market_cap).label("volume"),
                               tP.market_change_percentage, tP.market_change_percentage, tP.market_current_price,
                               tP.stock_name) \
