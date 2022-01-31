@@ -45,7 +45,7 @@ const Homepage = () => {
                                     {key}
                                 </div>
                                 <div>
-                                    {parseFloat(historicalData[key]['market_change_perc'] * 100).toFixed(2)}%
+                                    {(parseFloat(historicalData[key]['market_change_perc']) * 100).toFixed(2)}%
                                 </div>
                                 <div>
                                     {historicalData[key]['currency_symbol']}{historicalData[key]['price_now']}
