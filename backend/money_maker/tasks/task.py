@@ -4,7 +4,6 @@ import yahooquery
 from celery import shared_task
 from money_maker.extensions import db
 from money_maker.models.ticker_prices import TickerPrice as tP
-from pytickersymbols import PyTickerSymbols
 from sqlalchemy import asc, bindparam, insert, select
 from sqlalchemy.dialects.postgresql import insert
 from yahooquery import Ticker
