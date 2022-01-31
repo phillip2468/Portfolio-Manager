@@ -48,13 +48,13 @@ const SearchBar = ({placeholder}) => {
                                 </StocksNameTicker>
 
                                 <StocksPrice>
-                                    ${parseFloat(item.price).toFixed(2)}
+                                    ${parseFloat(item.market_current_price).toFixed(2)}
                                 </StocksPrice>
 
-                                <StocksPercentage percentageChange={item.change}>
-                                    {item.change > 0 ? <TriangleSymbol>&#x25B2;</TriangleSymbol> :
+                                <StocksPercentage percentageChange={item.market_change_percentage}>
+                                    {item.market_change_percentage > 0 ? <TriangleSymbol>&#x25B2;</TriangleSymbol> :
                                         <TriangleSymbol>&#x25BC;</TriangleSymbol>}
-                                    {(parseFloat(item.change) * 100).toFixed(2)}
+                                    {(parseFloat(item.market_change_percentage) * 100).toFixed(2)}
                                 </StocksPercentage>
                             </SearchResultsGrid>
                         })}
