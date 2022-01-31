@@ -19,6 +19,7 @@ export const ClientWrapper = ({children}) => {
             .then(response => {
                 console.log(response)
                 alert(response)
+                navigate('/')
             })
             .catch(e => {
                 console.log(e)
@@ -28,12 +29,10 @@ export const ClientWrapper = ({children}) => {
 
     const logoutUser = () => {
         FetchFunction('POST', 'auth/logout', null, null)
-            .then(res => res.json())
             .then(res => {
                 alert(res)
                 navigate('/login')
             })
-            .catch(error => alert(error))
     }
 
     let contextData = {

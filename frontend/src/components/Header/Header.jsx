@@ -14,7 +14,6 @@ const Header = () => {
 
     const whichUser = () => {
         FetchFunction('GET', 'auth/which_user', null, null)
-            .then(res => res.json())
             .then(res => {
                 alert(res)
                 setUser(res)
@@ -25,12 +24,19 @@ const Header = () => {
     let {logoutUser} = useContext(ClientContext);
 
     const handleLogout = () => {
+        setUser([])
         logoutUser();
     }
 
+    console.log(user)
     useEffect(()=> {
         whichUser();
     }, [])
+
+    if (!user) {
+        navigate('/login')
+    }
+
 
     return (<>
         <Box>
@@ -53,8 +59,8 @@ const Header = () => {
                     </div>
 
                     <div>
-                        {user ?
-                            <Button color="inherit" onClick={() => {handleLogout()}}>Logout</Button> :
+                        {user !== [] ?
+                            <Button color="inherit" onClick={handleLogout}>Logout</Button> :
                             <Button color="inherit" onClick={() => navigate('/login')}>Login / Register</Button>
                         }
                     </div>
