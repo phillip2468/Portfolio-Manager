@@ -2,7 +2,10 @@
 
 from alembic_utils.pg_function import PGFunction
 from alembic_utils.pg_trigger import PGTrigger
-from money_maker.extensions import db
+from flask_marshmallow import Schema
+from marshmallow import post_load
+
+from money_maker.extensions import db, marshmallow
 from sqlalchemy import Column
 from sqlalchemy.sql import func
 from sqlalchemy.types import (TIMESTAMP, BigInteger, Float, Integer, Numeric,
@@ -14,7 +17,7 @@ force_auto_coercion()
 
 class TickerPrice(db.Model):
     __tablename__ = 'ticker_prices'
-    
+
     stock_id = Column(Integer, primary_key=True, autoincrement=True)
     symbol = Column(String(10), unique=True)
     city = Column(String(20))
@@ -38,6 +41,17 @@ class TickerPrice(db.Model):
     market_volume = Column(BigInteger)
     last_updated = Column(TIMESTAMP, server_default=func.now(), server_onupdate=func.utc_timestamp())  # type: ignore
 
+
+class TickerPriceSchema(marshmallow.SQLAlchemyAutoSchema):
+    class Meta:
+        model = TickerPrice
+
+    @post_load
+    def make_user(self, data, **kwargs):
+        return TickerPrice(**data)
+
+
+ticker_price_schema: Schema = TickerPriceSchema()
 
 on_update_function = (PGFunction.from_sql(
     """

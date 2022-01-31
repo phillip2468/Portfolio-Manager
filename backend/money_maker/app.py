@@ -1,13 +1,16 @@
 import flask.app
 from flask import Flask
 from money_maker.auth.routes import auth_bp
-from money_maker.extensions import cache, celery, cors, db, talisman, jwt_manager, bcrypt
+from money_maker.extensions import (bcrypt, cache, celery, cors, db,
+                                    jwt_manager, marshmallow, talisman)
 from money_maker.home.routes import home_bp
+# from money_maker.models.ticker_prices import TickerPrice
+# from money_maker.models.user import User
 from money_maker.news.routes import news_stories_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.search.routes import search_bp
+from money_maker.ticker.routes import ticker_bp
 from money_maker.trending.routes import trending_bp
-#from money_maker.models.user import User
 
 
 def create_app(testing=False) -> Flask:
@@ -34,10 +37,10 @@ def create_app(testing=False) -> Flask:
 def configure_extensions(app):
     db.init_app(app)
     cache.init_app(app)
-    talisman.init_app(app)
     cors.init_app(app)
     jwt_manager.init_app(app)
     bcrypt.init_app(app)
+    marshmallow.init_app(app)
 
 
 def register_blueprints(app: flask.Flask):
@@ -47,6 +50,7 @@ def register_blueprints(app: flask.Flask):
     app.register_blueprint(news_stories_bp)
     app.register_blueprint(search_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(ticker_bp)
 
 
 def init_celery(app: flask.app.Flask = None):
