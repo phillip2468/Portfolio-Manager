@@ -19,6 +19,7 @@ export const ClientWrapper = ({children}) => {
             .then(response => {
                 console.log(response)
                 navigate('/')
+                window.location.reload()
             })
             .catch(e => {
                 console.log(e)
