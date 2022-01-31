@@ -10,15 +10,27 @@ const Header = () => {
 
     const navigate = useNavigate();
 
-    const [user, setUser] = useState([])
+    const thisUser = () => {
+        FetchFunction('GET', 'auth/which_user', null, null)
+            .then(res => {
+                return res
+            })
+            .catch(() => {
+                console.log("HERE")
+                return []
+            })
+    }
+
+    const [user, setUser] = useState(thisUser)
+
 
     const whichUser = () => {
         FetchFunction('GET', 'auth/which_user', null, null)
             .then(res => {
-                alert(res)
+                console.log(res)
                 setUser(res)
             })
-            .catch(error => alert(error))
+            .catch(error => console.log(error))
     }
 
     let {logoutUser} = useContext(ClientContext);
@@ -28,15 +40,9 @@ const Header = () => {
         logoutUser();
     }
 
-    console.log(user)
     useEffect(()=> {
-        whichUser();
-    }, [])
-
-    if (!user) {
-        navigate('/login')
-    }
-
+        whichUser()
+    }, [user])
 
     return (<>
         <Box>
@@ -59,9 +65,8 @@ const Header = () => {
                     </div>
 
                     <div>
-                        {user !== [] ?
-                            <Button color="inherit" onClick={handleLogout}>Logout</Button> :
-                            <Button color="inherit" onClick={() => navigate('/login')}>Login / Register</Button>
+                        { user ? (<Button color="inherit" onClick={() => navigate('/login')}>Login / Register</Button>) :
+                            (<Button color="inherit" onClick={handleLogout}>Logout</Button>)
                         }
                     </div>
                 </Toolbar>
