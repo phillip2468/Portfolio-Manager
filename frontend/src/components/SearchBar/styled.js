@@ -57,13 +57,13 @@ export const DataResult = styled.div`
 
 export const SearchResultsGrid = styled.div`
   display: inline-grid;
-  grid-template-columns: 70% 15% 10%;
+  grid-template-columns: 60% 20% 20%;
   grid-template-rows: 100%;
   grid-auto-flow: row;
-  justify-items: stretch;
-  grid-template-areas: ". . .";
-  border: 2px solid #072f34;
   font-family: Arial, Helvetica, sans-serif;
+  justify-content: center;
+  border: 2px solid #072f34;
+  justify-items: stretch;
   padding-left: 5%;
 `
 
@@ -89,6 +89,5 @@ export const StocksPercentage = styled.div`
   align-items: center;
   background-color: ${props => (props.percentageChange > 0 ? "green" : "red")};
   border-radius: 5px;
-  margin-top: 40%;
-  margin-bottom: 40%;
+  justify-content: center;
 `
