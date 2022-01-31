@@ -1,5 +1,5 @@
 import flask
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from money_maker.extensions import db
 from money_maker.models.ticker_prices import TickerPrice as tP
 from money_maker.models.ticker_prices import ticker_price_schema
@@ -21,9 +21,9 @@ def search_company(keyword: str) -> flask.Response:
     :rtype: flask.Response
     """
     keyword: str = "%{}%".format(keyword).upper()
-    results: list[tP] = db.session.query(tP.stock_id.label("key"), tP.stock_name, tP.symbol,
-                                         tP.market_current_price.label("price"),
-                                         tP.market_change_percentage.label("change")) \
+    results: list[tP] = db.session.query(tP.stock_id, tP.stock_name, tP.symbol,
+                                         tP.market_current_price,
+                                         tP.market_change_percentage) \
         .filter((tP.stock_name.ilike(keyword)) | (tP.symbol.ilike(keyword))) \
         .order_by(tP.market_volume.desc().nullslast()).limit(4).all()
     return ticker_price_schema.jsonify(results, many=True)
