@@ -3,12 +3,13 @@ from urllib.parse import urlparse
 
 from celery import Celery
 from dotenv import load_dotenv
+from flask_bcrypt import Bcrypt
 from flask_caching import Cache
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
+from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
-from flask_jwt_extended import JWTManager
-from flask_bcrypt import Bcrypt
 
 load_dotenv()
 
@@ -28,3 +29,5 @@ talisman = Talisman()
 cors = CORS()
 jwt_manager = JWTManager()
 bcrypt = Bcrypt()
+marshmallow = Marshmallow()
+

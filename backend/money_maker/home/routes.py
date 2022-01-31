@@ -1,52 +1,12 @@
-from typing import Any
-
 import flask
 import yahooquery.ticker
-from flask import Blueprint
-from flask import jsonify
-from money_maker.extensions import cache, db
-from money_maker.helpers import market_index_ticker, object_as_dict
+from flask import Blueprint, jsonify
+from money_maker.extensions import db
 from money_maker.models.ticker_prices import TickerPrice as tP
-from sqlalchemy import bindparam, desc
-from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.sql import ColumnElement
+from sqlalchemy import desc
 from yahooquery import Ticker
 
 home_bp = Blueprint('home_bp', __name__)
-
-
-@home_bp.route("/retrieve-asx-tickers")
-def asx_tickers() -> flask.Response:
-    """
-    Inserts asx tickers in the database.
-    Returns a list of all tickers.
-    """
-
-    insert_dictionary: dict[str, ColumnElement[Any]] = {
-        'market_state': bindparam('status'),
-        'symbol': bindparam('code') + ".AX",
-        'stock_name': bindparam('title')
-    }
-
-    stmt = insert(tP).values(insert_dictionary).on_conflict_do_update(
-        index_elements=['symbol'],
-        set_=insert_dictionary
-    )
-
-    db.session.execute(stmt, market_index_ticker())
-    db.session.commit()
-    result = [object_as_dict(element) for element in (db.session.query(tP).all())]
-
-    return jsonify(result)
-
-
-@home_bp.route("/all-asx-prices")
-@cache.cached(timeout=15 * 60)
-def get_all_asx_prices() -> flask.Response:
-    # https://stackoverflow.com/questions/56726689/sqlalchemy-insert-executemany-func
-    # https://newbedev.com/sqlalchemy-performing-a-bulk-upsert-if-exists-update-else-insert-in-postgresql
-    result = [object_as_dict(element) for element in db.session.query(tP).all()]
-    return jsonify(result)
 
 
 @home_bp.route('/trending-tickers')
@@ -76,6 +36,12 @@ def trending_tickers() -> flask.Response:
 
 @home_bp.route("/actively-traded")
 def most_actively_traded_stocks():
+    """
+    Provides a general overview for popular stocks that are traded using a simple
+    formula of volumne * current price / market cap. Only provides the first
+    5 results.
+    :return: flask.Response
+    """
     result = db.session.query(tP.symbol, ((tP.market_volume * tP.market_current_price) / tP.market_cap).label("volume"),
                               tP.market_change_percentage, tP.market_change_percentage, tP.market_current_price,
                               tP.stock_name) \
