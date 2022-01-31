@@ -2,6 +2,7 @@ import {Grid, TextField, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import {useContext, useState} from "react";
 import {ClientContext} from "../store/StoreCredentials";
+import {FetchFunction} from "../components/FetchFunction";
 
 
 const LoginPage = () => {
@@ -13,6 +14,13 @@ const LoginPage = () => {
 
     const handleLogIn = () => {
         loginUser(email, password);
+    }
+
+    const handleProtected = () => {
+        FetchFunction('GET', '/auth/protected', null, null)
+            .then(res => res.json())
+            .then(res => console.log(res))
+            .catch(res => console.log(res))
     }
 
     return (
@@ -56,6 +64,9 @@ const LoginPage = () => {
                     <Grid item>
                         <Button variant={"contained"} onClick={handleLogIn}>
                             Sign in
+                        </Button>
+                        <Button variant={"contained"} onClick={handleProtected}>
+                            Protected
                         </Button>
                     </Grid>
                 </Grid>

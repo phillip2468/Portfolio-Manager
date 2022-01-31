@@ -2,13 +2,35 @@ import {AppBar, Box, IconButton, Toolbar} from "@mui/material";
 import Button from "@mui/material/Button";
 import MenuIcon from '@mui/icons-material/Menu';
 import {useNavigate} from "react-router-dom";
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import {ClientContext} from "../../store/StoreCredentials";
+import {FetchFunction} from "../FetchFunction";
 
 const Header = () => {
 
     const navigate = useNavigate();
-    let {token, logoutUser} = useContext(ClientContext);
+
+    const [user, setUser] = useState([])
+
+    const whichUser = () => {
+        FetchFunction('GET', 'auth/which_user', null, null)
+            .then(res => res.json())
+            .then(res => {
+                alert(res)
+                setUser(res)
+            })
+            .catch(error => alert(error))
+    }
+
+    let {logoutUser} = useContext(ClientContext);
+
+    const handleLogout = () => {
+        logoutUser();
+    }
+
+    useEffect(()=> {
+        whichUser();
+    }, [])
 
     return (<>
         <Box>
@@ -31,8 +53,8 @@ const Header = () => {
                     </div>
 
                     <div>
-                        {token ?
-                            <Button color="inherit" onClick={() => {logoutUser()}}>Logout</Button> :
+                        {user ?
+                            <Button color="inherit" onClick={() => {handleLogout()}}>Logout</Button> :
                             <Button color="inherit" onClick={() => navigate('/login')}>Login / Register</Button>
                         }
                     </div>
