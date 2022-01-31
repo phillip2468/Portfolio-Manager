@@ -34,7 +34,7 @@ const SearchBar = ({placeholder}) => {
         <OuterContainer>
             <SearchInputBox placeholder={placeholder} value={typedInput} onChange={handleSearch}
                             onBlur={() => setShowResults(false)} onFocus={() => {setShowResults(true)}}/>
-            <div style={{position: "relative", display: showResults === false ? "none" : "block"}}>
+            <div style={{position: "relative", display: "block"}}>
                 {typedInput.length !== 0 && (
                     <DataResult>
                         {otherData.map((item, key) => {
@@ -42,20 +42,20 @@ const SearchBar = ({placeholder}) => {
                                 key={key}
                                 onMouseDown={() => navigate(`/${item.symbol}`)}
                             >
-                                <StocksNameTicker>
-                                    <div>{item.stock_name}</div>
-                                    <div>{item.symbol}</div>
-                                </StocksNameTicker>
+                                    <StocksNameTicker>
+                                        <div>{item.stock_name}</div>
+                                        <div>{item.symbol}</div>
+                                    </StocksNameTicker>
 
-                                <StocksPrice>
-                                    ${parseFloat(item.price).toFixed(2)}
-                                </StocksPrice>
+                                    <StocksPrice>
+                                        ${parseFloat(item.market_current_price).toFixed(2)}
+                                    </StocksPrice>
 
-                                <StocksPercentage percentageChange={item.change}>
-                                    {item.change > 0 ? <TriangleSymbol>&#x25B2;</TriangleSymbol> :
-                                        <TriangleSymbol>&#x25BC;</TriangleSymbol>}
-                                    {(parseFloat(item.change) * 100).toFixed(2)}
-                                </StocksPercentage>
+                                    <StocksPercentage percentageChange={item.market_change_percentage}>
+                                        {item.market_change_percentage > 0 ? <TriangleSymbol>&#x25B2;</TriangleSymbol> :
+                                            <TriangleSymbol>&#x25BC;</TriangleSymbol>}
+                                        {(parseFloat(item.market_change_percentage) * 100).toFixed(2)}
+                                    </StocksPercentage>
                             </SearchResultsGrid>
                         })}
                     </DataResult>
