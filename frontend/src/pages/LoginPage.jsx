@@ -16,12 +16,6 @@ const LoginPage = () => {
         loginUser(email, password);
     }
 
-    const handleProtected = () => {
-        FetchFunction('GET', '/auth/protected', null)
-            .then(res => console.log(res))
-            .catch(res => console.log(res))
-    }
-
     return (
         <>
             <Grid item>
@@ -63,9 +57,6 @@ const LoginPage = () => {
                     <Grid item>
                         <Button variant={"contained"} onClick={handleLogIn}>
                             Sign in
-                        </Button>
-                        <Button variant={"contained"} onClick={handleProtected}>
-                            Protected
                         </Button>
                     </Grid>
                 </Grid>
