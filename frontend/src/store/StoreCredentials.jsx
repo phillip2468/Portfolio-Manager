@@ -15,7 +15,7 @@ export const ClientWrapper = ({children}) => {
             email: email,
             password: password,
         }
-        FetchFunction('POST', 'auth/login', null, body)
+        FetchFunction('POST', 'auth/login', body)
             .then(() => {
                 setLoggedIn(true)
                 navigate('/')
@@ -27,7 +27,7 @@ export const ClientWrapper = ({children}) => {
 
 
     const logoutUser = () => {
-        FetchFunction('POST', 'auth/logout', null, null)
+        FetchFunction('POST', 'auth/logout', null)
             .then(res => {
                 console.log(res)
                 setLoggedIn(false)
@@ -37,7 +37,7 @@ export const ClientWrapper = ({children}) => {
     }
 
     const findUser = () => {
-        FetchFunction('GET', 'auth/which_user', null, null)
+        FetchFunction('GET', 'auth/which_user', null)
             .then(() => {
                 setLoggedIn(true)
             })

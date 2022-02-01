@@ -17,7 +17,7 @@ const LoginPage = () => {
     }
 
     const handleProtected = () => {
-        FetchFunction('GET', '/auth/protected', null, null)
+        FetchFunction('GET', '/auth/protected', null)
             .then(res => console.log(res))
             .catch(res => console.log(res))
     }
