@@ -6,6 +6,7 @@ import PasswordField from "../components/Password";
 const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
 
     const handleEmail = (event) => {
         const typedEmail = event.target.value;
@@ -15,6 +16,11 @@ const RegisterPage = () => {
     const handlePassword = (event) => {
         const typedPassword = event.target.value;
         setPassword(typedPassword);
+    }
+
+    const handleConfirmPassword = (event) => {
+        const typedPassword = event.target.value;
+        setConfirmPassword(typedPassword);
     }
 
 
@@ -44,6 +50,14 @@ const RegisterPage = () => {
                             placeholder={'Type in a password'}
                             password={password}
                             setPassword={handlePassword}
+                        />
+                    </Grid>
+
+                    <Grid item>
+                        <PasswordField
+                            placeholder={'Type in a password'}
+                            password={confirmPassword}
+                            setPassword={handleConfirmPassword}
                         />
                     </Grid>
                 </Grid>

@@ -13,9 +13,9 @@ const validatePassword = (password) => {
         'digit': /[0-9]/,
         'full': /^[A-Za-z0-9]{7,13}$/
     };
-    return re.capital .test(password) &&
-        re.digit   .test(password) &&
-        re.full    .test(password);
+    return re.capital.test(password) &&
+        re.digit.test(password) &&
+        re.full.test(password);
 }
 
 const PasswordField = ({placeholder, password, setPassword}) => {
@@ -33,8 +33,6 @@ const PasswordField = ({placeholder, password, setPassword}) => {
             setHelperText(defaultText)
         }
     }
-    const handleClickShowPassword = () => setShowPassword(!showPassword);
-    const handleMouseDownPassword = () => setShowPassword(!showPassword);
 
     return (
         <>
@@ -54,10 +52,10 @@ const PasswordField = ({placeholder, password, setPassword}) => {
                         <InputAdornment position="end">
                             <IconButton
                                 aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
-                                onMouseDown={handleMouseDownPassword}
+                                onClick={() => setShowPassword(!showPassword)}
+                                onMouseDown={() => setShowPassword(!showPassword)}
                             >
-                                {showPassword ? <Visibility /> : <VisibilityOff />}
+                                {showPassword ? <Visibility/> : <VisibilityOff/>}
                             </IconButton>
                         </InputAdornment>
                     )
