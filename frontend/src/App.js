@@ -7,6 +7,7 @@ import {useMemo} from "react";
 import Header from "./components/Header/Header";
 import LoginPage from "./pages/LoginPage";
 import {ClientWrapper} from "./store/StoreCredentials";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
 
@@ -37,6 +38,7 @@ function App() {
                                                 <Route exact path={'/'} element={<Homepage/>}/>
                                                 <Route path={'/:stockName'} element={<StockPage/>}/>
                                                 <Route path={'/login'} element={<LoginPage/>}/>
+                                                <Route path={'/register'} element={<RegisterPage/>}/>
                                             </Routes>
                                         </Grid>
                                     </Container>
