@@ -1,5 +1,9 @@
+"""
+Provides a simple way for users to search stocks in the database.
+Customise the options in the route to reflect this.
+"""
 import flask
-from flask import Blueprint, jsonify
+from flask import Blueprint
 from money_maker.extensions import db
 from money_maker.models.ticker_prices import TickerPrice as tP
 from money_maker.models.ticker_prices import ticker_price_schema

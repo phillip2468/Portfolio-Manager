@@ -1,10 +1,8 @@
-export const FetchFunction = (method, path, token, body) => {
+export const FetchFunction = (method, path, body) => {
     const requestOptions = {
         method: method,
         headers: {'Content-Type' : 'application/json'},
-    }
-    if (token !== null) {
-        requestOptions.headers.Authorization = `Bearer ${token}`;
+        credentials: 'include'
     }
     if (body !== null) {
         requestOptions.body = JSON.stringify(body)

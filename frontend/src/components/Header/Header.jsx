@@ -8,7 +8,13 @@ import {ClientContext} from "../../store/StoreCredentials";
 const Header = () => {
 
     const navigate = useNavigate();
-    let {token, logoutUser} = useContext(ClientContext);
+
+    let {logoutUser, loggedIn} = useContext(ClientContext);
+
+    const goToLoginPage = () => {
+        navigate('/login')
+    }
+
 
     return (<>
         <Box>
@@ -31,9 +37,10 @@ const Header = () => {
                     </div>
 
                     <div>
-                        {token ?
-                            <Button color="inherit" onClick={() => {logoutUser()}}>Logout</Button> :
-                            <Button color="inherit" onClick={() => navigate('/login')}>Login / Register</Button>
+                        {
+                            (loggedIn === false)
+                            ? (<Button color="inherit" onClick={goToLoginPage}>Login / Register</Button>)
+                            : (<Button color="inherit" onClick={logoutUser}>Logout</Button>)
                         }
                     </div>
                 </Toolbar>
