@@ -2,41 +2,19 @@ import {AppBar, Box, IconButton, Toolbar} from "@mui/material";
 import Button from "@mui/material/Button";
 import MenuIcon from '@mui/icons-material/Menu';
 import {useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
-import {FetchFunction} from "../FetchFunction";
+import {useContext} from "react";
+import {ClientContext} from "../../store/StoreCredentials";
 
 const Header = () => {
 
     const navigate = useNavigate();
-    const [loggedIn, setLoggedIn] = useState(false)
 
-    const handleLogout = () => {
-        FetchFunction('POST', 'auth/logout', null, null)
-            .then(res => {
-                console.log(res)
-                setLoggedIn(false)
-                navigate('/login')
-            })
-            .catch(res => console.log(res))
-    }
+    let {logoutUser, loggedIn} = useContext(ClientContext);
 
     const goToLoginPage = () => {
         navigate('/login')
     }
 
-    const findUser = () => {
-        FetchFunction('GET', 'auth/which_user', null, null)
-            .then(() => {
-                setLoggedIn(true)
-            })
-            .catch(()=> {
-                setLoggedIn(false)
-            })
-    }
-
-    useEffect(()=> {
-        findUser()
-    }, [loggedIn])
 
     return (<>
         <Box>
@@ -59,8 +37,10 @@ const Header = () => {
                     </div>
 
                     <div>
-                        { (loggedIn === false) ? (<Button color="inherit" onClick={goToLoginPage}>Login / Register</Button>) :
-                            (<Button color="inherit" onClick={handleLogout}>Logout</Button>)
+                        {
+                            (loggedIn === false)
+                            ? (<Button color="inherit" onClick={goToLoginPage}>Login / Register</Button>)
+                            : (<Button color="inherit" onClick={logoutUser}>Logout</Button>)
                         }
                     </div>
                 </Toolbar>

@@ -8,7 +8,7 @@ export const ClientContext = createContext(null);
 
 export const ClientWrapper = ({children}) => {
     const navigate = useNavigate();
-
+    const [loggedIn, setLoggedIn] = useState(false)
 
     const loginUser = (email, password) => {
         const body = {
@@ -16,31 +16,45 @@ export const ClientWrapper = ({children}) => {
             password: password,
         }
         FetchFunction('POST', 'auth/login', null, body)
-            .then(response => {
-                console.log(response)
+            .then(() => {
+                setLoggedIn(true)
                 navigate('/')
-                window.location.reload()
             })
             .catch(e => {
                 console.log(e)
             })
     }
 
+
     const logoutUser = () => {
         FetchFunction('POST', 'auth/logout', null, null)
             .then(res => {
-                alert(res)
+                console.log(res)
+                setLoggedIn(false)
                 navigate('/login')
+            })
+            .catch(res => console.log(res))
+    }
+
+    const findUser = () => {
+        FetchFunction('GET', 'auth/which_user', null, null)
+            .then(() => {
+                setLoggedIn(true)
+            })
+            .catch(()=> {
+                setLoggedIn(false)
             })
     }
 
+
     let contextData = {
-       loginUser, logoutUser
+       loginUser, logoutUser, findUser, loggedIn, setLoggedIn
     }
 
     useEffect( () => {
         // eslint-disable-next-line
-    }, [])
+        findUser()
+    }, [loggedIn])
 
     return (
         <ClientContext.Provider value={contextData}>
