@@ -1,8 +1,7 @@
-import {Grid, TextField, Typography} from "@mui/material";
+import {Divider, Grid, Link, TextField, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import {useContext, useState} from "react";
 import {ClientContext} from "../store/StoreCredentials";
-import {FetchFunction} from "../components/FetchFunction";
 
 
 const LoginPage = () => {
@@ -21,7 +20,7 @@ const LoginPage = () => {
             <Grid item>
                 <Grid
                     container
-                    spacing={1}
+                    spacing={2}
                     direction={"column"}
                     alignItems={"center"}
                     justifyContent={"center"}
@@ -59,6 +58,19 @@ const LoginPage = () => {
                             Sign in
                         </Button>
                     </Grid>
+
+                    <Grid item>
+                        <Link href={"#"}>Forgot your password?</Link>
+                    </Grid>
+
+                    <Divider light={true} flexItem style={{marginTop: "10px"}}/>
+
+                    <Grid item>
+                        <Button variant={"contained"} onClick={handleLogIn} style={{backgroundColor: "green"}}>
+                            Create a new account
+                        </Button>
+                    </Grid>
+
                 </Grid>
             </Grid>
         </>
