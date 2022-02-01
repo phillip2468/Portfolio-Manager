@@ -2,9 +2,11 @@ import {Divider, Grid, Link, TextField, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import {useContext, useState} from "react";
 import {ClientContext} from "../store/StoreCredentials";
+import {useNavigate} from "react-router-dom";
 
 
 const LoginPage = () => {
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -66,7 +68,7 @@ const LoginPage = () => {
                     <Divider light={true} flexItem style={{marginTop: "10px"}}/>
 
                     <Grid item>
-                        <Button variant={"contained"} onClick={handleLogIn} style={{backgroundColor: "green"}}>
+                        <Button variant={"contained"} onClick={()=>navigate('/register')} style={{backgroundColor: "green"}}>
                             Create a new account
                         </Button>
                     </Grid>
