@@ -1,13 +1,20 @@
 import {Grid, Typography} from "@mui/material";
 import EmailAddress from "../components/EmailAddress";
 import {useState} from "react";
+import PasswordField from "../components/Password";
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('')
 
-    const handleSearch = (event) => {
+    const handleEmail = (event) => {
         const typedEmail = event.target.value;
         setEmail(typedEmail);
+    }
+    
+    const handlePassword = (event) => {
+        const typedPassword = event.target.value;
+        setPassword(typedPassword);
     }
 
 
@@ -21,14 +28,22 @@ const RegisterPage = () => {
                       justifyContent={"center"}
                 >
                     <Grid item>
-                        <Typography variant={"h4"}>Register account</Typography>
+                        <Typography variant={"h4"}>Register</Typography>
                     </Grid>
 
                     <Grid item>
                         <EmailAddress
                             placeholder={'Type in an email address'}
                             email={email}
-                            setValue={handleSearch}
+                            setValue={handleEmail}
+                        />
+                    </Grid>
+
+                    <Grid item>
+                        <PasswordField
+                            placeholder={'Type in a password'}
+                            password={password}
+                            setPassword={handlePassword}
                         />
                     </Grid>
                 </Grid>
