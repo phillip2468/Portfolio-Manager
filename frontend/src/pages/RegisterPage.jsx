@@ -17,14 +17,14 @@ const RegisterPage = () => {
     })
 
     const [errorInInputs, setErrorInInputs] = useState({
-        email: true,
-        password: true,
-        confirmPassword: true,
+        email: false,
+        password: false,
+        confirmPassword: false,
     })
 
     const [error, setError] = useState({
         invalidInputs: true,
-        nonMatchingPasswords: true,
+        emptyInputs: true,
     });
 
     const handleInputChanges = (prop) => (event) => {
@@ -42,18 +42,24 @@ const RegisterPage = () => {
     }
 
     useEffect(()=> {
-        if (Object.values(errorInInputs).every((value) => value === false)) {
-            setError({...error, invalidInputs: true})
+
+        if (Object.values(inputs).some((value => value.length === 0))) {
+            setError({...error, emptyInputs: true})
         } else {
-            setError({...error, invalidInputs: false})
-        }
-        if (inputs.password !== inputs.confirmPassword) {
-            setError({...error, nonMatchingPasswords: true})
-        } else {
-            setError({...error, nonMatchingPasswords: false})
+            setError({...error, emptyInputs: false})
         }
     }, [errorInInputs])
 
+
+    const enableRegisterButton = () => {
+        if (error.emptyInputs === true) {
+            return true
+        } else if (error.invalidInputs === true) {
+            return true
+        } else {
+            return false
+        }
+    }
 
     return (
         <>
@@ -101,7 +107,7 @@ const RegisterPage = () => {
                         />
                     </Grid>
 
-                    {(error.nonMatchingPasswords === true) && (
+                    {inputs.password !== inputs.confirmPassword && (
                         <Grid item>
                             <Typography variant={'subtitle1'}>Passwords do not match</Typography>
                         </Grid>
@@ -112,7 +118,7 @@ const RegisterPage = () => {
                         <Button
                             variant={"contained"}
                             onClick={registerAccount}
-                            disabled={!(Object.values(errorInInputs).every((value) => value === false))}
+                            disabled={enableRegisterButton()}
                         >
                             Register a new account
                         </Button>

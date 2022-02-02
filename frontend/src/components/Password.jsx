@@ -2,35 +2,27 @@ import {IconButton, InputAdornment, TextField} from "@mui/material";
 import {useState} from "react";
 import {Visibility, VisibilityOff} from "@material-ui/icons";
 
-const errorText = 'Passwords must contain a capital letter, a digit and be between 8 to 14 characters.'
-const defaultText = 'You can enter numbers, letters and special characters'
+const errorText = 'Passwords must contain a lowercase and uppercase letter, a digit and be greater than 8 characters.'
+const defaultText = 'You can enter numbers and letters (no special characters)'
 
 
-// https://stackoverflow.com/questions/43993008/regex-for-validate-password-in-reactjs
+//https://stackoverflow.com/questions/19605150/regex-for-password-must-contain-at-least-eight-characters-at-least-one-number-a
 const validatePassword = (password) => {
-    const re = {
-        'capital': /[A-Z]/,
-        'digit': /[0-9]/,
-        'full': /^[A-Za-z0-9]{7,13}$/
-    };
-    return re.capital.test(password) &&
-        re.digit.test(password) &&
-        re.full.test(password);
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    return regex.test(password);
 }
 
 const PasswordField = ({placeholder, password, setPassword, errorInInputs, setErrorInInputs, errorKey}) => {
     const [helperText, setHelperText] = useState(defaultText);
     const [showPassword, setShowPassword] = useState(false);
 
-
-
     const checkPassword = (event) => {
         const password = event.target.value;
         if (!validatePassword(password)) {
-            setErrorInInputs({...errorInInputs, [errorKey]: false})
+            setErrorInInputs({...errorInInputs, [errorKey]: true})
             setHelperText(errorText)
         } else {
-            setErrorInInputs({...errorInInputs, [errorKey]: true})
+            setErrorInInputs({...errorInInputs, [errorKey]: false})
             setHelperText(defaultText)
         }
     }
@@ -45,7 +37,7 @@ const PasswordField = ({placeholder, password, setPassword, errorInInputs, setEr
                 placeholder={placeholder}
                 value={password}
                 onChange={setPassword}
-                error={!errorInInputs[errorKey]}
+                error={errorInInputs[errorKey]}
                 helperText={helperText}
                 onBlur={checkPassword}
                 InputProps={{
