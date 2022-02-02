@@ -11,18 +11,18 @@ const validateEmail = (email) => {
 }
 
 
-const EmailAddress = ({placeholder, email, setValue}) => {
+const EmailAddress = ({placeholder, email, setValue, error, setError}) => {
 
-    const [error, setError] = useState(false);
+    //const [error, setError] = useState(false);
     const [helperText, setHelperText] = useState(defaultText);
 
     const checkEmailAddress = (event) => {
         const emailAddress = event.target.value;
         if (!validateEmail(emailAddress)) {
-            setError(true)
+            setError({...error, email: true})
             setHelperText(errorText)
         } else {
-            setError(false)
+            setError({...error, email: false})
             setHelperText(defaultText)
         }
     }
