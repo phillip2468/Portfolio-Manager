@@ -44,22 +44,22 @@ const StockPage = () => {
             <Divider light={true}/>
 
             <StockPriceDetails
-                stockInfo={stockInfo}
                 lastUpdatedFmt={lastUpdatedFmt}
+                stockInfo={stockInfo}
             />
 
-            <StockIntervals listOfIntervals={listOfPeriods} callbackfn={(element, index) => {
+            <StockIntervals callbackfn={(element, index) => {
               return (
-                    <Button key={index} size={'small'} onClick={() => handleGetHistoricalData(element)}>
+                    <Button key={index} onClick={() => handleGetHistoricalData(element)} size={'small'}>
                         {element}
                     </Button>
               )
-            }}/>
+            }} listOfIntervals={listOfPeriods}/>
 
             <StockPriceChart
-                historicalData={historicalData.priceList}
                 formatTime={dateFormatter}
                 heightOfChart={500}
+                historicalData={historicalData.priceList}
                 widthOfChart={1000}
             />
         </>

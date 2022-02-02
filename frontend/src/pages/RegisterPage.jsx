@@ -73,11 +73,11 @@ const RegisterPage = () => {
   return (
         <>
             <Grid item>
-                <Grid container
-                      spacing={2}
+                <Grid alignItems={'center'}
+                      container
                       direction={'column'}
-                      alignItems={'center'}
                       justifyContent={'center'}
+                      spacing={2}
                 >
                     <Grid item>
                         <Typography variant={'h4'}>Register</Typography>
@@ -85,34 +85,34 @@ const RegisterPage = () => {
 
                     <Grid item>
                         <EmailAddress
-                            placeholder={'Type in an email address'}
                             email={inputs.email}
-                            setValue={handleInputChanges('email')}
                             errorInInputs={errorInInputs}
-                            setErrorInInputs={setErrorInInputs}
                             errorKey={'email'}
+                            placeholder={'Type in an email address'}
+                            setErrorInInputs={setErrorInInputs}
+                            setValue={handleInputChanges('email')}
                         />
                     </Grid>
 
                     <Grid item>
                         <PasswordField
-                            placeholder={'Type in a password'}
-                            password={inputs.password}
-                            setPassword={handleInputChanges('password')}
                             errorInInputs={errorInInputs}
-                            setErrorInInputs={setErrorInInputs}
                             errorKey={'password'}
+                            password={inputs.password}
+                            placeholder={'Type in a password'}
+                            setErrorInInputs={setErrorInInputs}
+                            setPassword={handleInputChanges('password')}
                         />
                     </Grid>
 
                     <Grid item>
                         <PasswordField
-                            placeholder={'Confirm your password'}
-                            password={inputs.confirmPassword}
-                            setPassword={handleInputChanges('confirmPassword')}
                             errorInInputs={errorInInputs}
-                            setErrorInInputs={setErrorInInputs}
                             errorKey={'confirmPassword'}
+                            password={inputs.confirmPassword}
+                            placeholder={'Confirm your password'}
+                            setErrorInInputs={setErrorInInputs}
+                            setPassword={handleInputChanges('confirmPassword')}
                         />
                     </Grid>
 
@@ -124,9 +124,9 @@ const RegisterPage = () => {
 
                     <Grid item>
                         <Button
-                            variant={'contained'}
-                            onClick={registerAccount}
                             disabled={enableRegisterButton()}
+                            onClick={registerAccount}
+                            variant={'contained'}
                         >
                             Register a new account
                         </Button>

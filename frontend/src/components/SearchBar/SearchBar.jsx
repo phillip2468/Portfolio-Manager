@@ -30,7 +30,7 @@ const SearchBar = ({ placeholder }) => {
 
   return (
         <OuterContainer>
-            <SearchInputBox placeholder={placeholder} value={typedInput} onChange={handleSearch}
+            <SearchInputBox onChange={handleSearch} placeholder={placeholder} value={typedInput}
                            />
             <div style={{ position: 'relative', display: 'block' }}>
                 {typedInput.length !== 0 && (

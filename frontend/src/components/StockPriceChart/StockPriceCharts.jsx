@@ -31,7 +31,7 @@ const StockPriceChart = (props) => {
                     <YAxis domain={['auto', 'auto']} width={40}/>
                     <CartesianGrid strokeDasharray="2 2"/>
                     <Tooltip content={<CustomTooltip/>}/>
-                    <Line type="monotone" dataKey={'open'} activeDot={{ r: 3 }} stroke="#8884d8"/>
+                    <Line activeDot={{ r: 3 }} dataKey={'open'} stroke="#8884d8" type="monotone"/>
                 </LineChart>
         </Grid>
   )

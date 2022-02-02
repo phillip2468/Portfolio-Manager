@@ -20,11 +20,11 @@ const LoginPage = () => {
         <>
             <Grid item>
                 <Grid
-                    container
-                    spacing={2}
-                    direction={'column'}
                     alignItems={'center'}
+                    container
+                    direction={'column'}
                     justifyContent={'center'}
+                    spacing={2}
                 >
                     <Grid item>
                         <Typography variant={'h4'}>Sign in</Typography>
@@ -32,30 +32,30 @@ const LoginPage = () => {
 
                     <Grid item>
                         <TextField
-                            variant={'outlined'}
-                            placeholder={'Email address'}
                             autoFocus={true}
                             fullWidth={true}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder={'Email address'}
                             sx={{ width: '350px' }}
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            variant={'outlined'}
                         />
                     </Grid>
 
                     <Grid item>
                         <TextField
-                            variant={'outlined'}
-                            placeholder={'Password'}
                             fullWidth={true}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder={'Password'}
                             sx={{ width: '350px' }}
                             type={'password'}
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            variant={'outlined'}
                         />
                     </Grid>
 
                     <Grid item>
-                        <Button variant={'contained'} onClick={handleLogIn}>
+                        <Button onClick={handleLogIn} variant={'contained'}>
                             Sign in
                         </Button>
                     </Grid>
@@ -64,11 +64,11 @@ const LoginPage = () => {
                         <Link href={'#'}>Forgot your password?</Link>
                     </Grid>
 
-                    <Divider light={true} flexItem style={{ marginTop: '10px' }}/>
+                    <Divider flexItem light={true} style={{ marginTop: '10px' }}/>
 
                     <Grid item>
-                        <Button variant={'contained'} onClick={() => navigate('/register')}
-                                style={{ backgroundColor: 'green' }}>
+                        <Button onClick={() => navigate('/register')} style={{ backgroundColor: 'green' }}
+                                variant={'contained'}>
                             Create a new account
                         </Button>
                     </Grid>

@@ -19,10 +19,10 @@ const Header = () => {
             <AppBar position="static">
                 <Toolbar sx={{ justifyContent: 'space-between' }}>
                     <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
                         aria-label="menu"
+                        color="inherit"
+                        edge="start"
+                        size="large"
                         sx={{ mr: 2 }}
                     >
                         <MenuIcon/>

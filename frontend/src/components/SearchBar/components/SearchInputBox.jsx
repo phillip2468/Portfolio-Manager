@@ -6,12 +6,12 @@ import React from 'react'
 const SearchInputBox = (props) => {
   return <SearchBox>
         <SearchInput
-            type={'text'}
-            placeholder={props.placeholder}
-            value={props.value}
-            onChange={props.onChange}
             onBlur={props.onBlur}
+            onChange={props.onChange}
             onFocus={props.onFocus}
+            placeholder={props.placeholder}
+            type={'text'}
+            value={props.value}
         />
         <SearchIconBox>
             <SearchIcon/>
