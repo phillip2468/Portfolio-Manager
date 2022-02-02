@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import PasswordField from "../components/Password";
 import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
+import {FetchFunction} from "../components/FetchFunction";
 
 const RegisterPage = () => {
 
@@ -31,6 +32,13 @@ const RegisterPage = () => {
     }
 
     const registerAccount = () => {
+        const body = {
+            email: inputs.email,
+            password: inputs.password,
+        }
+        FetchFunction('POST', 'auth/register', body)
+            .then(()=> navigate('/'))
+            .catch(error => console.log(error))
     }
 
     useEffect(()=> {
@@ -102,7 +110,7 @@ const RegisterPage = () => {
                         <Button
                             variant={"contained"}
                             onClick={registerAccount}
-                            disabled={(Object.values(errorInInputs).every((value) => value === false)) ? false : true}
+                            disabled={(!Object.values(errorInInputs).every((value) => value === false))}
                         >
                             Register a new account
                         </Button>
