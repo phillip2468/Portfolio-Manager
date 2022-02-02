@@ -33,6 +33,8 @@ const RegisterPage = () => {
         }
     }
 
+    console.log(errorInInputs)
+
     return (
         <>
             <Grid item>
@@ -51,8 +53,9 @@ const RegisterPage = () => {
                             placeholder={'Type in an email address'}
                             email={inputs.email}
                             setValue={handleInputChanges('email')}
-                            error={errorInInputs.email}
-                            setError={setErrorInInputs}
+                            errorInInputs={errorInInputs}
+                            setErrorInInputs={setErrorInInputs}
+                            errorKey={'email'}
                         />
                     </Grid>
 
@@ -61,6 +64,9 @@ const RegisterPage = () => {
                             placeholder={'Type in a password'}
                             password={inputs.password}
                             setPassword={handleInputChanges('password')}
+                            errorInInputs={errorInInputs}
+                            setErrorInInputs={setErrorInInputs}
+                            errorKey={'password'}
                         />
                     </Grid>
 
@@ -69,6 +75,9 @@ const RegisterPage = () => {
                             placeholder={'Confirm your password'}
                             password={inputs.confirmPassword}
                             setPassword={handleInputChanges('confirmPassword')}
+                            errorInInputs={errorInInputs}
+                            setErrorInInputs={setErrorInInputs}
+                            errorKey={'confirmPassword'}
                         />
                     </Grid>
 
