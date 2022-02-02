@@ -24,7 +24,7 @@ function App () {
                 <ClientWrapper>
                     <ThemeProvider theme={theme}>
                         <Paper style={{ minHeight: '150vh' }}>
-                            <Grid container spacing={4} direction={'column'}>
+                            <Grid container direction={'column'} spacing={4}>
 
                                 <Grid item>
                                     <Header/>
@@ -32,12 +32,12 @@ function App () {
 
                                 <Grid item>
                                     <Container maxWidth={'lg'} sx={{ border: '1px solid white' }}>
-                                        <Grid container spacing={4} direction={'column'}>
+                                        <Grid container direction={'column'} spacing={4}>
                                             <Routes>
-                                                <Route exact path={'/'} element={<Homepage/>}/>
-                                                <Route path={'/:stockName'} element={<StockPage/>}/>
-                                                <Route path={'/login'} element={<LoginPage/>}/>
-                                                <Route path={'/register'} element={<RegisterPage/>}/>
+                                                <Route element={<Homepage/>} exact path={'/'}/>
+                                                <Route element={<StockPage/>} path={'/:stockName'}/>
+                                                <Route element={<LoginPage/>} path={'/login'}/>
+                                                <Route element={<RegisterPage/>} path={'/register'}/>
                                             </Routes>
                                         </Grid>
                                     </Container>

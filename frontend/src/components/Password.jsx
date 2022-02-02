@@ -30,16 +30,6 @@ const PasswordField = ({ placeholder, password, setPassword, errorInInputs, setE
   return (
         <>
             <TextField
-                variant={'outlined'}
-                fullWidth={true}
-                sx={{ width: '350px' }}
-                type={showPassword ? 'text' : 'password'}
-                placeholder={placeholder}
-                value={password}
-                onChange={setPassword}
-                error={errorInInputs[errorKey]}
-                helperText={helperText}
-                onBlur={checkPassword}
                 InputProps={{
                   endAdornment: (
                         <InputAdornment position="end">
@@ -53,6 +43,16 @@ const PasswordField = ({ placeholder, password, setPassword, errorInInputs, setE
                         </InputAdornment>
                   )
                 }}
+                error={errorInInputs[errorKey]}
+                fullWidth={true}
+                helperText={helperText}
+                onBlur={checkPassword}
+                onChange={setPassword}
+                placeholder={placeholder}
+                sx={{ width: '350px' }}
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                variant={'outlined'}
             />
         </>
   )

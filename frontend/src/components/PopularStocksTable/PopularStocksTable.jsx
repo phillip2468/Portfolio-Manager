@@ -45,15 +45,15 @@ const PopularStocksTable = () => {
   return (
         <>
             <DataTable
-                title={'Popular stocks today'}
-                striped={true}
-                dense={true}
-                highlightOnHover={true}
-                theme={'dark'}
                 columns={columns}
                 data={popularStocks}
+                dense={true}
+                highlightOnHover={true}
                 onRowClicked={(row, e) => navigate(`/${row.symbol}`)}
                 pointerOnHover={true}
+                striped={true}
+                theme={'dark'}
+                title={'Popular stocks today'}
             />
         </>
   )

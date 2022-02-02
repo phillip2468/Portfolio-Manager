@@ -28,15 +28,15 @@ const EmailAddress = ({ placeholder, email, setValue, errorInInputs, setErrorInI
   return (
         <>
             <TextField
-                variant={'outlined'}
-                placeholder={placeholder}
+                error={errorInInputs[errorKey]}
                 fullWidth={true}
+                helperText={helperText}
+                onBlur={checkEmailAddress}
+                onChange={setValue}
+                placeholder={placeholder}
                 sx={{ width: '350px' }}
                 value={email}
-                onChange={setValue}
-                error={errorInInputs[errorKey]}
-                onBlur={checkEmailAddress}
-                helperText={helperText}
+                variant={'outlined'}
             />
         </>
   )

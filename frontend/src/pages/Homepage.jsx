@@ -50,10 +50,10 @@ const Homepage = () => {
                                     {historicalData[key].currency_symbol}{historicalData[key].price_now}
                                 </div>
                                 <StockPriceChart
-                                    heightOfChart={200}
-                                    widthOfChart={220}
-                                    historicalData={historicalData[key].priceList}
                                     formatTime={dateFormatter}
+                                    heightOfChart={200}
+                                    historicalData={historicalData[key].priceList}
+                                    widthOfChart={220}
                                 />
                             </div>
                       )
