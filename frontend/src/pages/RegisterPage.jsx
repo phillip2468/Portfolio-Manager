@@ -44,11 +44,13 @@ const RegisterPage = () => {
     useEffect(()=> {
         if (Object.values(errorInInputs).every((value) => value === false)) {
             setError({...error, validInputs: false})
+        } else {
+            setError({...error, validInputs: true})
         }
         if (inputs.password !== inputs.confirmPassword) {
             setError({...error, matchingPasswords: false})
         } else {
-            setError({...error, validInputs: true, matchingPasswords: true})
+            setError({...error, matchingPasswords: true})
         }
     }, [errorInInputs])
 
