@@ -23,8 +23,8 @@ const RegisterPage = () => {
     })
 
     const [error, setError] = useState({
-        invalidInputs: true,
         emptyInputs: true,
+        invalidInputs: true,
     });
 
     const handleInputChanges = (prop) => (event) => {
@@ -41,20 +41,36 @@ const RegisterPage = () => {
             .catch(error => console.log(error))
     }
 
+    console.log(error)
     useEffect(()=> {
+        if (Object.values(errorInInputs).some((value => value === true))) {
+            setError(prevState => ({
+                ...prevState,
+                invalidInputs: true
+            }))
+        } else {
+            setError(prevState => ({
+                ...prevState,
+                invalidInputs: false
+            }))
+        }
 
         if (Object.values(inputs).some((value => value.length === 0))) {
-            setError({...error, emptyInputs: true})
+            setError(prevState => ({
+                ...prevState,
+                emptyInputs: true
+            }))
         } else {
-            setError({...error, emptyInputs: false})
+            setError(prevState => ({
+                ...prevState,
+                emptyInputs: false
+            }))
         }
-    }, [errorInInputs])
+    }, [errorInInputs, inputs])
 
 
     const enableRegisterButton = () => {
         if (error.emptyInputs === true) {
-            return true
-        } else if (error.invalidInputs === true) {
             return true
         } else {
             return false
