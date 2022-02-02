@@ -1,88 +1,86 @@
-import {Grid, Typography} from "@mui/material";
-import EmailAddress from "../components/EmailAddress";
-import {useEffect, useState} from "react";
-import PasswordField from "../components/Password";
-import Button from "@mui/material/Button";
-import {useNavigate} from "react-router-dom";
-import {FetchFunction} from "../components/FetchFunction";
+import { Grid, Typography } from '@mui/material'
+import EmailAddress from '../components/EmailAddress'
+import { useEffect, useState } from 'react'
+import PasswordField from '../components/Password'
+import Button from '@mui/material/Button'
+import { useNavigate } from 'react-router-dom'
+import { FetchFunction } from '../components/FetchFunction'
 
 const RegisterPage = () => {
+  const navigate = useNavigate()
 
-    const navigate = useNavigate();
+  const [inputs, setInputs] = useState({
+    email: '',
+    password: '',
+    confirmPassword: ''
+  })
 
-    const [inputs, setInputs] = useState({
-        email: '',
-        password: '',
-        confirmPassword: '',
-    })
+  const [errorInInputs, setErrorInInputs] = useState({
+    email: false,
+    password: false,
+    confirmPassword: false
+  })
 
-    const [errorInInputs, setErrorInInputs] = useState({
-        email: false,
-        password: false,
-        confirmPassword: false,
-    })
+  const [error, setError] = useState({
+    emptyInputs: true,
+    invalidInputs: true
+  })
 
-    const [error, setError] = useState({
-        emptyInputs: true,
-        invalidInputs: true,
-    });
+  const handleInputChanges = (prop) => (event) => {
+    setInputs({ ...inputs, [prop]: event.target.value })
+  }
 
-    const handleInputChanges = (prop) => (event) => {
-        setInputs({...inputs, [prop]: event.target.value });
+  const registerAccount = () => {
+    const body = {
+      email: inputs.email,
+      password: inputs.password
+    }
+    FetchFunction('POST', 'auth/register', body)
+      .then(() => navigate('/'))
+      .catch(error => console.log(error))
+  }
+
+  useEffect(() => {
+    if (Object.values(errorInInputs).some(value => value === true)) {
+      setError(prevState => ({
+        ...prevState,
+        invalidInputs: true
+      }))
+    } else {
+      setError(prevState => ({
+        ...prevState,
+        invalidInputs: false
+      }))
     }
 
-    const registerAccount = () => {
-        const body = {
-            email: inputs.email,
-            password: inputs.password,
-        }
-        FetchFunction('POST', 'auth/register', body)
-            .then(()=> navigate('/'))
-            .catch(error => console.log(error))
+    if (Object.values(inputs).some(value => value.length === 0)) {
+      setError(prevState => ({
+        ...prevState,
+        emptyInputs: true
+      }))
+    } else {
+      setError(prevState => ({
+        ...prevState,
+        emptyInputs: false
+      }))
     }
+  }, [errorInInputs, inputs])
 
-    useEffect(()=> {
-        if (Object.values(errorInInputs).some((value => value === true))) {
-            setError(prevState => ({
-                ...prevState,
-                invalidInputs: true
-            }))
-        } else {
-            setError(prevState => ({
-                ...prevState,
-                invalidInputs: false
-            }))
-        }
+  const enableRegisterButton = () => {
+    return Object.values(error).some(value => value === true)
+  }
 
-        if (Object.values(inputs).some((value => value.length === 0))) {
-            setError(prevState => ({
-                ...prevState,
-                emptyInputs: true
-            }))
-        } else {
-            setError(prevState => ({
-                ...prevState,
-                emptyInputs: false
-            }))
-        }
-    }, [errorInInputs, inputs])
-
-
-    const enableRegisterButton = () => {
-        return Object.values(error).some((value => value === true));
-    }
-
-    return (
+  return (
         <>
             <Grid item>
                 <Grid container
                       spacing={2}
-                      direction={"column"}
-                      alignItems={"center"}
-                      justifyContent={"center"}
+                      direction={'column'}
+                      alignItems={'center'}
+                      justifyContent={'center'}
                 >
                     <Grid item>
-                        <Typography variant={"h4"}>Register</Typography>
+                        <Typography variant={'h4'}>Register</Typography>
                     </Grid>
 
                     <Grid item>
@@ -124,10 +122,9 @@ const RegisterPage = () => {
                         </Grid>
                     )}
 
-
                     <Grid item>
                         <Button
-                            variant={"contained"}
+                            variant={'contained'}
                             onClick={registerAccount}
                             disabled={enableRegisterButton()}
                         >
@@ -138,7 +135,7 @@ const RegisterPage = () => {
                 </Grid>
             </Grid>
         </>
-    )
+  )
 }
 
-export default RegisterPage;
+export default RegisterPage
