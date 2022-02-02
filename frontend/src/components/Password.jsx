@@ -18,18 +18,17 @@ const validatePassword = (password) => {
         re.full.test(password);
 }
 
-const PasswordField = ({placeholder, password, setPassword}) => {
-    const [error, setError] = useState(false);
+const PasswordField = ({placeholder, password, setPassword, errorInInputs, setErrorInInputs, errorKey}) => {
     const [helperText, setHelperText] = useState(defaultText);
     const [showPassword, setShowPassword] = useState(false);
 
     const checkPassword = (event) => {
         const password = event.target.value;
         if (!validatePassword(password)) {
-            setError(true)
+            setErrorInInputs({...errorInInputs, [errorKey]: true})
             setHelperText(errorText)
         } else {
-            setError(false)
+            setErrorInInputs({...errorInInputs, [errorKey]: false})
             setHelperText(defaultText)
         }
     }
@@ -44,7 +43,7 @@ const PasswordField = ({placeholder, password, setPassword}) => {
                 placeholder={placeholder}
                 value={password}
                 onChange={setPassword}
-                error={error}
+                error={errorInInputs[errorKey]}
                 helperText={helperText}
                 onBlur={checkPassword}
                 InputProps={{

@@ -11,18 +11,17 @@ const validateEmail = (email) => {
 }
 
 
-const EmailAddress = ({placeholder, email, setValue, error, setError}) => {
+const EmailAddress = ({placeholder, email, setValue, errorInInputs, setErrorInInputs, errorKey}) => {
 
-    //const [error, setError] = useState(false);
     const [helperText, setHelperText] = useState(defaultText);
 
     const checkEmailAddress = (event) => {
         const emailAddress = event.target.value;
         if (!validateEmail(emailAddress)) {
-            setError({...error, email: true})
+            setErrorInInputs({...errorInInputs, [errorKey]: true})
             setHelperText(errorText)
         } else {
-            setError({...error, email: false})
+            setErrorInInputs({...errorInInputs, [errorKey]: false})
             setHelperText(defaultText)
         }
     }
@@ -32,14 +31,12 @@ const EmailAddress = ({placeholder, email, setValue, error, setError}) => {
             <TextField
                 variant={"outlined"}
                 placeholder={placeholder}
-                autoFocus={true}
                 fullWidth={true}
                 sx={{width: "350px"}}
                 value={email}
                 onChange={setValue}
-                error={error}
+                error={errorInInputs[errorKey]}
                 onBlur={checkEmailAddress}
-                onFocus={() => setError(false)}
                 helperText={helperText}
             />
         </>
