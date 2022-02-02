@@ -1,5 +1,6 @@
 import { TextField } from '@mui/material'
 import { useState } from 'react'
+import * as PropTypes from 'prop-types'
 
 const errorText = 'Email addresses should be longer than 10 characters, contain an @ symbol and should contain a domain.'
 const defaultText = 'You can enter numbers, letters and periods'
@@ -39,6 +40,15 @@ const EmailAddress = ({ placeholder, email, setValue, errorInInputs, setErrorInI
             />
         </>
   )
+}
+
+EmailAddress.propTypes = {
+  placeholder: PropTypes.string,
+  email: PropTypes.string,
+  setValue: PropTypes.func,
+  errorInInputs: PropTypes.arrayOf(PropTypes.object),
+  setErrorInInputs: PropTypes.arrayOf(PropTypes.object),
+  errorKey: PropTypes.string
 }
 
 export default EmailAddress

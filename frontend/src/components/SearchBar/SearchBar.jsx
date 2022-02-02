@@ -1,44 +1,42 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react'
 import {
-    DataResult,
-    OuterContainer,
-    SearchResultsGrid,
-    StocksNameTicker,
-    StocksPercentage,
-    StocksPrice,
-    TriangleSymbol
-} from "./styled";
-import {useNavigate} from "react-router-dom";
-import SearchInputBox from "./components/SearchInputBox";
-//https://stackoverflow.com/questions/42987939/styled-components-organization
+  DataResult,
+  OuterContainer,
+  SearchResultsGrid,
+  StocksNameTicker,
+  StocksPercentage,
+  StocksPrice,
+  TriangleSymbol
+} from './styled'
+import { useNavigate } from 'react-router-dom'
+import SearchInputBox from './components/SearchInputBox'
+import * as PropTypes from 'prop-types'
+// https://stackoverflow.com/questions/42987939/styled-components-organization
 
+const SearchBar = ({ placeholder }) => {
+  const navigate = useNavigate()
+  const [typedInput, setTypedInput] = useState('')
 
-const SearchBar = ({placeholder}) => {
+  const [otherData, setOtherData] = useState([])
 
-    const navigate = useNavigate();
-    const [typedInput, setTypedInput] = useState("");
-    const [showResults, setShowResults] = useState(false);
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value
+    setTypedInput(searchTerm)
 
-    const [otherData, setOtherData] = useState([]);
+    fetch(`/search/${typedInput}`)
+      .then((res) => res.json())
+      .then((res) => setOtherData(res))
+  }
 
-    const handleSearch = (event) => {
-        const searchTerm = event.target.value;
-        setTypedInput(searchTerm);
-
-        fetch(`/search/${typedInput}`)
-            .then((res) => res.json())
-            .then((res) => setOtherData(res))
-    }
-
-    return (
+  return (
         <OuterContainer>
             <SearchInputBox placeholder={placeholder} value={typedInput} onChange={handleSearch}
-                            onBlur={() => setShowResults(false)} onFocus={() => {setShowResults(true)}}/>
-            <div style={{position: "relative", display: "block"}}>
+                           />
+            <div style={{ position: 'relative', display: 'block' }}>
                 {typedInput.length !== 0 && (
                     <DataResult>
                         {otherData.map((item, key) => {
-                            return <SearchResultsGrid
+                          return <SearchResultsGrid
                                 key={key}
                                 onMouseDown={() => navigate(`/${item.symbol}`)}
                             >
@@ -52,8 +50,9 @@ const SearchBar = ({placeholder}) => {
                                     </StocksPrice>
 
                                     <StocksPercentage percentageChange={item.market_change_percentage}>
-                                        {item.market_change_percentage > 0 ? <TriangleSymbol>&#x25B2;</TriangleSymbol> :
-                                            <TriangleSymbol>&#x25BC;</TriangleSymbol>}
+                                        {item.market_change_percentage > 0
+                                          ? <TriangleSymbol>&#x25B2;</TriangleSymbol>
+                                          : <TriangleSymbol>&#x25BC;</TriangleSymbol>}
                                         {(parseFloat(item.market_change_percentage) * 100).toFixed(2)}
                                     </StocksPercentage>
                             </SearchResultsGrid>
@@ -63,7 +62,11 @@ const SearchBar = ({placeholder}) => {
                 }
             </div>
         </OuterContainer>
-    );
-};
+  )
+}
 
-export default SearchBar;
+SearchBar.propTypes = {
+  placeholder: PropTypes.string
+}
+
+export default SearchBar
