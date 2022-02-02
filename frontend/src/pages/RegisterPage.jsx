@@ -41,7 +41,6 @@ const RegisterPage = () => {
             .catch(error => console.log(error))
     }
 
-    console.log(error)
     useEffect(()=> {
         if (Object.values(errorInInputs).some((value => value === true))) {
             setError(prevState => ({
@@ -70,11 +69,7 @@ const RegisterPage = () => {
 
 
     const enableRegisterButton = () => {
-        if (error.emptyInputs === true) {
-            return true
-        } else {
-            return false
-        }
+        return Object.values(error).some((value => value === true));
     }
 
     return (
