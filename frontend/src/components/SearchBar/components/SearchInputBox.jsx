@@ -1,12 +1,12 @@
-import {SearchBox, SearchIconBox, SearchInput} from "../styled";
-import SearchIcon from "@material-ui/icons/Search";
-import * as PropTypes from "prop-types";
-import React from "react";
+import { SearchBox, SearchIconBox, SearchInput } from '../styled'
+import SearchIcon from '@material-ui/icons/Search'
+import * as PropTypes from 'prop-types'
+import React from 'react'
 
 const SearchInputBox = (props) => {
-    return <SearchBox>
+  return <SearchBox>
         <SearchInput
-            type={"text"}
+            type={'text'}
             placeholder={props.placeholder}
             value={props.value}
             onChange={props.onChange}
@@ -16,15 +16,15 @@ const SearchInputBox = (props) => {
         <SearchIconBox>
             <SearchIcon/>
         </SearchIconBox>
-    </SearchBox>;
+    </SearchBox>
 }
 
 SearchInputBox.propTypes = {
-    placeholder: PropTypes.any,
-    value: PropTypes.string,
-    onChange: PropTypes.func,
-    onBlur: PropTypes.func,
-    onFocus: PropTypes.func
-};
+  placeholder: PropTypes.any,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  onBlur: PropTypes.func,
+  onFocus: PropTypes.func
+}
 
-export default SearchInputBox;
+export default SearchInputBox
