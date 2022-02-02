@@ -1,6 +1,6 @@
 import {Grid, Typography} from "@mui/material";
 import EmailAddress from "../components/EmailAddress";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import PasswordField from "../components/Password";
 import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
@@ -21,19 +21,29 @@ const RegisterPage = () => {
         confirmPassword: false,
     })
 
-    const [error, setError] = useState(false)
+    const [error, setError] = useState({
+        validInputs: true,
+        matchingPasswords: true,
+    });
 
     const handleInputChanges = (prop) => (event) => {
         setInputs({...inputs, [prop]: event.target.value });
     }
 
     const registerAccount = () => {
-        if (inputs.password !== inputs.confirmPassword) {
-            setError(true);
-        }
     }
 
-    console.log(errorInInputs)
+    useEffect(()=> {
+        if (Object.values(errorInInputs).every((value) => value === false)) {
+            setError({...error, validInputs: false})
+        }
+        if (inputs.password !== inputs.confirmPassword) {
+            setError({...error, matchingPasswords: false})
+        } else {
+            setError({...error, validInputs: true, matchingPasswords: true})
+        }
+    }, [errorInInputs])
+
 
     return (
         <>
@@ -81,7 +91,7 @@ const RegisterPage = () => {
                         />
                     </Grid>
 
-                    {error && (
+                    {(error.matchingPasswords === false) && (
                         <Grid item>
                             <Typography variant={'subtitle1'}>Passwords do not match</Typography>
                         </Grid>
@@ -92,7 +102,7 @@ const RegisterPage = () => {
                         <Button
                             variant={"contained"}
                             onClick={registerAccount}
-                            disabled={error}
+                            disabled={(Object.values(errorInInputs).every((value) => value === false)) ? false : true}
                         >
                             Register a new account
                         </Button>
