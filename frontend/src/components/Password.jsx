@@ -22,13 +22,15 @@ const PasswordField = ({placeholder, password, setPassword, errorInInputs, setEr
     const [helperText, setHelperText] = useState(defaultText);
     const [showPassword, setShowPassword] = useState(false);
 
+
+
     const checkPassword = (event) => {
         const password = event.target.value;
         if (!validatePassword(password)) {
-            setErrorInInputs({...errorInInputs, [errorKey]: true})
+            setErrorInInputs({...errorInInputs, [errorKey]: false})
             setHelperText(errorText)
         } else {
-            setErrorInInputs({...errorInInputs, [errorKey]: false})
+            setErrorInInputs({...errorInInputs, [errorKey]: true})
             setHelperText(defaultText)
         }
     }
@@ -43,7 +45,7 @@ const PasswordField = ({placeholder, password, setPassword, errorInInputs, setEr
                 placeholder={placeholder}
                 value={password}
                 onChange={setPassword}
-                error={errorInInputs[errorKey]}
+                error={!errorInInputs[errorKey]}
                 helperText={helperText}
                 onBlur={checkPassword}
                 InputProps={{
