@@ -18,10 +18,10 @@ const EmailAddress = ({placeholder, email, setValue, errorInInputs, setErrorInIn
     const checkEmailAddress = (event) => {
         const emailAddress = event.target.value;
         if (!validateEmail(emailAddress)) {
-            setErrorInInputs({...errorInInputs, [errorKey]: true})
+            setErrorInInputs({...errorInInputs, [errorKey]: false})
             setHelperText(errorText)
         } else {
-            setErrorInInputs({...errorInInputs, [errorKey]: false})
+            setErrorInInputs({...errorInInputs, [errorKey]: true})
             setHelperText(defaultText)
         }
     }
@@ -35,7 +35,7 @@ const EmailAddress = ({placeholder, email, setValue, errorInInputs, setErrorInIn
                 sx={{width: "350px"}}
                 value={email}
                 onChange={setValue}
-                error={errorInInputs[errorKey]}
+                error={!errorInInputs[errorKey]}
                 onBlur={checkEmailAddress}
                 helperText={helperText}
             />

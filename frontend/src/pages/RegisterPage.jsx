@@ -17,14 +17,14 @@ const RegisterPage = () => {
     })
 
     const [errorInInputs, setErrorInInputs] = useState({
-        email: false,
-        password: false,
-        confirmPassword: false,
+        email: true,
+        password: true,
+        confirmPassword: true,
     })
 
     const [error, setError] = useState({
-        validInputs: true,
-        matchingPasswords: true,
+        invalidInputs: true,
+        nonMatchingPasswords: true,
     });
 
     const handleInputChanges = (prop) => (event) => {
@@ -43,14 +43,14 @@ const RegisterPage = () => {
 
     useEffect(()=> {
         if (Object.values(errorInInputs).every((value) => value === false)) {
-            setError({...error, validInputs: false})
+            setError({...error, invalidInputs: true})
         } else {
-            setError({...error, validInputs: true})
+            setError({...error, invalidInputs: false})
         }
         if (inputs.password !== inputs.confirmPassword) {
-            setError({...error, matchingPasswords: false})
+            setError({...error, nonMatchingPasswords: true})
         } else {
-            setError({...error, matchingPasswords: true})
+            setError({...error, nonMatchingPasswords: false})
         }
     }, [errorInInputs])
 
@@ -101,7 +101,7 @@ const RegisterPage = () => {
                         />
                     </Grid>
 
-                    {(error.matchingPasswords === false) && (
+                    {(error.nonMatchingPasswords === true) && (
                         <Grid item>
                             <Typography variant={'subtitle1'}>Passwords do not match</Typography>
                         </Grid>
@@ -112,7 +112,7 @@ const RegisterPage = () => {
                         <Button
                             variant={"contained"}
                             onClick={registerAccount}
-                            disabled={(!Object.values(errorInInputs).every((value) => value === false))}
+                            disabled={!(Object.values(errorInInputs).every((value) => value === false))}
                         >
                             Register a new account
                         </Button>
