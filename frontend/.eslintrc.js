@@ -18,7 +18,8 @@ module.exports = {
     'react'
   ],
   rules: {
-    'react/react-in-jsx-scope': 'off',
-    'react/jsx-sort-props': 2
+    'react/react-in-jsx-scope': 0,
+    'react/jsx-sort-props': 2,
+    'react/jsx-props-no-multi-spaces': 2
   }
 }
