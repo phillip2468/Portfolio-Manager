@@ -18,7 +18,10 @@
     "@testing-library/user-event": "^13.5.0",
     "currency.js": "^2.0.4",
     "eslint-config-react-app": "^7.0.0",
-    "eslint-plugin-react": "^7.27.1",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-react": "^7.28.0",
     "hotkeys-js": "^3.8.7",
     "jwt-decode": "^3.1.2",
     "luxon": "^2.3.0",
@@ -61,6 +64,7 @@
     ]
   },
   "devDependencies": {
+    "eslint": "^8.8.0",
     "eslint-config-react": "^1.1.7"
   }
 }
