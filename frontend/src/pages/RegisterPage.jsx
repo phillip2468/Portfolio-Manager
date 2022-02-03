@@ -37,7 +37,7 @@ const RegisterPage = () => {
     }
     FetchFunction('POST', 'auth/register', body)
       .then(() => navigate('/'))
-      .catch(error => console.log(error))
+      .catch(error => alert(error))
   }
 
   useEffect(() => {
