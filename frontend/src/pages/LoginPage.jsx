@@ -1,74 +1,74 @@
-import {Divider, Grid, Link, TextField, Typography} from "@mui/material";
-import Button from "@mui/material/Button";
-import {useContext, useState} from "react";
-import {ClientContext} from "../store/StoreCredentials";
-import {useNavigate} from "react-router-dom";
-
+import { Divider, Grid, Link, TextField, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import { useContext, useState } from 'react'
+import { ClientContext } from '../store/StoreCredentials'
+import { useNavigate } from 'react-router-dom'
 
 const LoginPage = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate()
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
-    let {loginUser} = useContext(ClientContext);
+  const { loginUser } = useContext(ClientContext)
 
-    const handleLogIn = () => {
-        loginUser(email, password);
-    }
+  const handleLogIn = () => {
+    loginUser(email, password)
+  }
 
-    return (
+  return (
         <>
             <Grid item>
                 <Grid
+                    alignItems={'center'}
                     container
+                    direction={'column'}
+                    justifyContent={'center'}
                     spacing={2}
-                    direction={"column"}
-                    alignItems={"center"}
-                    justifyContent={"center"}
                 >
                     <Grid item>
-                        <Typography variant={"h4"}>Sign in</Typography>
+                        <Typography variant={'h4'}>Sign in</Typography>
                     </Grid>
 
                     <Grid item>
                         <TextField
-                            variant={"outlined"}
-                            placeholder={"Email address"}
                             autoFocus={true}
                             fullWidth={true}
-                            sx={{width: "350px"}}
-                            value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            placeholder={'Email address'}
+                            sx={{ width: '350px' }}
+                            value={email}
+                            variant={'outlined'}
                         />
                     </Grid>
 
                     <Grid item>
                         <TextField
-                            variant={"outlined"}
-                            placeholder={"Password"}
                             fullWidth={true}
-                            sx={{width: "350px"}}
-                            type={"password"}
-                            value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            placeholder={'Password'}
+                            sx={{ width: '350px' }}
+                            type={'password'}
+                            value={password}
+                            variant={'outlined'}
                         />
                     </Grid>
 
                     <Grid item>
-                        <Button variant={"contained"} onClick={handleLogIn}>
+                        <Button onClick={handleLogIn} variant={'contained'}>
                             Sign in
                         </Button>
                     </Grid>
 
                     <Grid item>
-                        <Link href={"#"}>Forgot your password?</Link>
+                        <Link href={'#'}>Forgot your password?</Link>
                     </Grid>
 
-                    <Divider light={true} flexItem style={{marginTop: "10px"}}/>
+                    <Divider flexItem light={true} style={{ marginTop: '10px' }}/>
 
                     <Grid item>
-                        <Button variant={"contained"} onClick={()=>navigate('/register')} style={{backgroundColor: "green"}}>
+                        <Button onClick={() => navigate('/register')} style={{ backgroundColor: 'green' }}
+                                variant={'contained'}>
                             Create a new account
                         </Button>
                     </Grid>
@@ -76,7 +76,7 @@ const LoginPage = () => {
                 </Grid>
             </Grid>
         </>
-    )
+  )
 }
 
-export default LoginPage;
+export default LoginPage

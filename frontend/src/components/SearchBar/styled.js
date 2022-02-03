@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const OuterContainer = styled.div`
   display: flex;
@@ -7,7 +7,6 @@ export const OuterContainer = styled.div`
   align-items: center;
   position: relative;
 `
-
 
 export const SearchBox = styled.div`
   display: flex;
@@ -87,7 +86,7 @@ export const StocksPrice = styled.div`
 export const StocksPercentage = styled.div`
   display: flex;
   align-items: center;
-  background-color: ${props => (props.percentageChange > 0 ? "green" : "red")};
+  background-color: ${props => (props.percentageChange > 0 ? 'green' : 'red')};
   border-radius: 5px;
   justify-content: center;
 `
