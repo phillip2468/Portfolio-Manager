@@ -87,10 +87,10 @@ const TrendingTable = () => {
   return (
         <>
             <MUIDataTable
-                title={'Trending stocks today (from Yahoo finance)'}
-                data={trendingStocks}
                 columns={columnDefinitions}
+                data={trendingStocks}
                 options={options}
+                title={'Trending stocks today (from Yahoo finance)'}
             />
         </>
   )
