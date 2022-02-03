@@ -62,8 +62,8 @@ PasswordField.propTypes = {
   placeholder: PropTypes.string,
   password: PropTypes.string,
   setPassword: PropTypes.func,
-  errorInInputs: PropTypes.arrayOf(PropTypes.object),
-  setErrorInInputs: PropTypes.arrayOf(PropTypes.object),
+  errorInInputs: PropTypes.object,
+  setErrorInInputs: PropTypes.object,
   errorKey: PropTypes.string
 }
 

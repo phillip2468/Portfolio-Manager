@@ -46,8 +46,8 @@ EmailAddress.propTypes = {
   placeholder: PropTypes.string,
   email: PropTypes.string,
   setValue: PropTypes.func,
-  errorInInputs: PropTypes.arrayOf(PropTypes.object),
-  setErrorInInputs: PropTypes.arrayOf(PropTypes.object),
+  errorInInputs: PropTypes.object,
+  setErrorInInputs: PropTypes.object,
   errorKey: PropTypes.string
 }
 
