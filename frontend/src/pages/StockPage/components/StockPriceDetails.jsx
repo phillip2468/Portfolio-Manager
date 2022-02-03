@@ -5,14 +5,6 @@ import * as PropTypes from 'prop-types'
 import React from 'react'
 
 const StockPriceDetails = (props) => {
-  props.propTypes = {
-    stockInfo: {
-      market_current_price: PropTypes.string,
-      market_change_percentage: PropTypes.string,
-      market_change: PropTypes.string
-    }
-  }
-
   return <Grid item>
         <StockInfoContainer>
             <div style={{ fontSize: '2em' }}>
@@ -23,12 +15,12 @@ const StockPriceDetails = (props) => {
                     {props.stockInfo.market_change_percentage > 0
                       ? <TriangleSymbol>&#x25B2;</TriangleSymbol>
                       : <TriangleSymbol>&#x25BC;</TriangleSymbol>}
-                    {(parseFloat(props.stockInfo.market_change_percentage) * 100).toFixed(2)}%
+                    {(props.stockInfo.market_change_percentage * 100).toFixed(2)}%
                 </StockPercentageChange>
             </div>
             <div>
                 {props.stockInfo.market_change > 0 ? ('+') : ('-')}
-                {parseFloat(props.stockInfo.market_change).toFixed(3)}
+                {(props.stockInfo.market_change)}
             </div>
         </StockInfoContainer>
         <MiscDetailsStock>
@@ -38,7 +30,13 @@ const StockPriceDetails = (props) => {
 }
 
 StockPriceDetails.propTypes = {
-  stockInfo: PropTypes.any,
+  stockInfo: PropTypes.shape({
+    currency: PropTypes.string,
+    exchange: PropTypes.string,
+    market_change: PropTypes.number,
+    market_change_percentage: PropTypes.number,
+    market_current_price: PropTypes.string
+  }),
   lastUpdatedFmt: PropTypes.string
 }
 

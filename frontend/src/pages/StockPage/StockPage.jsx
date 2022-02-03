@@ -1,3 +1,5 @@
+// noinspection JSValidateTypes
+
 import { useParams } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { Divider } from '@mui/material'
@@ -11,7 +13,7 @@ const { DateTime } = require('luxon')
 
 const StockPage = () => {
   const { stockName } = useParams()
-  const [stockInfo, setStockInfo] = useState([])
+  const [stockInfo, setStockInfo] = useState({})
   const lastUpdatedFmt = DateTime.fromISO(stockInfo.last_updated).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS)
   const listOfPeriods = ['1d', '5d', '7d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
   const [historicalData, setHistoricalData] = useState([])
