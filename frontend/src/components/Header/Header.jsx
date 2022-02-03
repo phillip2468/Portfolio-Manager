@@ -1,31 +1,29 @@
-import {AppBar, Box, IconButton, Toolbar} from "@mui/material";
-import Button from "@mui/material/Button";
-import MenuIcon from '@mui/icons-material/Menu';
-import {useNavigate} from "react-router-dom";
-import {useContext} from "react";
-import {ClientContext} from "../../store/StoreCredentials";
+import { AppBar, Box, IconButton, Toolbar } from '@mui/material'
+import Button from '@mui/material/Button'
+import MenuIcon from '@mui/icons-material/Menu'
+import { useNavigate } from 'react-router-dom'
+import { useContext } from 'react'
+import { ClientContext } from '../../store/StoreCredentials'
 
 const Header = () => {
+  const navigate = useNavigate()
 
-    const navigate = useNavigate();
+  const { logoutUser, loggedIn } = useContext(ClientContext)
 
-    let {logoutUser, loggedIn} = useContext(ClientContext);
+  const goToLoginPage = () => {
+    navigate('/login')
+  }
 
-    const goToLoginPage = () => {
-        navigate('/login')
-    }
-
-
-    return (<>
+  return (<>
         <Box>
             <AppBar position="static">
-                <Toolbar sx={{justifyContent: "space-between"}}>
+                <Toolbar sx={{ justifyContent: 'space-between' }}>
                     <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
                         aria-label="menu"
-                        sx={{mr: 2}}
+                        color="inherit"
+                        edge="start"
+                        size="large"
+                        sx={{ mr: 2 }}
                     >
                         <MenuIcon/>
                     </IconButton>
@@ -39,8 +37,8 @@ const Header = () => {
                     <div>
                         {
                             (loggedIn === false)
-                            ? (<Button color="inherit" onClick={goToLoginPage}>Login / Register</Button>)
-                            : (<Button color="inherit" onClick={logoutUser}>Logout</Button>)
+                              ? (<Button color="inherit" onClick={goToLoginPage}>Login / Register</Button>)
+                              : (<Button color="inherit" onClick={logoutUser}>Logout</Button>)
                         }
                     </div>
                 </Toolbar>
@@ -49,4 +47,4 @@ const Header = () => {
     </>)
 }
 
-export default Header;
+export default Header

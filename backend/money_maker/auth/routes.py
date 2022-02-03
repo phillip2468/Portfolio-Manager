@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
+import sqlalchemy.exc
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 get_jwt, get_jwt_identity, jwt_required,
@@ -66,6 +67,28 @@ def logout():
 @jwt_required()
 def protected():
     return jsonify(foo="bar")
+
+
+@auth_bp.route("/register", methods=["POST"])
+def register():
+    req = request.get_json(force=True)
+    email = req.get("email", None)
+    password = req.get("password", None)
+
+    new_user = User(email=email, hashed_password=bcrypt.generate_password_hash(password))
+
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+    except sqlalchemy.exc.IntegrityError as e:
+        db.session.rollback()
+        return jsonify({"error": "error while inserting into database"}), 400
+
+    response = jsonify({"msg":  "register successful"})
+    access_token = create_access_token(identity=new_user.user_id)
+    set_access_cookies(response, access_token)
+
+    return response, 200
 
 
 @auth_bp.route("/which_user", methods=["GET"])
