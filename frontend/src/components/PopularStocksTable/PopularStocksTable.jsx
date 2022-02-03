@@ -49,7 +49,7 @@ const PopularStocksTable = () => {
                 data={popularStocks}
                 dense={true}
                 highlightOnHover={true}
-                onRowClicked={(row, e) => navigate(`/${row.symbol}`)}
+                onRowClicked={(row) => navigate(`/${row.symbol}`)}
                 pointerOnHover={true}
                 striped={true}
                 theme={'dark'}
