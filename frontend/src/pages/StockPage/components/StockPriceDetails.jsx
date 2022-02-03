@@ -5,6 +5,14 @@ import * as PropTypes from 'prop-types'
 import React from 'react'
 
 const StockPriceDetails = (props) => {
+  props.propTypes = {
+    stockInfo: {
+      market_current_price: PropTypes.string,
+      market_change_percentage: PropTypes.string,
+      market_change: PropTypes.string
+    }
+  }
+
   return <Grid item>
         <StockInfoContainer>
             <div style={{ fontSize: '2em' }}>
