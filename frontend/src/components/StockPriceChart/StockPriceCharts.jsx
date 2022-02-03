@@ -41,7 +41,11 @@ StockPriceChart.propTypes = {
   historicalData: PropTypes.arrayOf(PropTypes.any),
   formatTime: PropTypes.func,
   heightOfChart: PropTypes.any,
-  widthOfChart: PropTypes.number
+  widthOfChart: PropTypes.number,
+  priceList: PropTypes.objectOf(PropTypes.shape({
+    open: PropTypes.string,
+    time: PropTypes.string
+  }))
 }
 
 export default StockPriceChart

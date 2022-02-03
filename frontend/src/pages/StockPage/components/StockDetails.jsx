@@ -8,13 +8,16 @@ const StockDetails = (props) => {
             {props.stockInfo.symbol}
         </div>
         <div style={{ fontSize: '2em' }}>
-            {props.stockInfo !== [] && props.stockInfo.stock_name}
+            {props.stockInfo !== {} && props.stockInfo.stock_name}
         </div>
     </Grid>
 }
 
 StockDetails.propTypes = {
-  stockInfo: PropTypes.any
+  stockInfo: PropTypes.shape({
+    stock_name: PropTypes.string,
+    symbol: PropTypes.string
+  })
 }
 
 export default StockDetails
