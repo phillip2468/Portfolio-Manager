@@ -20,7 +20,7 @@ const StockPriceDetails = (props) => {
             </div>
             <div>
                 {props.stockInfo.market_change > 0 ? ('+') : ('-')}
-                {(props.stockInfo.market_change)}
+                {props.stockInfo.market_change && (props.stockInfo.market_change).toFixed(3)}
             </div>
         </StockInfoContainer>
         <MiscDetailsStock>
