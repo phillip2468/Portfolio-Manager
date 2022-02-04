@@ -16,9 +16,6 @@ const Header = () => {
     navigate('/login')
   }
 
-  // eslint-disable-next-line no-lone-blocks
-  { console.log(loggedIn) }
-
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const toggleDrawer = (anchor, open) => (event) => {
