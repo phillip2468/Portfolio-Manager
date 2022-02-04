@@ -1,7 +1,7 @@
 from flask_marshmallow import Schema
 from money_maker.extensions import db, marshmallow
-from sqlalchemy import (TIMESTAMP, Column, ForeignKey, ForeignKeyConstraint,
-                        Integer, String, func)
+from sqlalchemy import (TIMESTAMP, Column, ForeignKey,
+                        Integer, String, func, UniqueConstraint)
 
 
 class Portfolio(db.Model):
@@ -16,9 +16,8 @@ class Portfolio(db.Model):
     stock_id = Column(Integer, ForeignKey('ticker_prices.stock_id'))
     last_inserted = Column(TIMESTAMP, server_default=func.now(), server_onupdate=func.utc_timestamp())
     ___table_args__ = (
-        ForeignKeyConstraint(columns=["portfolio_name", "user_id", "stock_id"],
-                             refcolumns=["portfolio_name", "user.user_id", "ticker_price.stock_id"],
-                             onupdate="CASCADE", ondelete="CASCADE",), {}
+        UniqueConstraint(portfolio_name, user_id, stock_id,
+                         name="unique_stock_in_portfolio_by_user"),
     )
 
 
