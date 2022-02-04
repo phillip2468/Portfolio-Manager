@@ -2,11 +2,18 @@ import { Grid, Typography } from '@mui/material'
 import DataTable from 'react-data-table-component'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { FetchFunction } from '../components/FetchFunction'
 
 const PortfolioPage = () => {
   const navigate = useNavigate()
 
   const [popularStocks, setPopularStocks] = useState([])
+
+  const [listOfPortfolios, setListOfPortfolios] = useState([])
+
+  const getListOfPortfolios = () => {
+    FetchFunction('GET', '')
+  }
 
   useEffect(() => {
     fetch('/actively-traded')
