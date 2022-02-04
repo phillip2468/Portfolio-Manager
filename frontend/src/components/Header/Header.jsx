@@ -16,6 +16,9 @@ const Header = () => {
     navigate('/login')
   }
 
+  // eslint-disable-next-line no-lone-blocks
+  { console.log(loggedIn) }
+
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const toggleDrawer = (anchor, open) => (event) => {
@@ -25,6 +28,14 @@ const Header = () => {
     }
 
     setDrawerOpen(open)
+  }
+
+  const protectedPage = (pageName) => {
+    if (loggedIn) {
+      navigate(`/${pageName}`)
+    } else {
+      navigate('/login')
+    }
   }
 
   const listOfItems = (anchor) => (
@@ -43,11 +54,11 @@ const Header = () => {
         </ListItem>
 
         <ListItem button key={'Portfolio'}>
-          <ListItemText onClick={() => navigate('/portfolio')} primary={'Portfolio'}/>
+          <ListItemText onClick={() => protectedPage('portfolio')} primary={'Portfolio'}/>
         </ListItem>
 
         <ListItem button key={'Watchlist'}>
-          <ListItemText onClick={() => navigate('/watchlist')} primary={'Watchlist'}/>
+          <ListItemText onClick={() => protectedPage('watchlist')} primary={'Watchlist'}/>
         </ListItem>
       </List>
     </Box>
