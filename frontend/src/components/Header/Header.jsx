@@ -34,7 +34,7 @@ const Header = () => {
       role="presentation"
       sx={{ width: 250 }}>
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+        {['Home', 'Market trends', 'Portfolio', 'Watchlist'].map((text, index) => (
           <ListItem button key={text}>
             <ListItemText primary={text} />
           </ListItem>
