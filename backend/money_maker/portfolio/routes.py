@@ -28,9 +28,23 @@ def get_portfolio_stocks_by_user(user_id: int, portfolio_name: str):
     :param portfolio_name: The portfolio name
     :return: flask.Response
     """
-    results = db.session.query(pF.portfolio_name, pF.stock_id) \
+    results = db.session.query(pF.portfolio_name, pF.stock_id, pF.units_price, pF.date_purchased, pF.units_purchased) \
         .filter(pF.user_id == user_id, pF.portfolio_name == portfolio_name).all()
     return portfolio_schema.jsonify(results, many=True)
+
+
+@portfolio_bp.route("<user_id>/<portfolio_name>", methods=["POST"])
+def add_new_portfolio(user_id: int, portfolio_name: str):
+    """
+    Creates a new portfolio for the particular user
+    :param user_id: The user id
+    :param portfolio_name: The portfolio name
+    :return: flask.Response
+    """
+
+    new_portfilio = pF(portfolio_name=portfolio_name, user_id=user_id)
+    db.session.add(new_portfilio)
+    return jsonify({"msg", "Successfully created a new portfolio"}), 200
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["POST"])

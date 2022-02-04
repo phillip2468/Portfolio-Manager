@@ -1,7 +1,8 @@
 from flask_marshmallow import Schema
-from money_maker.extensions import db, marshmallow
 from sqlalchemy import (TIMESTAMP, Column, ForeignKey,
                         Integer, String, func, UniqueConstraint, Numeric, DATE)
+
+from money_maker.extensions import db, marshmallow
 
 
 class Portfolio(db.Model):
@@ -13,7 +14,7 @@ class Portfolio(db.Model):
     """
     __tablename__ = 'portfolio'
     portfolio_id = Column(Integer, primary_key=True, autoincrement=True)
-    portfolio_name = Column(String(length=100), unique=True)
+    portfolio_name = Column(String(length=100))
     user_id = Column(Integer, ForeignKey('user.user_id'))
     stock_id = Column(Integer, ForeignKey('ticker_prices.stock_id'))
     units_purchased = Column(Integer)
