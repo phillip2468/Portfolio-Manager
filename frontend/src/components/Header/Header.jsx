@@ -34,11 +34,21 @@ const Header = () => {
       role="presentation"
       sx={{ width: 250 }}>
       <List>
-        {['Home', 'Market trends', 'Portfolio', 'Watchlist'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
+        <ListItem button key={'Home'}>
+          <ListItemText onClick={() => navigate('/')} primary={'Home'}/>
+        </ListItem>
+
+        <ListItem button key={'Market trends'}>
+          <ListItemText onClick={() => navigate('/trends')} primary={'Trends'}/>
+        </ListItem>
+
+        <ListItem button key={'Portfolio'}>
+          <ListItemText onClick={() => navigate('/portfolio')} primary={'Portfolio'}/>
+        </ListItem>
+
+        <ListItem button key={'Watchlist'}>
+          <ListItemText onClick={() => navigate('/watchlist')} primary={'Watchlist'}/>
+        </ListItem>
       </List>
     </Box>
   )
