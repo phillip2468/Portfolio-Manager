@@ -90,9 +90,11 @@ const PortfolioPage = () => {
       </Grid>
 
       <Grid item>
-        <Button onClick={() => setOpen(true)} variant={'contained'}>
-          Create a new watchlist
-        </Button>
+        <Grid container justifyContent={'center'}>
+          <Button onClick={() => setOpen(true)} variant={'contained'}>
+            Create a new watchlist
+          </Button>
+        </Grid>
       </Grid>
 
       <Dialog onClose={() => setOpen(false)} open={open}>
@@ -114,19 +116,36 @@ const PortfolioPage = () => {
 
           <DialogActions>
             <Button onClick={() => setOpen(false)}>Cancel</Button>
-            <Button onClick={() => setOpen(true)}>Subscribe</Button>
+            <Button onClick={() => setOpen(true)}>Add</Button>
           </DialogActions>
         </DialogContent>
       </Dialog>
 
       <Grid item>
-        <InputLabel id="demo-simple-select-label">Select a portfolio here</InputLabel>
-        <Select onChange={(e) => setSelectedPortfolio(e.target.value)} value={selectedPortfolio}>
-          {
-            listOfPortfolios.map(element =>
-            <MenuItem key={element.portfolio_name} value={element.portfolio_name}>{element.portfolio_name}</MenuItem>
-            )}
-        </Select>
+        <Grid container direction={'row'} justifyContent={'center'} spacing={2}>
+          <Grid item>
+            <InputLabel id="demo-simple-select-label">Select a portfolio here</InputLabel>
+          </Grid>
+
+          <Grid item>
+            <Select
+              autoWidth={true}
+              onChange={(e) => setSelectedPortfolio(e.target.value)}
+              value={selectedPortfolio}
+            >
+              {
+                listOfPortfolios.map(element =>
+                  <MenuItem
+                    key={element.portfolio_name}
+                    value={element.portfolio_name}
+                  >
+                    {element.portfolio_name}
+                  </MenuItem>
+                )}
+            </Select>
+          </Grid>
+
+        </Grid>
       </Grid>
 
       <Grid item>
