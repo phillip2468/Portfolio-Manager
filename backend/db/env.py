@@ -47,7 +47,8 @@ def run_migrations_offline():
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         compare_type=True,
-        include_object=include_object
+        include_object=include_object,
+        compare_server_default=True
     )
 
     with context.begin_transaction():
@@ -83,7 +84,8 @@ def run_migrations_online():
             target_metadata=target_metadata,
             process_revision_directives=process_revision_directives,
             compare_type=True,
-            include_object=include_object
+            include_object=include_object,
+            compare_server_default=True
         )
 
         with context.begin_transaction():
