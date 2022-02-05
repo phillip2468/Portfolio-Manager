@@ -9,10 +9,14 @@ import {
   Typography
 } from '@mui/material'
 import DataTable from 'react-data-table-component'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { ClientContext } from '../store/StoreCredentials'
 import { FetchFunction } from '../components/FetchFunction'
 import Button from '@mui/material/Button'
+
+function findById (array, id) {
+  return array.findIndex((d) => d.id === id)
+}
 
 const PortfolioPage = () => {
   const { userId } = useContext(ClientContext)
@@ -39,43 +43,74 @@ const PortfolioPage = () => {
       .catch(error => console.log(error))
   }
 
-  const columns = [
-    {
-      name: 'symbol',
-      selector: row => row.stock_details.symbol
-    },
-    {
-      name: 'exchange',
-      selector: row => row.stock_details.exchange
-    },
-    {
-      name: 'Name',
-      selector: row => row.stock_details.stock_name,
-      compact: true
-    },
-    {
-      name: 'price',
-      selector: row => row.stock_details.market_current_price,
-      compact: true
-    },
-    {
-      name: 'change %',
-      selector: row => row.stock_details.market_change_percentage,
-      compact: true,
-      format: row => (row.stock_details.market_change_percentage * 100).toFixed(2)
-    },
-    {
-      name: 'Unit price',
-      selector: row => row.units_price,
-      compact: true
-    },
-    {
-      name: 'Units purchased',
-      selector: row => row.units_purchased
-    }
-  ]
+  const columns = useMemo(() => {
+    const handleCellEditable = (field) => (row) => (e) => {
+      const newRow = { ...row }
+      newRow[field] = e.target.value
 
-  console.log(listOfStocks)
+      const newData = listOfStocks.slice(0)
+      newData[findById(listOfStocks, row.id)] = newRow
+      setListOfStocks(newData)
+    }
+
+    return [
+      {
+        name: 'symbol',
+        selector: row => row.stock_details.symbol,
+        sortable: true
+      },
+      {
+        name: 'exchange',
+        selector: row => row.stock_details.exchange,
+        sortable: true
+      },
+      {
+        name: 'Name',
+        selector: row => row.stock_details.stock_name,
+        wrap: true,
+        sortable: true
+      },
+      {
+        name: 'price',
+        selector: row => row.stock_details.market_current_price,
+        sortable: true
+      },
+      {
+        name: 'Todays change %',
+        selector: row => row.stock_details.market_change_percentage,
+        sortable: true,
+        format: row => (row.stock_details.market_change_percentage * 100).toFixed(2)
+      },
+      {
+        name: 'Unit price',
+        selector: row => row.units_price,
+        sortable: true,
+        cell: (row) => (
+          <TextField
+            onChange={handleCellEditable('units_price')(row)}
+            value={row.units_price}
+          />
+        )
+      },
+      {
+        name: 'Units purchased',
+        selector: row => row.units_purchased,
+        sortable: true,
+        cell: (row) => (
+          <TextField
+               onChange={handleCellEditable('units_purchased')(row)}
+               value={row.units_purchased}
+               />
+        )
+      },
+      {
+        name: 'Total price',
+        selector: row => (row.units_purchased * row.units_price),
+        sortable: true,
+        format: row => ((parseFloat(row.units_purchased) * row.units_price).toFixed(2))
+      }
+    ]
+  }, [listOfStocks])
 
   return (
     <>
@@ -153,6 +188,7 @@ const PortfolioPage = () => {
           data={listOfStocks}
           highlightOnHover={true}
           pointerOnHover={true}
+          selectableRows={true}
           theme={'dark'}
           title={`${selectedPortfolio} portfolio's`}
         />
