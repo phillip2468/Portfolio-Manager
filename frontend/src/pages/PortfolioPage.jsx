@@ -10,23 +10,17 @@ import {
 } from '@mui/material'
 import DataTable from 'react-data-table-component'
 import { useContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { ClientContext } from '../store/StoreCredentials'
 import { FetchFunction } from '../components/FetchFunction'
 import Button from '@mui/material/Button'
 
 const PortfolioPage = () => {
-  const navigate = useNavigate()
-
-  const [popularStocks, setPopularStocks] = useState([])
   const { userId } = useContext(ClientContext)
 
-  // eslint-disable-next-line no-unused-vars
   const [listOfPortfolios, setListOfPortfolios] = useState([])
 
   const [selectedPortfolio, setSelectedPortfolio] = useState('')
 
-  // eslint-disable-next-line no-unused-vars
   const [listOfStocks, setListOfStocks] = useState([])
 
   const [open, setOpen] = useState(false)
@@ -39,15 +33,6 @@ const PortfolioPage = () => {
     }
   }, [userId])
 
-  useEffect(() => {
-    fetch('/actively-traded')
-      .then((res) => res.json())
-      .then((res) => {
-        setPopularStocks(res)
-      })
-  }, [])
-
-  // eslint-disable-next-line no-unused-vars
   const getStocksFromPortfolio = (portfolioName) => {
     FetchFunction('GET', `portfolio/${userId}/${portfolioName}`)
       .then(res => setListOfStocks(res))
@@ -57,29 +42,40 @@ const PortfolioPage = () => {
   const columns = [
     {
       name: 'symbol',
-      selector: row => row.symbol,
-      width: '100px'
+      selector: row => row.stock_details.symbol
+    },
+    {
+      name: 'exchange',
+      selector: row => row.stock_details.exchange
     },
     {
       name: 'Name',
-      selector: row => row.stock_name,
-      compact: true,
-      width: '250px'
+      selector: row => row.stock_details.stock_name,
+      compact: true
     },
     {
       name: 'price',
-      selector: row => row.market_current_price,
-      compact: true,
-      width: '100px'
+      selector: row => row.stock_details.market_current_price,
+      compact: true
     },
     {
       name: 'change %',
-      selector: row => row.market_change_percentage,
+      selector: row => row.stock_details.market_change_percentage,
       compact: true,
-      width: '100px',
-      format: row => (row.market_change_percentage * 100).toFixed(2)
+      format: row => (row.stock_details.market_change_percentage * 100).toFixed(2)
+    },
+    {
+      name: 'Unit price',
+      selector: row => row.units_price,
+      compact: true
+    },
+    {
+      name: 'Units purchased',
+      selector: row => row.units_purchased
     }
   ]
+
+  console.log(listOfStocks)
 
   return (
     <>
@@ -130,7 +126,10 @@ const PortfolioPage = () => {
           <Grid item>
             <Select
               autoWidth={true}
-              onChange={(e) => setSelectedPortfolio(e.target.value)}
+              onChange={(e) => {
+                setSelectedPortfolio(e.target.value)
+                getStocksFromPortfolio(e.target.value)
+              }}
               value={selectedPortfolio}
             >
               {
@@ -151,14 +150,11 @@ const PortfolioPage = () => {
       <Grid item>
         <DataTable
           columns={columns}
-          data={popularStocks}
-          dense={true}
+          data={listOfStocks}
           highlightOnHover={true}
-          onRowClicked={(row) => navigate(`/${row.symbol}`)}
           pointerOnHover={true}
-          striped={true}
           theme={'dark'}
-          title={'Popular stocks today'}
+          title={`${selectedPortfolio} portfolio's`}
         />
       </Grid>
     </>
