@@ -45,7 +45,7 @@ const PortfolioPage = () => {
 
   const columns = useMemo(() => {
     const handleCellEditable = (field) => (row) => (e) => {
-      if (e.target.value > 0) {
+      if (e.target.value >= 0) {
         const newRow = { ...row }
         newRow[field] = e.target.value
 
@@ -95,7 +95,6 @@ const PortfolioPage = () => {
         cell: (row) => (
           <TextField
             onChange={handleCellEditable('units_price')(row)}
-            type={'number'}
             value={row.units_price}
           />
         )
