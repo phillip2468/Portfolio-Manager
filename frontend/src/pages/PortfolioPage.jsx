@@ -45,12 +45,14 @@ const PortfolioPage = () => {
 
   const columns = useMemo(() => {
     const handleCellEditable = (field) => (row) => (e) => {
-      const newRow = { ...row }
-      newRow[field] = e.target.value
+      if (e.target.value > 0) {
+        const newRow = { ...row }
+        newRow[field] = e.target.value
 
-      const newData = listOfStocks.slice(0)
-      newData[findById(listOfStocks, row.portfolio_id)] = newRow
-      setListOfStocks(newData)
+        const newData = listOfStocks.slice(0)
+        newData[findById(listOfStocks, row.portfolio_id)] = newRow
+        setListOfStocks(newData)
+      }
     }
 
     return [
@@ -93,6 +95,7 @@ const PortfolioPage = () => {
         cell: (row) => (
           <TextField
             onChange={handleCellEditable('units_price')(row)}
+            type={'number'}
             value={row.units_price}
           />
         )
