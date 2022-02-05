@@ -15,7 +15,7 @@ import { FetchFunction } from '../components/FetchFunction'
 import Button from '@mui/material/Button'
 
 function findById (array, id) {
-  return array.findIndex((d) => d.id === id)
+  return array.findIndex((d) => d.portfolio_id === id)
 }
 
 const PortfolioPage = () => {
@@ -49,7 +49,7 @@ const PortfolioPage = () => {
       newRow[field] = e.target.value
 
       const newData = listOfStocks.slice(0)
-      newData[findById(listOfStocks, row.id)] = newRow
+      newData[findById(listOfStocks, row.portfolio_id)] = newRow
       setListOfStocks(newData)
     }
 
@@ -71,8 +71,13 @@ const PortfolioPage = () => {
         sortable: true
       },
       {
-        name: 'price',
+        name: 'Last',
         selector: row => row.stock_details.market_current_price,
+        sortable: true
+      },
+      {
+        name: 'Currency',
+        selector: row => row.stock_details.currency,
         sortable: true
       },
       {
@@ -93,7 +98,7 @@ const PortfolioPage = () => {
         )
       },
       {
-        name: 'Units purchased',
+        name: 'Units',
         selector: row => row.units_purchased,
         sortable: true,
         cell: (row) => (
@@ -104,10 +109,16 @@ const PortfolioPage = () => {
         )
       },
       {
-        name: 'Total price',
+        name: 'Value',
         selector: row => (row.units_purchased * row.units_price),
         sortable: true,
         format: row => ((parseFloat(row.units_purchased) * row.units_price).toFixed(2))
+      },
+      {
+        name: 'Change %',
+        selector: row => (100 - ((row.stock_details.market_current_price / row.units_price) * 100)),
+        sortable: true,
+        format: row => (100 - ((row.stock_details.market_current_price / row.units_price) * 100)).toFixed(2)
       }
     ]
   }, [listOfStocks])
