@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
+from money_maker.models.ticker_prices import TickerPrice as tP
 from sqlalchemy import distinct
 from sqlalchemy.exc import IntegrityError
 
@@ -23,14 +24,13 @@ def get_portfolio_names_by_user(user_id: int):
 @portfolio_bp.route("<user_id>/<portfolio_name>", methods=["GET"])
 def get_portfolio_stocks_by_user(user_id: int, portfolio_name: str):
     """
-    Returns a stocks list by portfolio name.
+    Returns all the stocks that are under the particular portfolio name.
 
     :param user_id: The user id
     :param portfolio_name: The portfolio name
     :return: flask.Response
     """
-    results = db.session.query(pF.portfolio_name, pF.stock_id, pF.units_price, pF.date_purchased, pF.units_purchased) \
-        .filter(pF.user_id == user_id, pF.portfolio_name == portfolio_name).all()
+    results = db.session.query(pF).filter(pF.user_id == user_id, pF.portfolio_name == portfolio_name).join(tP).all()
     return portfolio_schema.jsonify(results, many=True)
 
 
