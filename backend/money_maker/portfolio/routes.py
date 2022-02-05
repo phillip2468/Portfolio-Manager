@@ -68,7 +68,7 @@ def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int):
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["PATCH"])
-def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int):
+def update_stock_in_portfolio(user_id: int, portfolio_name: str, stock_id: int):
     """
     Updates a stock in a portfolio. The attributes that can be changed
     are the units_purchased or units_price attributes.
@@ -83,10 +83,10 @@ def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int):
     units_purchased = req.get("units_purchased", None)
 
     db.session.query(pF).filter(pF.user_id == user_id, pF.portfolio_name == portfolio_name, pF.stock_id == stock_id)\
-        .update({pF.units_price: units_price, pF.units_purchased: units_purchased}, synchronize_session="fetch")
+        .update(values={"units_price": units_price, "units_purchased": units_purchased}, synchronize_session="fetch")
     db.session.commit()
 
-    return jsonify({"msg", "Successfully updated the stock"}), 200
+    return jsonify({"msg" : "Successfully updated the stock"}), 200
 
 
 @portfolio_bp.errorhandler(IntegrityError)

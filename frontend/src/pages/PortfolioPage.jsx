@@ -52,6 +52,14 @@ const PortfolioPage = () => {
         const newData = listOfStocks.slice(0)
         newData[findById(listOfStocks, row.portfolio_id)] = newRow
         setListOfStocks(newData)
+
+        const body = {
+          units_price: newRow.units_price,
+          units_purchased: newRow.units_purchased
+        }
+        FetchFunction('PATCH', `portfolio/${userId}/${newRow.portfolio_name}/${newRow.stock_details.stock_id}`, body)
+          .then(res => console.log(res))
+          .catch(error => alert(error))
       }
     }
 
