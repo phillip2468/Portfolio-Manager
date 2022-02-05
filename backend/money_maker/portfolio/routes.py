@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
@@ -65,6 +65,28 @@ def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int):
     db.session.commit()
 
     return jsonify({"msg", "Successfully added stock"}), 200
+
+
+@portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["PATCH"])
+def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int):
+    """
+    Updates a stock in a portfolio. The attributes that can be changed
+    are the units_purchased or units_price attributes.
+
+    :param user_id: The user id
+    :param portfolio_name: The portfolio name
+    :param stock_id: The stock id
+    :return: flask.Response
+    """
+    req = request.get_json(force=True)
+    units_price = req.get("units_price", None)
+    units_purchased = req.get("units_purchased", None)
+
+    db.session.query(pF).filter(pF.user_id == user_id, pF.portfolio_name == portfolio_name, pF.stock_id == stock_id)\
+        .update({pF.units_price: units_price, pF.units_purchased: units_purchased}, synchronize_session="fetch")
+    db.session.commit()
+
+    return jsonify({"msg", "Successfully updated the stock"}), 200
 
 
 @portfolio_bp.errorhandler(IntegrityError)
