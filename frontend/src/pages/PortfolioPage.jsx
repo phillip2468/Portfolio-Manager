@@ -148,8 +148,6 @@ const PortfolioPage = () => {
     ]
   }, [listOfStocks])
 
-  console.log(stockDialogOpen)
-
   const handleRowsSelected = useCallback(state => {
     setSelectedRows(state.selectedRows)
   }, [])
