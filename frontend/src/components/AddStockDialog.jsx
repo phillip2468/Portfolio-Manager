@@ -32,7 +32,11 @@ const AddStockDialog = (props) => {
       .catch(error => console.log(error))
   }
 
-  return <Dialog onClose={props.onClose} open={props.open}>
+  return <Dialog onClose={() => {
+    setSearchValue('')
+    setSelectedStock([])
+    props.onClose()
+  }} open={props.open}>
     <DialogTitle>Add a new stock to {props.selectedPortfolio}</DialogTitle>
     <DialogContent>
       <Autocomplete
@@ -49,8 +53,12 @@ const AddStockDialog = (props) => {
       />
     </DialogContent>
     <DialogActions>
-      <Button onClick={props.onClose}>Cancel</Button>
-      <Button disabled={true} onClick={handleSubmit}>Add stock</Button>
+      <Button onClick={() => {
+        setSearchValue('')
+        setSelectedStock([])
+        props.onClose()
+      }}>Cancel</Button>
+      <Button disabled={typeof selectedStock.stock_id !== 'number'} onClick={handleSubmit}>Add stock</Button>
     </DialogActions>
   </Dialog>
 }
