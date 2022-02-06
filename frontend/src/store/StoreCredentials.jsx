@@ -10,6 +10,7 @@ export const ClientContext = createContext(null)
 export const ClientWrapper = ({ children }) => {
   const navigate = useNavigate()
   const [loggedIn, setLoggedIn] = useState(false)
+  const [userId, setUserId] = useState(null)
 
   const loginUser = (email, password) => {
     const body = {
@@ -38,8 +39,9 @@ export const ClientWrapper = ({ children }) => {
 
   const findUser = () => {
     FetchFunction('GET', 'auth/which_user', null)
-      .then(() => {
+      .then((res) => {
         setLoggedIn(true)
+        setUserId(res.user_id)
       })
       .catch(() => {
         setLoggedIn(false)
@@ -47,7 +49,7 @@ export const ClientWrapper = ({ children }) => {
   }
 
   const contextData = {
-    loginUser, logoutUser, findUser, loggedIn, setLoggedIn
+    loginUser, logoutUser, findUser, loggedIn, setLoggedIn, userId
   }
 
   useEffect(() => {
