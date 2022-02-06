@@ -5,7 +5,6 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
-  InputLabel,
   MenuItem,
   Select,
   TextField,
@@ -208,19 +207,25 @@ const PortfolioPage = () => {
 
       <Grid item>
         <Grid container direction={'row'} justifyContent={'center'} spacing={2}>
-          <Grid item>
-            <InputLabel id="demo-simple-select-label">Select a portfolio here</InputLabel>
-          </Grid>
-
-          <Grid item>
             <Select
-              autoWidth={true}
+              displayEmpty
               onChange={(e) => {
                 setSelectedPortfolio(e.target.value)
                 getStocksFromPortfolio(e.target.value)
               }}
+              renderValue={(selected) => {
+                if (selected.length === 0) {
+                  return <em>Select a portfolio</em>
+                }
+                return selected
+              }}
+              sx={{ width: '150px' }}
               value={selectedPortfolio}
+              variant={'standard'}
             >
+              <MenuItem disabled value="">
+                <em>Select...</em>
+              </MenuItem>
               {
                 listOfPortfolios.map(element =>
                   <MenuItem
@@ -232,8 +237,6 @@ const PortfolioPage = () => {
                 )}
             </Select>
           </Grid>
-
-        </Grid>
       </Grid>
 
       <Grid item>
