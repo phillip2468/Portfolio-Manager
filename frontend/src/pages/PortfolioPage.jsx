@@ -50,6 +50,12 @@ const PortfolioPage = () => {
       .catch(error => console.log(error))
   }
 
+  useEffect(() => {
+    if (selectedPortfolio !== '') {
+      getStocksFromPortfolio(selectedPortfolio)
+    }
+  }, [selectedPortfolio])
+
   const columns = useMemo(() => {
     const handleCellEditable = (field) => (row) => (e) => {
       if (e.target.value >= 0) {
@@ -219,15 +225,13 @@ const PortfolioPage = () => {
       </Dialog>
 
       <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
-                      selectedPortfolio={selectedPortfolio}/>
-
+                      selectedPortfolio={selectedPortfolio} userId={userId}/>
       <Grid item>
         <Grid container direction={'row'} justifyContent={'center'} spacing={2}>
           <Select
             displayEmpty
             onChange={(e) => {
               setSelectedPortfolio(e.target.value)
-              getStocksFromPortfolio(e.target.value)
             }}
             renderValue={(selected) => {
               if (selected.length === 0) {

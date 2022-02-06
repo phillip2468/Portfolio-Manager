@@ -1,10 +1,9 @@
 from flask import Blueprint, jsonify, request
-from sqlalchemy.exc import IntegrityError
-
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
 from money_maker.models.ticker_prices import TickerPrice as tP
+from sqlalchemy.exc import IntegrityError
 
 portfolio_bp = Blueprint("portfolio_bp", __name__, url_prefix="/portfolio")
 
@@ -60,11 +59,11 @@ def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int):
     :param stock_id: The stock id
     :return: flask.Response
     """
-    stock = pF(stock_id=stock_id, portfolio_name=portfolio_name, user_id=user_id)
+    stock = pF(stock_id=stock_id, portfolio_name=portfolio_name, user_id=user_id, units_price=0, units_purchased=0)
     db.session.add(stock)
     db.session.commit()
 
-    return jsonify({"msg", "Successfully added stock"}), 200
+    return jsonify({"msg":  "Successfully added stock"}), 200
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["DELETE"])
@@ -79,6 +78,7 @@ def remove_stock_from_portfolio(user_id: int, portfolio_name: str, stock_id: int
     :return: flask.Response
     """
     db.session.query(pF).filter(pF.stock_id == stock_id).delete()
+    db.session.commit()
 
     return jsonify({"msg": "Successfully deleted the stock"}), 200
 

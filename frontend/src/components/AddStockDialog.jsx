@@ -12,34 +12,45 @@ import { FetchFunction } from './FetchFunction'
 import { useEffect, useState } from 'react'
 
 const AddStockDialog = (props) => {
-  const [value, setValue] = useState('A')
+  const [searchValue, setSearchValue] = useState('')
   const [suggestions, setSuggestions] = useState([])
+  const [selectedStock, setSelectedStock] = useState([])
 
   useEffect(() => {
-    FetchFunction('GET', `search/${value}`, null)
-      .then(res => setSuggestions(res))
+    if (searchValue !== '') {
+      FetchFunction('GET', `search/${searchValue}`, null)
+        .then(res => setSuggestions(res))
+        .catch(error => console.log(error))
+    }
+  }, [searchValue])
+
+  const handleSubmit = () => {
+    FetchFunction('POST', `portfolio/${props.userId}/${props.selectedPortfolio}/${selectedStock.stock_id}`)
+      .then(() => {
+        return props.onClose()
+      })
       .catch(error => console.log(error))
-  }, [value])
+  }
 
   return <Dialog onClose={props.onClose} open={props.open}>
     <DialogTitle>Add a new stock to {props.selectedPortfolio}</DialogTitle>
     <DialogContent>
       <Autocomplete
-        getOptionLabel={(option) => option.stock_name}
-        onChange={(event, value) => console.log(event)}
+        getOptionLabel={(option) => `${option.symbol} - ${option.stock_name}`}
+        onChange={(event, value) => setSelectedStock(value)}
         options={suggestions}
-        renderInput={(params) => <TextField {...params} label="Movie" onChange={e => {
-          if (e.target.value !== '' || e.target.value !== null) {
-            setValue(e.target.value)
+        renderInput={(params) => <TextField {...params} label="Stock" onChange={e => {
+          if (e.target.value !== '') {
+            setSearchValue(e.target.value)
           }
         }
         }/>}
-        sx={{ width: '200px', paddingTop: '10px' }}
+        sx={{ width: '500px', paddingTop: '10px' }}
       />
     </DialogContent>
     <DialogActions>
       <Button onClick={props.onClose}>Cancel</Button>
-      <Button onClick={props.onClose}>Add stock</Button>
+      <Button disabled={true} onClick={handleSubmit}>Add stock</Button>
     </DialogActions>
   </Dialog>
 }
@@ -47,7 +58,8 @@ const AddStockDialog = (props) => {
 AddStockDialog.propTypes = {
   onClose: PropTypes.func,
   open: PropTypes.bool,
-  selectedPortfolio: PropTypes.string
+  selectedPortfolio: PropTypes.string,
+  userId: PropTypes.number
 }
 
 export default AddStockDialog
