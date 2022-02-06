@@ -4,12 +4,15 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Grid, InputLabel, MenuItem, Select,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography
 } from '@mui/material'
 import DataTable from 'react-data-table-component'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ClientContext } from '../store/StoreCredentials'
 import { FetchFunction } from '../components/FetchFunction'
 import Button from '@mui/material/Button'
@@ -28,6 +31,10 @@ const PortfolioPage = () => {
   const [listOfStocks, setListOfStocks] = useState([])
 
   const [open, setOpen] = useState(false)
+
+  const [selectedRows, setSelectedRows] = useState([])
+
+  const [toggleCleared, setToggleCleared] = useState(false)
 
   useEffect(() => {
     if (userId !== null) {
@@ -133,6 +140,24 @@ const PortfolioPage = () => {
     ]
   }, [listOfStocks])
 
+  const handleRowsSelected = useCallback(state => {
+    setSelectedRows(state.selectedRows)
+  }, [])
+
+  const contextActions = useMemo(() => {
+    const handleDelete = () => {
+      let newData = { ...listOfStocks }
+      newData = Object.values(newData).filter(item => !selectedRows.includes(item))
+      setListOfStocks(newData)
+      setToggleCleared(!toggleCleared)
+    }
+
+    return (
+      <Button onClick={handleDelete} style={{ background: 'darkred' }} variant={'contained'}>Delete</Button>
+    )
+  }, [listOfStocks, selectedRows, toggleCleared])
+
+  // noinspection JSValidateTypes
   return (
     <>
       <Grid item>
@@ -205,9 +230,12 @@ const PortfolioPage = () => {
 
       <Grid item>
         <DataTable
+          clearSelectedRows={toggleCleared}
           columns={columns}
+          contextActions={contextActions}
           data={listOfStocks}
           highlightOnHover={true}
+          onSelectedRowsChange={handleRowsSelected}
           pointerOnHover={true}
           selectableRows={true}
           theme={'dark'}
