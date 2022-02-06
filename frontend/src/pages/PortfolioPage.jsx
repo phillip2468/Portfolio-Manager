@@ -15,6 +15,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ClientContext } from '../store/StoreCredentials'
 import { FetchFunction } from '../components/FetchFunction'
 import Button from '@mui/material/Button'
+import AddStockDialog from '../components/AddStockDialog'
 
 function findById (array, id) {
   return array.findIndex((d) => d.portfolio_id === id)
@@ -164,6 +165,18 @@ const PortfolioPage = () => {
     )
   }, [listOfStocks, selectedRows, toggleCleared])
 
+  const [stockDialogOpen, setStockDialogOpen] = useState(false)
+
+  const renderAddStock = () => {
+    if (selectedPortfolio) {
+      return (
+        <Button
+          onClick={() => setStockDialogOpen(true)}
+          variant={'outlined'}>Add a new stock</Button>
+      )
+    }
+  }
+
   // noinspection JSValidateTypes
   return (
     <>
@@ -191,12 +204,12 @@ const PortfolioPage = () => {
           </DialogContentText>
 
           <TextField autoFocus
-          fullWidth
-          id={'portfolio_name'}
-          label={'Portfolio name'}
-          margin={'dense'}
-          type={'text'}
-          variant={'standard'}/>
+                     fullWidth
+                     id={'portfolio_name'}
+                     label={'Portfolio name'}
+                     margin={'dense'}
+                     type={'text'}
+                     variant={'standard'}/>
 
           <DialogActions>
             <Button onClick={() => setOpen(false)}>Cancel</Button>
@@ -205,50 +218,56 @@ const PortfolioPage = () => {
         </DialogContent>
       </Dialog>
 
+      <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
+                      selectedPortfolio={selectedPortfolio}/>
+
       <Grid item>
         <Grid container direction={'row'} justifyContent={'center'} spacing={2}>
-            <Select
-              displayEmpty
-              onChange={(e) => {
-                setSelectedPortfolio(e.target.value)
-                getStocksFromPortfolio(e.target.value)
-              }}
-              renderValue={(selected) => {
-                if (selected.length === 0) {
-                  return <em>Select a portfolio</em>
-                }
-                return selected
-              }}
-              sx={{ width: '150px' }}
-              value={selectedPortfolio}
-              variant={'standard'}
-            >
-              <MenuItem disabled value="">
-                <em>Select...</em>
-              </MenuItem>
-              {
-                listOfPortfolios.map(element =>
-                  <MenuItem
-                    key={element.portfolio_name}
-                    value={element.portfolio_name}
-                  >
-                    {element.portfolio_name}
-                  </MenuItem>
-                )}
-            </Select>
-          </Grid>
+          <Select
+            displayEmpty
+            onChange={(e) => {
+              setSelectedPortfolio(e.target.value)
+              getStocksFromPortfolio(e.target.value)
+            }}
+            renderValue={(selected) => {
+              if (selected.length === 0) {
+                return <em>Select a portfolio</em>
+              }
+              return selected
+            }}
+            sx={{ width: '150px', paddingLeft: '10px' }}
+            value={selectedPortfolio}
+            variant={'standard'}
+          >
+            <MenuItem disabled value="">
+              <em>Select...</em>
+            </MenuItem>
+            {
+              listOfPortfolios.map(element =>
+                <MenuItem
+                  key={element.portfolio_name}
+                  value={element.portfolio_name}
+                >
+                  {element.portfolio_name}
+                </MenuItem>
+              )}
+          </Select>
+        </Grid>
       </Grid>
 
       <Grid item>
         <DataTable
+          actions={renderAddStock()}
           clearSelectedRows={toggleCleared}
           columns={columns}
           contextActions={contextActions}
           data={listOfStocks}
           highlightOnHover={true}
           onSelectedRowsChange={handleRowsSelected}
+          pagination={true}
           pointerOnHover={true}
           selectableRows={true}
+          subHeaderAlign={'center'}
           theme={'dark'}
           title={`${selectedPortfolio} portfolio's`}
         />
