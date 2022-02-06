@@ -94,7 +94,7 @@ def register():
 @auth_bp.route("/which_user", methods=["GET"])
 @jwt_required()
 def which_user():
-    user = db.session.query(User).filter(User.user_id == get_jwt()["sub"]).one_or_none()
+    user = db.session.query(User.user_id).filter(User.user_id == get_jwt()["sub"]).one_or_none()
     return users_schema.jsonify(user)
 
 

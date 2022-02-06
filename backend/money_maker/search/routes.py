@@ -11,7 +11,7 @@ from money_maker.models.ticker_prices import ticker_price_schema
 search_bp = Blueprint("search_bp", __name__, url_prefix="/search")
 
 
-@search_bp.route("/<keyword>")
+@search_bp.route("/<keyword>", methods=['GET'])
 def search_company(keyword: str) -> flask.Response:
     """
     A function which takes in a keyword from the url and

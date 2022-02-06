@@ -39,23 +39,23 @@ const Homepage = () => {
                 <Grid container direction={'row'}>
                     {Object.keys(historicalData).map(function (key) {
                       return (
-                            <div key={key} style={{ textAlign: 'center' }}>
-                                <div>
-                                    {key}
-                                </div>
-                                <div>
-                                    {(parseFloat(historicalData[key].market_change_perc) * 100).toFixed(2)}%
-                                </div>
-                                <div>
-                                    {historicalData[key].currency_symbol}{historicalData[key].price_now}
-                                </div>
-                                <StockPriceChart
-                                    formatTime={dateFormatter}
-                                    heightOfChart={200}
-                                    historicalData={historicalData[key].priceList}
-                                    widthOfChart={220}
-                                />
-                            </div>
+                        <Grid item key={key} style={{ textAlign: 'center' }}>
+                          <div>
+                            {key}
+                          </div>
+                          <div>
+                            {(parseFloat(historicalData[key].market_change_perc) * 100).toFixed(2)}%
+                          </div>
+                          <div>
+                            {historicalData[key].currency_symbol}{historicalData[key].price_now}
+                          </div>
+                          <StockPriceChart
+                            formatTime={dateFormatter}
+                            heightOfChart={200}
+                            historicalData={historicalData[key].priceList}
+                            widthOfChart={220}
+                          />
+                        </Grid>
                       )
                     })}
                 </Grid>
