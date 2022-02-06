@@ -16,6 +16,7 @@ import { ClientContext } from '../store/StoreCredentials'
 import { FetchFunction } from '../components/FetchFunction'
 import Button from '@mui/material/Button'
 import AddStockDialog from '../components/AddStockDialog'
+import { Link } from 'react-router-dom'
 
 function findById (array, id) {
   return array.findIndex((d) => d.portfolio_id === id)
@@ -82,7 +83,8 @@ const PortfolioPage = () => {
       {
         name: 'symbol',
         selector: row => row.stock_details.symbol,
-        sortable: true
+        sortable: true,
+        cell: row => <Link target="_blank" to={`/${row.stock_details.symbol}`}>{row.stock_details.symbol}</Link>
       },
       {
         name: 'exchange',
