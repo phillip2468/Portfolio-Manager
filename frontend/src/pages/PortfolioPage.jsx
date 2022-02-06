@@ -36,6 +36,8 @@ const PortfolioPage = () => {
 
   const [toggleCleared, setToggleCleared] = useState(false)
 
+  const [stockDialogOpen, setStockDialogOpen] = useState(false)
+
   useEffect(() => {
     if (userId !== null) {
       FetchFunction('GET', `portfolio/${userId}`, null)
@@ -54,7 +56,7 @@ const PortfolioPage = () => {
     if (selectedPortfolio !== '') {
       getStocksFromPortfolio(selectedPortfolio)
     }
-  }, [selectedPortfolio])
+  }, [selectedPortfolio, stockDialogOpen])
 
   const columns = useMemo(() => {
     const handleCellEditable = (field) => (row) => (e) => {
@@ -146,6 +148,8 @@ const PortfolioPage = () => {
     ]
   }, [listOfStocks])
 
+  console.log(stockDialogOpen)
+
   const handleRowsSelected = useCallback(state => {
     setSelectedRows(state.selectedRows)
   }, [])
@@ -170,8 +174,6 @@ const PortfolioPage = () => {
       <Button onClick={handleDelete} style={{ background: 'darkred' }} variant={'contained'}>Delete</Button>
     )
   }, [listOfStocks, selectedRows, toggleCleared])
-
-  const [stockDialogOpen, setStockDialogOpen] = useState(false)
 
   const renderAddStock = () => {
     if (selectedPortfolio) {
