@@ -147,6 +147,14 @@ const PortfolioPage = () => {
   const contextActions = useMemo(() => {
     const handleDelete = () => {
       let newData = { ...listOfStocks }
+      const listOfIds = Object.values(selectedRows).map(item => item.stock_details.stock_id)
+      console.log(listOfIds)
+
+      const promises = listOfIds.map(id =>
+        FetchFunction('DELETE', `portfolio/${userId}/${selectedPortfolio}/${id}`, null)
+      )
+      Promise.all(promises).then(results => console.log(results))
+
       newData = Object.values(newData).filter(item => !selectedRows.includes(item))
       setListOfStocks(newData)
       setToggleCleared(!toggleCleared)
