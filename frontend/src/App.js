@@ -8,7 +8,7 @@ import Header from './components/Header/Header'
 import LoginPage from './pages/LoginPage'
 import { ClientWrapper } from './store/StoreCredentials'
 import RegisterPage from './pages/RegisterPage'
-import PortfolioPage from './pages/PortfolioPage'
+import PortfolioPage from './pages/PortfolioPage/PortfolioPage'
 
 function App () {
   const theme = useMemo(
