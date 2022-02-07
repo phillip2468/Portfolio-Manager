@@ -26,4 +26,4 @@ class WatchlistSchema(marshmallow.SQLAlchemyAutoSchema):
         model = Watchlist
 
 
-portfolio_schema: Schema = WatchlistSchema()
+watchlist_schema: Schema = WatchlistSchema()
