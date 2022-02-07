@@ -101,7 +101,7 @@ const PortfolioPage = () => {
       <AddPortfolio onClick={() => setOpen(true)} onClose={() => setOpen(false)} open={open}/>
 
       <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
-                      route={'portfolio'} selectedPortfolio={selectedPortfolio} userId={userId}/>
+                      route={'portfolio'} selectedItem={selectedPortfolio} userId={userId}/>
       <Grid item>
         <CurrentPortfolios callbackfn={element =>
           <MenuItem
@@ -122,7 +122,7 @@ const PortfolioPage = () => {
       <Grid item>
         <TableOfStocks actions={renderAddStock()} clearSelectedRows={toggleCleared} columns={columns}
                        contextActions={contextActions} data={listOfStocks} onSelectedRowsChange={handleRowsSelected}
-                       selectedPortfolio={selectedPortfolio}/>
+                       selectedItem={selectedPortfolio}/>
       </Grid>
     </>
   )

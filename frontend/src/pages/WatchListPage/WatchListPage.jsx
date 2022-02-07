@@ -164,7 +164,7 @@ const WatchListPage = () => {
       </Dialog>
 
       <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
-                      route={'watchlist'} selectedPortfolio={selectedWL} userId={userId}/>
+                      route={'watchlist'} selectedItem={selectedWL} userId={userId}/>
 
       <Grid item>
         <Grid container direction={'row'} justifyContent={'center'} spacing={2}>
@@ -205,7 +205,7 @@ const WatchListPage = () => {
           contextActions={contextActions}
           data={listOfStocks}
         onSelectedRowsChange={handleRowsSelected}
-        selectedPortfolio={selectedWL}/>
+        selectedItem={selectedWL}/>
       </Grid>
 
     </>

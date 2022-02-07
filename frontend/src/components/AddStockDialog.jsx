@@ -18,7 +18,7 @@ const AddStockDialog = (props) => {
   }, [searchValue])
 
   const handleSubmit = () => {
-    FetchFunction('POST', `${props.route}/${props.userId}/${props.selectedPortfolio}/${selectedStock.stock_id}`)
+    FetchFunction('POST', `${props.route}/${props.userId}/${props.selectedItem}/${selectedStock.stock_id}`)
       .then(() => {
         return props.onClose()
       })
@@ -30,7 +30,7 @@ const AddStockDialog = (props) => {
     setSelectedStock([])
     props.onClose()
   }} open={props.open}>
-    <DialogTitle>Add a new stock to {props.selectedPortfolio}</DialogTitle>
+    <DialogTitle>Add a new stock to {props.selectedItem}</DialogTitle>
     <DialogContent>
       <Autocomplete
         getOptionLabel={(option) => `${option.symbol} - ${option.stock_name}`}
@@ -60,7 +60,7 @@ AddStockDialog.propTypes = {
   route: PropTypes.string,
   onClose: PropTypes.func,
   open: PropTypes.bool,
-  selectedPortfolio: PropTypes.string,
+  selectedItem: PropTypes.string,
   userId: PropTypes.number
 }
 
