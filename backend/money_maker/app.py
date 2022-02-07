@@ -1,5 +1,6 @@
 import flask.app
 from flask import Flask
+
 from money_maker.auth.routes import auth_bp
 from money_maker.extensions import (bcrypt, cache, celery, cors, db,
                                     jwt_manager, marshmallow)
@@ -10,6 +11,7 @@ from money_maker.quote.routes import quote_bp
 from money_maker.search.routes import search_bp
 from money_maker.ticker.routes import ticker_bp
 from money_maker.trending.routes import trending_bp
+from money_maker.watchlist.routes import watchlist_bp
 
 
 def create_app(testing=False) -> Flask:
@@ -52,6 +54,7 @@ def register_blueprints(app: flask.Flask):
     app.register_blueprint(auth_bp)
     app.register_blueprint(ticker_bp)
     app.register_blueprint(portfolio_bp)
+    app.register_blueprint(watchlist_bp)
 
 
 def init_celery(app: flask.app.Flask = None):
