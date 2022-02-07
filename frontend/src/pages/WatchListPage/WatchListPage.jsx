@@ -16,6 +16,7 @@ import { FetchFunction } from '../../components/FetchFunction'
 import { ClientContext } from '../../store/StoreCredentials'
 import { Link } from 'react-router-dom'
 import TableOfStocks from '../../components/TableOfStocks'
+import AddStockDialog from '../../components/AddStockDialog'
 
 const WatchListPage = () => {
   const [openWLDialog, setOpenWLDialog] = useState(false)
@@ -29,6 +30,8 @@ const WatchListPage = () => {
   const [selectedRows, setSelectedRows] = useState([])
 
   const [toggleCleared, setToggleCleared] = useState(false)
+
+  const [stockDialogOpen, setStockDialogOpen] = useState(false)
 
   const { userId } = useContext(ClientContext)
 
@@ -46,7 +49,7 @@ const WatchListPage = () => {
         .then(res => setListOfStocks(res))
         .catch(error => console.log(error))
     }
-  }, [selectedWL])
+  }, [selectedWL, stockDialogOpen])
 
   const columns = useMemo(() => {
     return [
@@ -90,7 +93,7 @@ const WatchListPage = () => {
     if (selectedWL) {
       return (
         <Button
-          onClick={() => console.log('HERE')}
+          onClick={() => setStockDialogOpen(true)}
           variant={'outlined'}>Add a new stock</Button>
       )
     }
@@ -160,6 +163,9 @@ const WatchListPage = () => {
         </DialogContent>
       </Dialog>
 
+      <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
+                      route={'watchlist'} selectedPortfolio={selectedWL} userId={userId}/>
+
       <Grid item>
         <Grid container direction={'row'} justifyContent={'center'} spacing={2}>
           <Select
@@ -167,7 +173,7 @@ const WatchListPage = () => {
             onChange={(e) => setSelectedWL(e.target.value)}
             renderValue={(selected) => {
               if (selected.length === 0) {
-                return <em>Select a portfolio</em>
+                return <em>Select a watchlist</em>
               }
               return selected
             }}

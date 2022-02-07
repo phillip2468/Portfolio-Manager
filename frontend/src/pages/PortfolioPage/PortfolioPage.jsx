@@ -101,7 +101,7 @@ const PortfolioPage = () => {
       <AddPortfolio onClick={() => setOpen(true)} onClose={() => setOpen(false)} open={open}/>
 
       <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
-                      selectedPortfolio={selectedPortfolio} userId={userId}/>
+                      route={'portfolio'} selectedPortfolio={selectedPortfolio} userId={userId}/>
       <Grid item>
         <CurrentPortfolios callbackfn={element =>
           <MenuItem
