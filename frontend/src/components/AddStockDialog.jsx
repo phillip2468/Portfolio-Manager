@@ -1,11 +1,4 @@
-import {
-  Autocomplete,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField
-} from '@mui/material'
+import { Autocomplete, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material'
 import Button from '@mui/material/Button'
 import * as PropTypes from 'prop-types'
 import { FetchFunction } from './FetchFunction'
@@ -25,7 +18,7 @@ const AddStockDialog = (props) => {
   }, [searchValue])
 
   const handleSubmit = () => {
-    FetchFunction('POST', `portfolio/${props.userId}/${props.selectedPortfolio}/${selectedStock.stock_id}`)
+    FetchFunction('POST', `${props.route}/${props.userId}/${props.selectedItem}/${selectedStock.stock_id}`)
       .then(() => {
         return props.onClose()
       })
@@ -37,7 +30,7 @@ const AddStockDialog = (props) => {
     setSelectedStock([])
     props.onClose()
   }} open={props.open}>
-    <DialogTitle>Add a new stock to {props.selectedPortfolio}</DialogTitle>
+    <DialogTitle>Add a new stock to {props.selectedItem}</DialogTitle>
     <DialogContent>
       <Autocomplete
         getOptionLabel={(option) => `${option.symbol} - ${option.stock_name}`}
@@ -64,9 +57,10 @@ const AddStockDialog = (props) => {
 }
 
 AddStockDialog.propTypes = {
+  route: PropTypes.string,
   onClose: PropTypes.func,
   open: PropTypes.bool,
-  selectedPortfolio: PropTypes.string,
+  selectedItem: PropTypes.string,
   userId: PropTypes.number
 }
 
