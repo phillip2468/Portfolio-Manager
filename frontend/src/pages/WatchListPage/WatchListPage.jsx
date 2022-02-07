@@ -11,7 +11,7 @@ import {
   Typography
 } from '@mui/material'
 import Button from '@mui/material/Button'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FetchFunction } from '../../components/FetchFunction'
 import { ClientContext } from '../../store/StoreCredentials'
 import { Link } from 'react-router-dom'
@@ -25,6 +25,10 @@ const WatchListPage = () => {
   const [selectedWL, setSelectedWL] = useState('')
 
   const [listOfStocks, setListOfStocks] = useState([])
+
+  const [selectedRows, setSelectedRows] = useState([])
+
+  const [toggleCleared, setToggleCleared] = useState(false)
 
   const { userId } = useContext(ClientContext)
 
@@ -81,6 +85,40 @@ const WatchListPage = () => {
       }
     ]
   }, [listOfStocks])
+
+  const renderAddStock = () => {
+    if (selectedWL) {
+      return (
+        <Button
+          onClick={() => console.log('HERE')}
+          variant={'outlined'}>Add a new stock</Button>
+      )
+    }
+  }
+
+  const handleRowsSelected = useCallback(state => {
+    setSelectedRows(state.selectedRows)
+  }, [])
+
+  const contextActions = useMemo(() => {
+    const handleDelete = () => {
+      let newData = { ...listOfStocks }
+      const listOfIds = Object.values(selectedRows).map(item => item.stock_details.stock_id)
+
+      const promises = listOfIds.map(id =>
+        FetchFunction('DELETE', `watchlist/${userId}/${selectedWL}/${id}`, null)
+      )
+      Promise.all(promises).then(results => console.log(results))
+
+      newData = Object.values(newData).filter(item => !selectedRows.includes(item))
+      setListOfStocks(newData)
+      setToggleCleared(!toggleCleared)
+    }
+
+    return (
+      <Button onClick={handleDelete} style={{ background: 'darkred' }} variant={'contained'}>Delete</Button>
+    )
+  }, [listOfStocks, selectedRows, toggleCleared])
 
   return (
     <>
@@ -154,7 +192,14 @@ const WatchListPage = () => {
       </Grid>
 
       <Grid item>
-        <TableOfStocks columns={columns} data={listOfStocks}/>
+        <TableOfStocks
+          actions={renderAddStock()}
+          clearSelectedRows={toggleCleared}
+          columns={columns}
+          contextActions={contextActions}
+          data={listOfStocks}
+        onSelectedRowsChange={handleRowsSelected}
+        selectedPortfolio={selectedWL}/>
       </Grid>
 
     </>
