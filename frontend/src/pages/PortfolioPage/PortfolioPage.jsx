@@ -50,7 +50,6 @@ const PortfolioPage = () => {
     const handleDelete = () => {
       let newData = { ...listOfStocks }
       const listOfIds = Object.values(selectedRows).map(item => item.stock_details.stock_id)
-      console.log(listOfIds)
 
       const promises = listOfIds.map(id =>
         FetchFunction('DELETE', `portfolio/${userId}/${selectedPortfolio}/${id}`, null)

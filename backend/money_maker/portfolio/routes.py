@@ -1,9 +1,10 @@
 from flask import Blueprint, jsonify, request
+from sqlalchemy.exc import IntegrityError
+
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
 from money_maker.models.ticker_prices import TickerPrice as tP
-from sqlalchemy.exc import IntegrityError
 
 portfolio_bp = Blueprint("portfolio_bp", __name__, url_prefix="/portfolio")
 
@@ -45,6 +46,8 @@ def add_new_portfolio(user_id: int, portfolio_name: str):
 
     new_portfilio = pF(portfolio_name=portfolio_name, user_id=user_id)
     db.session.add(new_portfilio)
+    db.session.commit()
+
     return jsonify({"msg", "Successfully created a new portfolio"}), 200
 
 
