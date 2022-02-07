@@ -1,6 +1,5 @@
 import flask.app
 from flask import Flask
-
 from money_maker.auth.routes import auth_bp
 from money_maker.extensions import (bcrypt, cache, celery, cors, db,
                                     jwt_manager, marshmallow)
@@ -9,9 +8,30 @@ from money_maker.news.routes import news_stories_bp
 from money_maker.portfolio.routes import portfolio_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.search.routes import search_bp
+from money_maker.test_extensions import (test_bcrypt, test_cors, test_db,
+                                         test_jwt_manager, test_marshmallow)
 from money_maker.ticker.routes import ticker_bp
 from money_maker.trending.routes import trending_bp
 from money_maker.watchlist.routes import watchlist_bp
+
+
+def create_test_app():
+    app = Flask(__name__)
+    app.config.from_object("money_maker.test_config")
+
+    configure_test_extensions(app)
+    register_blueprints(app)
+    app.debug = True
+    app.testing = True
+    return app
+
+
+def configure_test_extensions(app):
+    test_db.init_app(app)
+    test_cors.init_app(app)
+    test_marshmallow.init_app(app)
+    test_jwt_manager.init_app(app)
+    test_bcrypt.init_app(app)
 
 
 def create_app(testing=False) -> Flask:
