@@ -4,6 +4,8 @@ from sqlalchemy import (TIMESTAMP, Column, ForeignKey,
 from sqlalchemy.orm import relationship
 
 from money_maker.extensions import db, marshmallow
+from money_maker.models.ticker_prices import TickerPriceSchema
+from marshmallow import fields
 
 
 class Watchlist(db.Model):
@@ -24,8 +26,11 @@ class Watchlist(db.Model):
 
 
 class WatchlistSchema(marshmallow.SQLAlchemyAutoSchema):
+    stock_details = fields.Nested(TickerPriceSchema)
+
     class Meta:
         model = Watchlist
 
 
 watchlist_schema: Schema = WatchlistSchema()
+
