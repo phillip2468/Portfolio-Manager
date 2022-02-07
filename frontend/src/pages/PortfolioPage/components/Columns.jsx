@@ -70,6 +70,7 @@ function Columns (listOfStocks, setListOfStocks, userId) {
           <TextField
             onChange={handleCellEditable('units_price')(row)}
             value={row.units_price}
+            variant={'standard'}
           />
         )
       },
@@ -80,8 +81,8 @@ function Columns (listOfStocks, setListOfStocks, userId) {
         cell: (row) => (
           <TextField
             onChange={handleCellEditable('units_purchased')(row)}
-            style={{ fontSize: '5px' }}
             value={row.units_purchased}
+            variant={'standard'}
           />
         )
       },
@@ -95,7 +96,13 @@ function Columns (listOfStocks, setListOfStocks, userId) {
         name: 'Loss/Gain %',
         selector: row => (100 - ((row.units_price / row.stock_details.market_current_price) * 100)),
         sortable: true,
-        format: row => (100 - ((row.units_price / row.stock_details.market_current_price) * 100)).toFixed(2)
+        format: row => (100 - ((row.units_price / row.stock_details.market_current_price) * 100)).toFixed(2),
+        cell: row => {
+          const changePercentage = (100 - ((row.units_price / row.stock_details.market_current_price) * 100)).toFixed(2)
+          return (
+            <div style={{ color: changePercentage > 0 ? 'green' : 'red' }}>{changePercentage}</div>
+          )
+        }
       }
     ]
   }, [listOfStocks])

@@ -146,7 +146,7 @@ const PortfolioPage = () => {
               }
               return selected
             }}
-            sx={{ width: '150px', paddingLeft: '10px' }}
+            sx={{ width: '210px' }}
             value={selectedPortfolio}
             variant={'standard'}
           >
