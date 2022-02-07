@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage'
 import { ClientWrapper } from './store/StoreCredentials'
 import RegisterPage from './pages/RegisterPage'
 import PortfolioPage from './pages/PortfolioPage/PortfolioPage'
+import WatchListPage from './pages/WatchListPage/WatchListPage'
 
 function App () {
   const theme = useMemo(
@@ -40,6 +41,7 @@ function App () {
                                                 <Route element={<LoginPage/>} path={'/login'}/>
                                                 <Route element={<RegisterPage/>} path={'/register'}/>
                                                 <Route element={<PortfolioPage/>} path={'/portfolio'}/>
+                                                <Route element={<WatchListPage/>} path={'/watchlist'}/>
                                             </Routes>
                                         </Grid>
                                     </Container>

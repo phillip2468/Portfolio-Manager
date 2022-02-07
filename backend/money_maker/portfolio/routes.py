@@ -110,4 +110,4 @@ def update_stock_in_portfolio(user_id: int, portfolio_name: str, stock_id: int):
 
 @portfolio_bp.errorhandler(IntegrityError)
 def exception_handler(e):
-    return jsonify({'message': e.description}), 400
+    return jsonify({'message': e}), 400
