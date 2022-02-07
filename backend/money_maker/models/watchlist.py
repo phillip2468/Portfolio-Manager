@@ -1,6 +1,7 @@
 from flask_marshmallow import Schema
 from sqlalchemy import (TIMESTAMP, Column, ForeignKey,
                         Integer, String, func, UniqueConstraint)
+from sqlalchemy.orm import relationship
 
 from money_maker.extensions import db, marshmallow
 
@@ -15,6 +16,7 @@ class Watchlist(db.Model):
     user_id = Column(Integer, ForeignKey('user.user_id'))
     stock_id = Column(Integer, ForeignKey('ticker_prices.stock_id'))
     last_inserted = Column(TIMESTAMP, server_default=func.now(), server_onupdate=func.utc_timestamp())
+    stock_details = relationship("TickerPrice", backref="watchlist")
     ___table_args__ = (
         UniqueConstraint(watchlist_name, user_id, stock_id,
                          name="unique_stock_in_watchlist_by_user"),
