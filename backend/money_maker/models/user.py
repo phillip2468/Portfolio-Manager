@@ -1,7 +1,8 @@
 from flask_marshmallow import Schema
+from sqlalchemy import TIMESTAMP, Column, Integer, Text, func
+
 from money_maker.extensions import db, marshmallow
-from sqlalchemy import TIMESTAMP, Column, ForeignKey, Integer, Text, func
-from sqlalchemy.orm import relationship
+
 
 # This model inspired by below link
 # https://flask-praetorian.readthedocs.io/en/latest/notes.html#requirements-for-the-user-class

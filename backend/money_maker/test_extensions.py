@@ -4,9 +4,8 @@ from flask_jwt_extended import JWTManager
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 
-test_db = SQLAlchemy()
+db = SQLAlchemy()
 test_cors = CORS()
 test_jwt_manager = JWTManager()
 test_bcrypt = Bcrypt()
 test_marshmallow = Marshmallow()
-
