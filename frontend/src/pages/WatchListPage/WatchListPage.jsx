@@ -35,13 +35,15 @@ const WatchListPage = () => {
 
   const { userId } = useContext(ClientContext)
 
+  const [newWLName, setNewWLName] = useState('')
+
   useEffect(() => {
     if (userId !== null) {
       FetchFunction('GET', `watchlist/${userId}`, null)
         .then(res => setListOfWL(res))
         .catch(error => console.log(error))
     }
-  }, [userId])
+  }, [userId, openWLDialog])
 
   useEffect(() => {
     if (selectedWL !== '') {
@@ -49,7 +51,7 @@ const WatchListPage = () => {
         .then(res => setListOfStocks(res))
         .catch(error => console.log(error))
     }
-  }, [selectedWL, stockDialogOpen])
+  }, [selectedWL, stockDialogOpen, newWLName])
 
   const columns = useMemo(() => {
     return [
@@ -153,12 +155,24 @@ const WatchListPage = () => {
                      id={'watchlist_name'}
                      label={'Watchlist name'}
                      margin={'dense'}
+                     onChange={(e) => setNewWLName(e.target.value)}
                      type={'text'}
-                     variant={'standard'}/>
+                     value={newWLName}
+                     variant={'standard'}
+          />
 
           <DialogActions>
             <Button onClick={() => setOpenWLDialog(false)}>Cancel</Button>
-            <Button onClick={() => setOpenWLDialog(false)}>Add</Button>
+            <Button onClick={() => {
+              FetchFunction('POST', `watchlist/${userId}/${newWLName}`, null)
+                .then(res => {
+                  console.log(res)
+                  setOpenWLDialog(false)
+                })
+                .catch(error => {
+                  console.log(error)
+                })
+            }}>Add</Button>
           </DialogActions>
         </DialogContent>
       </Dialog>
