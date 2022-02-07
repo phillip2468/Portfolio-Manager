@@ -168,6 +168,7 @@ const WatchListPage = () => {
                 .then(res => {
                   console.log(res)
                   setOpenWLDialog(false)
+                  setNewWLName('')
                 })
                 .catch(error => {
                   console.log(error)
