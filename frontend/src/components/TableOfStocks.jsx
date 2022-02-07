@@ -16,7 +16,7 @@ const TableOfStocks = (props) => {
     pointerOnHover={true}
     selectableRows={true}
     theme={'dark'}
-    title={`${props.selectedPortfolio} portfolio's`}
+    title={`${props.selectedItem}'s`}
   />
 }
 
@@ -27,7 +27,7 @@ TableOfStocks.propTypes = {
   contextActions: PropTypes.any,
   data: PropTypes.arrayOf(PropTypes.any),
   onSelectedRowsChange: PropTypes.func,
-  selectedPortfolio: PropTypes.string
+  selectedItem: PropTypes.string
 }
 
 export default TableOfStocks
