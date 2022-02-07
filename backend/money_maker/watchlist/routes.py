@@ -46,7 +46,7 @@ def add_new_portfolio(user_id: int, watchlist_name: str):
     db.session.add(new_portfilio)
     db.session.commit()
 
-    return jsonify({"msg", "Successfully created a new watchlist"}), 200
+    return jsonify({"msg": "Successfully created a new watchlist"}), 200
 
 
 @watchlist_bp.route("<user_id>/<watchlist_name>/<stock_id>", methods=["POST"])
