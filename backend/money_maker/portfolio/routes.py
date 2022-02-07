@@ -72,7 +72,7 @@ def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int):
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["DELETE"])
 def remove_stock_from_portfolio(user_id: int, portfolio_name: str, stock_id: int):
     """
-    Removes a particular portfolio, using their stock_id from the database.
+    Removes a particular stock from a users portfiolio, using their stock_id from the database.
     Returns a message indicating user success.
 
     :param user_id: The user id
@@ -80,7 +80,7 @@ def remove_stock_from_portfolio(user_id: int, portfolio_name: str, stock_id: int
     :param stock_id: The stock id
     :return: flask.Response
     """
-    db.session.query(pF).filter(pF.stock_id == stock_id).delete()
+    db.session.query(pF).filter(pF.stock_id == stock_id, pF.portfolio_name == portfolio_name, pF.user_id == user_id).delete()
     db.session.commit()
 
     return jsonify({"msg": "Successfully deleted the stock"}), 200
