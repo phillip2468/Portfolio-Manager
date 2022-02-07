@@ -13,11 +13,7 @@ from flask_talisman import Talisman
 
 load_dotenv()
 
-db = SQLAlchemy(engine_options={
-    "executemany_mode": 'values',
-    "executemany_values_page_size": 10000,
-    "executemany_batch_page_size": 500
-})
+db = SQLAlchemy()
 celery = Celery()
 url = urlparse(os.getenv("REDISCLOUD_URL"))
 cache = Cache(config={"CACHE_TYPE": "RedisCache",
