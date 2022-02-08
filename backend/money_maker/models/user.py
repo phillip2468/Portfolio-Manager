@@ -24,6 +24,7 @@ class User(db.Model):
 
     @validates('email')
     def validate_email(self, key, address):
+        print(address)
         pattern = re.compile(email_regex)
         if not bool(pattern.search(address)):
             raise ValueError("Invalid email")
