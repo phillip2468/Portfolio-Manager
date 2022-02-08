@@ -26,4 +26,3 @@ cors = CORS()
 jwt_manager = JWTManager()
 bcrypt = Bcrypt()
 marshmallow = Marshmallow()
-

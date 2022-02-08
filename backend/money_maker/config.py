@@ -20,7 +20,8 @@ CELERY = {
 
 SQLALCHEMY_ENGINE_OPTIONS = {
     "executemany_mode": 'values',
-    "executemany_values_page_size": 10000
+    "executemany_values_page_size": 10000,
+    "executemany_batch_page_size": 500,
 }
 SECRET_KEY = os.getenv("SECRET_KEY")
 

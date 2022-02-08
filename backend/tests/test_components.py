@@ -1,7 +1,6 @@
 import pytest
-
 from money_maker.app import create_test_app
-from money_maker.extensions import db
+from money_maker.extensions import db, mixer
 from money_maker.models.user import User
 
 
@@ -13,9 +12,16 @@ def setup_database():
         db.create_all()
         yield test_app
         db.drop_all()
+        db.session.rollback()
 
 
 def testing_app(setup_database):
-    new_user = User(email="dasmkldas", hashed_password='1234567890')
+    new_user_2 = mixer.blend(User)
+    print(new_user_2.hashed_password)
+    db.session.add(new_user_2)
+    db.session.commit()
+    new_user = User(email="asdasdasddas@gmail.com", hashed_password='1234567890')
+    print(new_user.email)
     db.session.add(new_user)
-    assert (db.session.query(User).filter(User.email == "dasmkldas").first() is not None)
+    db.session.commit()
+    assert len(db.session.query(User).all()) != 0
