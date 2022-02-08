@@ -10,6 +10,7 @@ from flask_jwt_extended import JWTManager
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
+from mixer.backend.flask import Mixer
 
 load_dotenv()
 
@@ -26,3 +27,4 @@ cors = CORS()
 jwt_manager = JWTManager()
 bcrypt = Bcrypt()
 marshmallow = Marshmallow()
+mixer = Mixer(commit=False, fake=False)

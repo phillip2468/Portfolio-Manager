@@ -50,6 +50,9 @@ def create_app(testing=False) -> Flask:
         app.config["TESTING"] = True
     init_celery(app)
 
+    new_user_2 = mixer.blend(User)
+    print(new_user_2.email)
+
     return app
 
 
