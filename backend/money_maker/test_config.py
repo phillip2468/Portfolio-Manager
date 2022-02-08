@@ -1,3 +1,7 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
 ENV = "TESTING"
 SECRET_KEY = "for_testing_purposes_only"
 SQLALCHEMY_DATABASE_URI = "sqlite://"
