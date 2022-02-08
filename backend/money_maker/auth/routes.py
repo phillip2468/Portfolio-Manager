@@ -2,9 +2,9 @@ from datetime import datetime, timedelta, timezone
 
 import sqlalchemy.exc
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import (create_access_token, create_refresh_token,
-                                get_jwt, get_jwt_identity, jwt_required,
-                                set_access_cookies, unset_jwt_cookies)
+from flask_jwt_extended import (create_access_token, get_jwt, get_jwt_identity,
+                                jwt_required, set_access_cookies,
+                                unset_jwt_cookies)
 from money_maker.extensions import bcrypt, db, jwt_manager
 from money_maker.models.user import User, users_schema
 
@@ -75,7 +75,7 @@ def register():
     email = req.get("email", None)
     password = req.get("password", None)
 
-    new_user = User(email=email, hashed_password=bcrypt.generate_password_hash(password))
+    new_user = User(email=email, hashed_password=password)
 
     try:
         db.session.add(new_user)
