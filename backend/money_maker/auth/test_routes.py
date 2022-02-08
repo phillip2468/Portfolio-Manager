@@ -12,6 +12,10 @@ valid_email = 'Email addresses should be longer than 10 characters, contain an @
 min_length_email = 8
 max_length_email = 100
 
+# Remember that you can't have [False, False] for casing as there would be no letters!
+letter_cases = [[True, True], [True, False], [False, True]]
+
+
 @pytest.fixture(scope="function")
 def create_app():
     test_app = create_test_app()
@@ -43,7 +47,6 @@ def test_valid_register(create_app):
         assert len(db.session.query(User).all()) == 1
 
 
-@pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.repeat(REPEAT_TESTS)
 def test_invalid_register_email_with_names(create_app):
     """
@@ -60,14 +63,16 @@ def test_invalid_register_email_with_names(create_app):
         body = {
             "email": faker_data.name(),
             "password": faker_data.password(length=random_num,
-                                            special_chars=False, digits=bool(random.getrandbits(1)),
-                                            upper_case=bool(random.getrandbits(1)),
-                                            lower_case=bool(random.getrandbits(1)))
+                                            special_chars=False,
+                                            digits=random.choice([True, False]),
+                                            upper_case=random.choice([True, False]),
+                                            lower_case=True
+                                            )
         }
         client.post("/auth/register", json=body)
 
 
-@pytest.mark.repeat(1000)
+@pytest.mark.repeat(REPEAT_TESTS)
 def test_invalid_register_short_pw(create_app):
     """
     Tests that an invalid password cannot be entered. In this case, passwords
@@ -76,13 +81,16 @@ def test_invalid_register_short_pw(create_app):
     :param create_app: The flask app fixture
     :type create_app: flask.app.Flask
     """
-    random.seed(0)
     with create_app.test_client() as client, pytest.raises(ValueError):
+        casing = random.choice(letter_cases)
         body = {
             "email": faker_data.ascii_email(),
             "password": faker_data.password(length=random.randint(4, 7),
-                                            special_chars=random.choice([True, False]), digits=random.choice([True, False]),
-                                            upper_case=random.choice([True, False]), lower_case=random.choice([True, False]))
+                                            special_chars=random.choice([True, False]),
+                                            digits=random.choice([True, False]),
+                                            upper_case=casing[0],
+                                            lower_case=casing[1]
+                                            )
         }
         client.post("/auth/register", json=body)
 
@@ -97,12 +105,14 @@ def test_invalid_register_passwords(create_app):
     :type create_app: flask.app.Flask
     """
 
-    list_of_bools = [faker_data.boolean() for i in range(4)]
     with create_app.test_client() as client, pytest.raises(ValueError):
+        casing = random.choice(letter_cases)
         body = {
             "email": faker_data.ascii_email(),
-            "password": faker_data.password(length=100,
-                                            special_chars=True, digits=list_of_bools[1],
-                                            upper_case=list_of_bools[2], lower_case=list_of_bools[3])
+            "password": faker_data.password(length=random.randint(min_length_email, max_length_email),
+                                            special_chars=True,
+                                            digits=random.choice([True, False]),
+                                            upper_case=casing[0],
+                                            lower_case=casing[1])
         }
         client.post("/auth/register", json=body)
