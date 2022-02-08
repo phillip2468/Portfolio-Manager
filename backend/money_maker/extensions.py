@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 
 from celery import Celery
 from dotenv import load_dotenv
+from faker import Faker
 from flask_bcrypt import Bcrypt
 from flask_caching import Cache
 from flask_cors import CORS
@@ -28,3 +29,4 @@ jwt_manager = JWTManager()
 bcrypt = Bcrypt()
 marshmallow = Marshmallow()
 mixer = Mixer(commit=False, fake=False)
+faker_data = Faker()

@@ -1,7 +1,7 @@
 import re
 
 from flask_marshmallow import Schema
-from money_maker.extensions import db, marshmallow
+from money_maker.extensions import bcrypt, db, marshmallow
 from sqlalchemy import TIMESTAMP, Column, Integer, Text, func
 from sqlalchemy.orm import validates
 
@@ -10,6 +10,8 @@ from sqlalchemy.orm import validates
 
 
 email_regex = r'^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+password_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$'
+
 
 class User(db.Model):
     """
@@ -23,12 +25,18 @@ class User(db.Model):
     portfolios = db.relationship('Portfolio', backref='user')
 
     @validates('email')
-    def validate_email(self, key, address):
-        print(address)
+    def validate_email(self, key, email):
         pattern = re.compile(email_regex)
-        if not bool(pattern.search(address)):
+        if not bool(pattern.search(email)):
             raise ValueError("Invalid email")
-        return address
+        return email
+
+    @validates('hashed_password')
+    def validate_password(self, key, password):
+        pattern = re.compile(password_regex)
+        if not bool(pattern.search(password)):
+            raise ValueError("Invalid password")
+        return bcrypt.generate_password_hash(password)
 
 
 class UserSchema(marshmallow.SQLAlchemyAutoSchema):
