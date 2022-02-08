@@ -1,10 +1,12 @@
 import random
 
 import pytest
+
 from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
 
+REPEAT_TESTS = 1
 
 @pytest.fixture(scope="function")
 def create_app():
@@ -17,7 +19,7 @@ def create_app():
 
 
 # noinspection DuplicatedCode
-@pytest.mark.repeat(1)
+@pytest.mark.repeat(REPEAT_TESTS)
 def test_valid_register(create_app):
     """
     Register an account with valid details by providing an email
@@ -37,7 +39,7 @@ def test_valid_register(create_app):
         assert len(db.session.query(User).all()) == 1
 
 
-@pytest.mark.repeat(1)
+@pytest.mark.repeat(REPEAT_TESTS)
 def test_invalid_register_email_with_names(create_app):
     """
     Tests that an invalid email cannot be entered. In this case, names
@@ -55,7 +57,7 @@ def test_invalid_register_email_with_names(create_app):
         client.post("/auth/register", json=body)
 
 
-@pytest.mark.repeat(100)
+@pytest.mark.repeat(REPEAT_TESTS)
 def test_invalid_register_short_pw(create_app):
     """
     Tests that an invalid password cannot be entered. In this case, passwords

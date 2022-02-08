@@ -1,6 +1,7 @@
 import flask.app
 from flask import Flask
 from mixer.backend.flask import mixer
+
 from money_maker.auth.routes import auth_bp
 from money_maker.extensions import (bcrypt, cache, celery, cors, db,
                                     jwt_manager, marshmallow)
