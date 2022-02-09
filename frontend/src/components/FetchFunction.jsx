@@ -7,7 +7,6 @@ export const FetchFunction = (method, path, body) => {
     },
     credentials: 'include'
   }
-  console.log(requestOptions.headers)
   if (body !== null) {
     requestOptions.body = JSON.stringify(body)
   }
