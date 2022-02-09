@@ -1,7 +1,10 @@
 export const FetchFunction = (method, path, body) => {
   const requestOptions = {
     method: method,
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': getCookie('csrf_access_token')
+    },
     credentials: 'include'
   }
   if (body !== null) {
@@ -25,4 +28,10 @@ export const FetchFunction = (method, path, body) => {
         console.log(error)
       })
   })
+}
+
+function getCookie (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';')
 }

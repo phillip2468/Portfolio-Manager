@@ -9,3 +9,6 @@ celery -A money_maker.celery_app beat -l info
 
 flask db migrate revision -m "Added a new table" --autogenerate
 flask db migrate
+
+
+pytest -rP --disable-pytest-warnings
