@@ -1,31 +1,10 @@
 import random
 
 import pytest
-
-from money_maker.app import create_test_app
+from conftest import (HTTP_SUCCESS_CODE, LETTER_CASINGS, MAX_LENGTH_EMAIL,
+                      MIN_LENGTH_EMAIL, REPEAT_TESTS)
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
-
-HTTP_SUCCESS_CODE = 200
-
-REPEAT_TESTS = 5
-valid_password = 'Passwords must contain a lowercase and uppercase letter, a digit and be greater than 8 characters.'
-valid_email = 'Email addresses should be longer than 10 characters, contain an @ symbol and should contain a domain.'
-min_length_email = 8
-max_length_email = 100
-
-# Remember that you can't have [False, False] for casing as there would be no letters!
-letter_cases = [[True, True], [True, False], [False, True]]
-
-
-@pytest.fixture(scope="function")
-def client():
-    test_app = create_test_app()
-    with test_app.test_client() as flask_client:
-        with test_app.app_context():
-            db.create_all()
-        yield flask_client
-        db.drop_all()
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
@@ -35,8 +14,8 @@ def test_valid_register(client):
     and password, and check in the backend that these values have been
     inserted.
 
-    :param create_app: The flask app fixture
-    :type create_app: flask.app.Flask
+    :param client: The flask app fixture
+    :type client: Any
     """
     body = {
         "email": faker_data.ascii_email(),
@@ -54,8 +33,8 @@ def test_valid_multiple_register(client):
     and password for each account, and check in the backend that these values have been
     inserted.
 
-    :param create_app: The flask app fixture
-    :type create_app: flask.app.Flask
+    :param client: The flask app fixture
+    :type client: Any
     """
     random_iterations = random.randint(2, 10)
     for i in range(random_iterations):
@@ -79,11 +58,11 @@ def test_invalid_register_email(client):
     domain.
 
     :param client: The flask app fixture
-    :type client: flask.app.Flask
+    :type client: Any
     """
 
     with pytest.raises(ValueError):
-        random_num = random.randint(min_length_email, max_length_email)
+        random_num = random.randint(MIN_LENGTH_EMAIL, MAX_LENGTH_EMAIL)
         body = {
             "email": faker_data.name(),
             "password": faker_data.password(length=random_num,
@@ -106,7 +85,7 @@ def test_invalid_register_short_pw(client):
     :type client: flask.app.Flask
     """
     with pytest.raises(ValueError):
-        casing = random.choice(letter_cases)
+        casing = random.choice(LETTER_CASINGS)
         body = {
             "email": faker_data.ascii_email(),
             "password": faker_data.password(length=random.randint(4, 7),
@@ -130,10 +109,10 @@ def test_invalid_register_passwords(client):
     """
 
     with pytest.raises(ValueError):
-        casing = random.choice(letter_cases)
+        casing = random.choice(LETTER_CASINGS)
         body = {
             "email": faker_data.ascii_email(),
-            "password": faker_data.password(length=random.randint(min_length_email, max_length_email),
+            "password": faker_data.password(length=random.randint(MIN_LENGTH_EMAIL, MAX_LENGTH_EMAIL),
                                             special_chars=True,
                                             digits=random.choice([True, False]),
                                             upper_case=casing[0],
