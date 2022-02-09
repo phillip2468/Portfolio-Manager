@@ -17,16 +17,6 @@ letter_cases = [[True, True], [True, False], [False, True]]
 
 
 @pytest.fixture(scope="function")
-def create_app():
-    test_app = create_test_app()
-    with create_test_app().app_context():
-        db.create_all()
-        yield test_app
-        db.session.remove()
-        db.drop_all()
-
-
-@pytest.fixture(scope="function")
 def client():
     test_app = create_test_app()
     with test_app.test_client() as flask_client:
@@ -37,7 +27,7 @@ def client():
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
-def test_valid_register(create_app, client):
+def test_valid_register(client):
     """
     Register an account with valid details by providing an email
     and password, and check in the backend that these values have been
@@ -53,6 +43,30 @@ def test_valid_register(create_app, client):
     response = client.post("/auth/register", json=body)
     assert response.status_code == 200
     assert len(db.session.query(User).all()) == 1
+
+
+@pytest.mark.repeat(REPEAT_TESTS)
+def test_valid_multiple_register(client):
+    """
+    Register multiple accounts (2 to 10 times selected randomly) with valid details by providing an email
+    and password for each account, and check in the backend that these values have been
+    inserted.
+
+    :param create_app: The flask app fixture
+    :type create_app: flask.app.Flask
+    """
+    random_iterations = random.randint(2, 10)
+    for i in range(random_iterations):
+        body = {
+            "email": faker_data.ascii_email(),
+            "password": faker_data.password(length=10, special_chars=False)
+        }
+        response = client.post("/auth/register", json=body)
+        assert response.status_code == 200
+        # Note that we must always add 1 to the index as range is a 0 based index
+        assert len(db.session.query(User).all()) == i + 1
+
+    assert len(db.session.query(User).all()) == random_iterations
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
