@@ -76,8 +76,8 @@ def test_invalid_register_email(client):
     cannot be entered as an email address as they do not contain a
     domain.
 
-    :param create_app: The flask app fixture
-    :type create_app: flask.app.Flask
+    :param client: The flask app fixture
+    :type client: flask.app.Flask
     """
 
     with pytest.raises(ValueError):
