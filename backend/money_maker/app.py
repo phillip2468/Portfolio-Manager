@@ -6,7 +6,6 @@ from money_maker.auth.routes import auth_bp
 from money_maker.extensions import (bcrypt, cache, celery, cors, db,
                                     jwt_manager, marshmallow)
 from money_maker.home.routes import home_bp
-from money_maker.models.user import User
 from money_maker.news.routes import news_stories_bp
 from money_maker.portfolio.routes import portfolio_bp
 from money_maker.quote.routes import quote_bp
@@ -49,9 +48,6 @@ def create_app(testing=False) -> Flask:
     if testing is True:
         app.config["TESTING"] = True
     init_celery(app)
-
-    new_user_2 = mixer.blend(User)
-    print(new_user_2.email)
 
     return app
 
