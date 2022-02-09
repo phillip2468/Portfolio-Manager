@@ -9,4 +9,4 @@ Deployable on heroku.https://morning-temple-33157.herokuapp.com/
 ![example workflow](https://github.com/phillip2468/stocks_scraper_2/workflows/main.yml/badge.svg)
 
 
-![example workflow](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
+![example workflow](https://github.com/phillip2468/stocks_scraper_2/actions/workflows/main.yml/badge.svg)
