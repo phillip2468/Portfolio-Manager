@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 
 from celery import Celery
 from dotenv import load_dotenv
+from faker import Faker
 from flask_bcrypt import Bcrypt
 from flask_caching import Cache
 from flask_cors import CORS
@@ -10,14 +11,11 @@ from flask_jwt_extended import JWTManager
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
+from mixer.backend.flask import Mixer
 
 load_dotenv()
 
-db = SQLAlchemy(engine_options={
-    "executemany_mode": 'values',
-    "executemany_values_page_size": 10000,
-    "executemany_batch_page_size": 500
-})
+db = SQLAlchemy()
 celery = Celery()
 url = urlparse(os.getenv("REDISCLOUD_URL"))
 cache = Cache(config={"CACHE_TYPE": "RedisCache",
@@ -30,4 +28,5 @@ cors = CORS()
 jwt_manager = JWTManager()
 bcrypt = Bcrypt()
 marshmallow = Marshmallow()
-
+mixer = Mixer(commit=False, fake=False)
+faker_data = Faker()
