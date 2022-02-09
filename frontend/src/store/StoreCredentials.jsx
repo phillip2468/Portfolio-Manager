@@ -48,6 +48,20 @@ export const ClientWrapper = ({ children }) => {
       })
   }
 
+  const protectedRoute = () => {
+    FetchFunction('GET', 'auth/protected', null)
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  useEffect(() => {
+    protectedRoute()
+  }, [])
+
   const contextData = {
     loginUser, logoutUser, findUser, loggedIn, setLoggedIn, userId
   }
