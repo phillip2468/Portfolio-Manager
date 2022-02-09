@@ -6,6 +6,8 @@ from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
 
+HTTP_SUCCESS_CODE = 200
+
 REPEAT_TESTS = 5
 valid_password = 'Passwords must contain a lowercase and uppercase letter, a digit and be greater than 8 characters.'
 valid_email = 'Email addresses should be longer than 10 characters, contain an @ symbol and should contain a domain.'
@@ -41,7 +43,7 @@ def test_valid_register(client):
         "password": faker_data.password(length=10, special_chars=False)
     }
     response = client.post("/auth/register", json=body)
-    assert response.status_code == 200
+    assert response.status_code == HTTP_SUCCESS_CODE
     assert len(db.session.query(User).all()) == 1
 
 
@@ -62,7 +64,7 @@ def test_valid_multiple_register(client):
             "password": faker_data.password(length=10, special_chars=False)
         }
         response = client.post("/auth/register", json=body)
-        assert response.status_code == 200
+        assert response.status_code == HTTP_SUCCESS_CODE
         # Note that we must always add 1 to the index as range is a 0 based index
         assert len(db.session.query(User).all()) == i + 1
 
