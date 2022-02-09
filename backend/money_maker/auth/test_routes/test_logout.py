@@ -1,6 +1,5 @@
 import pytest
-from conftest import (HTTP_SUCCESS_CODE, NUMBER_OF_USERS, PASSWORD_LENGTH,
-                      REPEAT_TESTS)
+from conftest import HTTP_SUCCESS_CODE, NUMBER_OF_USERS, REPEAT_TESTS
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
