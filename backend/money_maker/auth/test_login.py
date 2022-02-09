@@ -4,7 +4,8 @@ from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
 
-REPEAT_TESTS = 1
+REPEAT_TESTS = 10
+HTTP_SUCCESS_CODE = 200
 
 
 @pytest.fixture(scope="function")
@@ -33,18 +34,54 @@ def client_account(client):
         "password": password
     }
     response = client.post("/auth/register", json=body)
-    assert response.status_code == 200
+    assert response.status_code == HTTP_SUCCESS_CODE
     assert len(db.session.query(User).all()) == 1
     yield body
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
-def test_valid_login(client, client_account):
+def test_valid_login(client, client_account) -> None:
     """
-    Register an account with valid details by providing an email
-    and password, and check in the backend that these values have been
-    inserted.
+    Login a user into the application with valid account details.
+
+    :param client: the flask app
+    :param client_account: a dictionary containing the user details
     """
 
     response = client.post("/auth/login", json=client_account)
-    assert response.status_code == 200
+    assert response.status_code == HTTP_SUCCESS_CODE
+
+
+@pytest.mark.repeat(REPEAT_TESTS)
+def test_invalid_email_login(client, client_account) -> None:
+    """
+    Login a user into the application invalid account details.
+    In this case, the wrong email is entered. Note that
+    there may be a small chance that emails may be the same
+    and thus the test will fail.
+
+    :param client: the flask app
+    :param client_account: a dictionary containing the user details
+    """
+    client_account["email"] = faker_data.ascii_email()
+
+    response = client.post("/auth/login", json=client_account)
+    assert response.status_code != HTTP_SUCCESS_CODE
+
+
+@pytest.mark.repeat(REPEAT_TESTS)
+def test_invalid_email_pw(client, client_account) -> None:
+    """
+    Login a user into the application invalid account details.
+    In this case, the wrong password is entered. Note that
+    there may be a small chance that password may be the same
+    and thus the test will fail.
+
+    :param client: the flask app
+    :param client_account: a dictionary containing the user details
+    """
+    client_account["password"] = faker_data.password(length=10, special_chars=False)
+
+    response = client.post("/auth/login", json=client_account)
+    assert response.status_code != HTTP_SUCCESS_CODE
+
