@@ -11,12 +11,12 @@ NUMBER_OF_USERS = 3
 MIN_LENGTH_EMAIL = 8
 MAX_LENGTH_EMAIL = 100
 
-
 # 'Passwords must contain a lowercase and uppercase letter, a digit and be greater than 8 characters.'
 # 'Email addresses should be longer than 10 characters, contain an @ symbol and should contain a domain.'
 
 # Remember that you can't have [False, False] for casing as there would be no letters!
 LETTER_CASINGS = [[True, True], [True, False], [False, True]]
+
 
 @pytest.fixture(scope="function")
 def client():
@@ -26,6 +26,8 @@ def client():
             db.create_all()
         yield flask_client
         db.drop_all()
+        flask_client.cookie_jar.clear()
+        flask_client.cookie_jar.clear_session_cookies()
 
 
 @pytest.fixture
