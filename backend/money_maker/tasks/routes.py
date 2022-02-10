@@ -1,6 +1,6 @@
 import yahooquery
 from flask import Blueprint, jsonify
-from sqlalchemy import asc, bindparam, select
+from sqlalchemy import asc, bindparam, select, insert
 from yahooquery import Ticker
 
 from money_maker.extensions import db
@@ -54,7 +54,9 @@ def update_stocks():
 
     db.session.query(tP).delete(synchronize_session="fetch")
 
-    db.session.execute(market_information, formatted_yh_information)
+    stmt = insert(tP).values(market_information)
+    db.session.execute(stmt, formatted_yh_information)
+
     db.session.commit()
     results = db.session.query(tP).all()
 

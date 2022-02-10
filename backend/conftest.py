@@ -55,3 +55,12 @@ def client_accounts(client):
 
     assert len(db.session.query(User).all()) == NUMBER_OF_USERS
     yield list_of_clients
+
+
+@pytest.fixture(scope="function")
+def symbols(client):
+    response = client.get("/ticker/refresh-asx-symbols")
+    assert response.status_code == HTTP_SUCCESS_CODE
+
+    response = client.get("/ticker/refresh-us-symbols")
+    assert response.status_code == HTTP_SUCCESS_CODE
