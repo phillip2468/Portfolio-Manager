@@ -10,9 +10,10 @@ from money_maker.models.user import User
 @pytest.mark.repeat(REPEAT_TESTS)
 def test_valid_register(client):
     """
-    Register an account with valid details by providing an email
-    and password, and check in the backend that these values have been
-    inserted.
+    GIVEN valid user_details
+    WHEN a new user registers
+    THEN check that the user exists in the database by checking
+    the length of rows.
 
     :param client: The flask app fixture
     :type client: Any
@@ -29,9 +30,10 @@ def test_valid_register(client):
 @pytest.mark.repeat(REPEAT_TESTS)
 def test_valid_multiple_register(client):
     """
-    Register multiple accounts (2 to 10 times selected randomly) with valid details by providing an email
-    and password for each account, and check in the backend that these values have been
-    inserted.
+    GIVEN multiple Users
+    WHEN each User registers
+    THEN check that each user in the database exists by checking
+    the length of rows in the database.
 
     :param client: The flask app fixture
     :type client: Any
@@ -53,9 +55,9 @@ def test_valid_multiple_register(client):
 @pytest.mark.repeat(REPEAT_TESTS)
 def test_invalid_register_email(client):
     """
-    Tests that an invalid email cannot be entered. In this case, names
-    cannot be entered as an email address as they do not contain a
-    domain.
+    GIVEN a user with a first name as their email address
+    WHEN a User registers
+    THEN check that the model raises a valuerror and does not insert the user
 
     :param client: The flask app fixture
     :type client: Any
@@ -78,8 +80,9 @@ def test_invalid_register_email(client):
 @pytest.mark.repeat(REPEAT_TESTS)
 def test_invalid_register_short_pw(client):
     """
-    Tests that an invalid password cannot be entered. In this case, passwords
-    shorter than 8 characters cannot be entered.
+    GIVEN a user with a password between 4 to 7 characters
+    WHEN a User registers
+    THEN check that the model raises a valuerror and does not insert the user
 
     :param client: The flask app fixture
     :type client: flask.app.Flask
@@ -101,8 +104,9 @@ def test_invalid_register_short_pw(client):
 @pytest.mark.repeat(REPEAT_TESTS)
 def test_invalid_register_passwords(client):
     """
-    Tests that an invalid password cannot be entered. In this case, passwords
-    that contain special characters cannot be entered.
+    GIVEN a user with a password that contains special characters
+    WHEN a User registers
+    THEN check that the model raises a valuerror and does not insert the user
 
     :param client: The flask app fixture
     :type client: flask.app.Flask

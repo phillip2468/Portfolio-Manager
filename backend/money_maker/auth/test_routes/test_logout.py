@@ -5,8 +5,9 @@ from conftest import HTTP_SUCCESS_CODE, NUMBER_OF_USERS, REPEAT_TESTS
 @pytest.mark.repeat(REPEAT_TESTS)
 def test_valid_logout(client, client_accounts) -> None:
     """
-    Login a user into the application with valid account details
-    and then log them out.
+    GIVEN a user
+    WHEN a User logout
+    THEN check that the backend provides a 200 response
 
     :param client: the flask app
     :param client_accounts: a dictionary containing the user details

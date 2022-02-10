@@ -5,7 +5,9 @@ from conftest import HTTP_SUCCESS_CODE, NUMBER_OF_USERS, REPEAT_TESTS
 @pytest.mark.repeat(REPEAT_TESTS)
 def test_valid_login(client, client_accounts) -> None:
     """
-    Login a user into the application with valid account details.
+    GIVEN a registered user
+    WHEN a User logins
+    THEN check that the backend responds with a 200 response code
 
     :param client: the flask app
     :param client_accounts: a dictionary containing the user details
@@ -18,9 +20,9 @@ def test_valid_login(client, client_accounts) -> None:
 @pytest.mark.repeat(REPEAT_TESTS)
 def test_invalid_email_login(client, client_accounts) -> None:
     """
-    Login a user into the application invalid account details.
-    In this case, the wrong email is entered. To make the test invalid,
-    the email is appeneded with an 'e' symbol.
+    GIVEN a registered user with an invalid email
+    WHEN a User logins
+    THEN check that the backend does not respond with a 200 response code
 
     :param client: the flask app
     :param client_accounts: a dictionary containing the user details
@@ -34,9 +36,9 @@ def test_invalid_email_login(client, client_accounts) -> None:
 @pytest.mark.repeat(REPEAT_TESTS)
 def test_invalid_email_pw(client, client_accounts) -> None:
     """
-    Login a user into the application invalid account details.
-    In this case, the wrong password is entered.  To make the test invalid,
-    the password is appeneded with an 'e' symbol.
+    GIVEN a registered user with an invalid password
+    WHEN a User logins
+    THEN check that the backend does not respond with a 200 response code
 
     :param client: the flask app
     :param client_accounts: a dictionary containing the user details
