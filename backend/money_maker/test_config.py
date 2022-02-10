@@ -22,7 +22,7 @@ JWT_CSRF_IN_COOKIES = True
 
 CELERY = {
     "broker_url": "memory://",
-    "result_backend": "redis://",
+    "result_backend": 'rpc',
     "result_serializer": 'json'
 }
 CELERY_ALWAYS_EAGER = True

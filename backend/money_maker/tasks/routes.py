@@ -1,22 +1,26 @@
-from __future__ import absolute_import, unicode_literals
-
 import yahooquery
-from celery import shared_task
-from sqlalchemy import asc, bindparam, insert, select
-from sqlalchemy.dialects.postgresql import insert
+from flask import Blueprint, jsonify
+from sqlalchemy import asc, bindparam, select
 from yahooquery import Ticker
 
 from money_maker.extensions import db
-from money_maker.models.ticker_prices import TickerPrice as tP
+from money_maker.models.ticker_prices import TickerPrice as tP, ticker_price_schema
+
+task_bp = Blueprint("task_bp", __name__, url_prefix="/task")
 
 
-@shared_task()
-def update_yh_stocks():
-    list_asx_symbols = select(tP.symbol).order_by(asc(tP.symbol))
-    list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
+# noinspection DuplicatedCode
+@task_bp.route("", methods=["GET"])
+def update_stocks():
+    list_all_symbols = select(tP.symbol).order_by(asc(tP.symbol))
+    list_symbols: list[str] = [element[0] for element in db.session.execute(list_all_symbols)]
+
+    print("HERE")
+    if len(list_symbols) == 0:
+        return jsonify({"error": "no stocks found"}), 400
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
-        Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),
+        Ticker(list_symbols[0], formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),
                progress=True).get_modules('price summaryProfile')
 
     formatted_yh_information = []
@@ -48,12 +52,10 @@ def update_yh_stocks():
         'symbol': bindparam('symbol')
     }
 
-    stmt = insert(tP).values(market_information)
+    db.session.query(tP).delete(synchronize_session="fetch")
 
-    on_conflict_statement = stmt.on_conflict_do_update(
-        index_elements=['symbol'],
-        set_=market_information
-    )
-
-    db.session.execute(on_conflict_statement, formatted_yh_information)
+    db.session.execute(market_information, formatted_yh_information)
     db.session.commit()
+    results = db.session.query(tP).all()
+
+    return ticker_price_schema.jsonify(results, many=True)

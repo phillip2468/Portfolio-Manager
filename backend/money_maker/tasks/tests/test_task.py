@@ -1,5 +1,9 @@
-from money_maker.tasks.task import update_yh_stocks
+from conftest import HTTP_SUCCESS_CODE
+from money_maker.extensions import db
+from money_maker.models.ticker_prices import TickerPrice
 
 
-def test_get_stock_information(celery_session_worker):
-    update_yh_stocks.delay()
+def test_get_stock_information(client):
+    response = client.get("/task")
+    assert response.status_code == HTTP_SUCCESS_CODE
+    assert len(db.session.query(TickerPrice).all()) == 1
