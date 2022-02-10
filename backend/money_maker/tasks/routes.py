@@ -15,7 +15,6 @@ def update_stocks():
     list_all_symbols = select(tP.symbol).order_by(asc(tP.symbol))
     list_symbols: list[str] = [element[0] for element in db.session.execute(list_all_symbols)]
 
-    print("HERE")
     if len(list_symbols) == 0:
         return jsonify({"error": "no stocks found"}), 400
 

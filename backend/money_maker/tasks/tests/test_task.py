@@ -4,6 +4,11 @@ from money_maker.models.ticker_prices import TickerPrice
 
 
 def test_get_stock_information(client, symbols):
+    """
+    GIVEN the flask client
+    WHEN a request is submitted to check all stock prices
+    THEN check that the stock was successfully inserted into the database
+    """
     response = client.get("/task")
     assert response.status_code == HTTP_SUCCESS_CODE
     assert len(db.session.query(TickerPrice).all()) == 1
