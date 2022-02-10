@@ -6,10 +6,9 @@ from conftest import HTTP_SUCCESS_CODE, NUMBER_OF_USERS, REPEAT_TESTS
 @pytest.mark.repeat(REPEAT_TESTS)
 def test_which_user(client, client_accounts) -> None:
     """
-    Tests that the system can find the user using cookies from the
-    request. Returns a dictionary containing a user_id.
-    Useful for identifying other features that are related to a user
-    in the database.
+    GIVEN a registered user
+    WHEN attempts to find out which user they are
+    THEN check that the backend responds with a 200 response code
 
     :param client: The flask app
     :type client: flask.testing.FlaskClient
@@ -28,8 +27,9 @@ def test_which_user(client, client_accounts) -> None:
 @pytest.mark.repeat(REPEAT_TESTS)
 def test_which_user_invalid(client, client_accounts) -> None:
     """
-    Tests unauthorized route status by clearing cookies of client
-    response.
+    GIVEN a registered user
+    WHEN attempts to find out which user they are
+    THEN check that the backend does not responds with a 200 response code
 
     :param client: The flask app
     :type client: flask.testing.FlaskClient

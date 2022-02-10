@@ -3,7 +3,7 @@ from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
 
-REPEAT_TESTS = 10
+REPEAT_TESTS = 2
 HTTP_SUCCESS_CODE = 200
 PASSWORD_LENGTH = 10
 NUMBER_OF_USERS = 3
@@ -25,6 +25,7 @@ def client():
         with test_app.app_context():
             db.create_all()
         yield flask_client
+        db.session.remove()
         db.drop_all()
         flask_client.cookie_jar.clear()
         flask_client.cookie_jar.clear_session_cookies()
