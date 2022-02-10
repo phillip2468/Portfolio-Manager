@@ -57,6 +57,15 @@ def client_accounts(client):
     yield list_of_clients
 
 
+@pytest.fixture(scope='session')
+def celery_config():
+    return {
+        'broker_url': 'amqp://',
+        'result_backend': 'rpc',
+    }
+
+
+
 def list_stocks(client):
     response = client.get("/ticker/refresh-us-symbols")
     assert response.status_code == HTTP_SUCCESS_CODE
