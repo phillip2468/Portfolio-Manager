@@ -1,6 +1,7 @@
 import flask.app
 from flask import Flask
 from mixer.backend.flask import mixer
+
 from money_maker.auth.routes import auth_bp
 from money_maker.extensions import (bcrypt, cache, celery, cors, db,
                                     jwt_manager, marshmallow)
@@ -12,13 +13,16 @@ from money_maker.search.routes import search_bp
 from money_maker.ticker.routes import ticker_bp
 from money_maker.trending.routes import trending_bp
 from money_maker.watchlist.routes import watchlist_bp
+from money_maker.tasks.routes import task_bp
 
 
 def create_test_app():
     app = Flask(__name__)
     app.config.from_object("money_maker.test_config")
+
     configure_test_extensions(app)
     register_blueprints(app)
+
     init_celery(app)
     return app
 
@@ -72,6 +76,7 @@ def register_blueprints(app: flask.Flask):
     app.register_blueprint(ticker_bp)
     app.register_blueprint(portfolio_bp)
     app.register_blueprint(watchlist_bp)
+    app.register_blueprint(task_bp)
 
 
 def init_celery(app: flask.app.Flask = None):

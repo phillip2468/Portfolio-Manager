@@ -1,6 +1,6 @@
 import pytest
+
 from money_maker.app import create_test_app
-from money_maker.celery_app import app
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
 
@@ -25,11 +25,11 @@ def client():
     with test_app.test_client() as flask_client:
         with test_app.app_context():
             db.create_all()
-        yield flask_client
-        db.session.remove()
-        db.drop_all()
-        flask_client.cookie_jar.clear()
-        flask_client.cookie_jar.clear_session_cookies()
+            yield flask_client
+            db.session.remove()
+            db.drop_all()
+            flask_client.cookie_jar.clear()
+            flask_client.cookie_jar.clear_session_cookies()
 
 
 @pytest.fixture
@@ -55,19 +55,3 @@ def client_accounts(client):
 
     assert len(db.session.query(User).all()) == NUMBER_OF_USERS
     yield list_of_clients
-
-
-@pytest.fixture(scope='session')
-def celery_config():
-    return {
-        'broker_url': 'amqp://',
-        'result_backend': 'rpc',
-    }
-
-
-
-def list_stocks(client):
-    response = client.get("/ticker/refresh-us-symbols")
-    assert response.status_code == HTTP_SUCCESS_CODE
-
-
