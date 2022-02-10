@@ -56,7 +56,7 @@ def client_accounts(client):
     yield list_of_clients
 
 
-def test_list_stocks(client):
+def list_stocks(client):
     response = client.get("/ticker/refresh-us-symbols")
     assert response.status_code == HTTP_SUCCESS_CODE
     print(response)
