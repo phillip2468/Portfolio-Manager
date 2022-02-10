@@ -1,5 +1,6 @@
 import pytest
 from money_maker.app import create_test_app
+from money_maker.celery_app import app
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
 
@@ -59,4 +60,5 @@ def client_accounts(client):
 def list_stocks(client):
     response = client.get("/ticker/refresh-us-symbols")
     assert response.status_code == HTTP_SUCCESS_CODE
-    print(response)
+
+

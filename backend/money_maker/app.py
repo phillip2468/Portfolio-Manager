@@ -1,7 +1,6 @@
 import flask.app
 from flask import Flask
 from mixer.backend.flask import mixer
-
 from money_maker.auth.routes import auth_bp
 from money_maker.extensions import (bcrypt, cache, celery, cors, db,
                                     jwt_manager, marshmallow)
@@ -20,6 +19,7 @@ def create_test_app():
     app.config.from_object("money_maker.test_config")
     configure_test_extensions(app)
     register_blueprints(app)
+    init_celery(app)
     return app
 
 
