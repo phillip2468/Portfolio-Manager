@@ -3,7 +3,7 @@ from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
 
-REPEAT_TESTS = 2
+REPEAT_TESTS = 1
 HTTP_SUCCESS_CODE = 200
 PASSWORD_LENGTH = 10
 NUMBER_OF_USERS = 3
