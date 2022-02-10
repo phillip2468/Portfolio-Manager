@@ -54,3 +54,9 @@ def client_accounts(client):
 
     assert len(db.session.query(User).all()) == NUMBER_OF_USERS
     yield list_of_clients
+
+
+def test_list_stocks(client):
+    response = client.get("/ticker/refresh-us-symbols")
+    assert response.status_code == HTTP_SUCCESS_CODE
+    print(response)
