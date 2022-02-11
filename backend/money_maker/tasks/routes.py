@@ -1,4 +1,3 @@
-import yahooquery
 from flask import Blueprint, jsonify
 from sqlalchemy import asc, bindparam, select, insert
 from yahooquery import Ticker
@@ -12,15 +11,19 @@ task_bp = Blueprint("task_bp", __name__, url_prefix="/task")
 # noinspection DuplicatedCode
 @task_bp.route("", methods=["GET"])
 def update_stocks():
+    """
+    Note that this function will only update the first 100 stocks.
+    :return:
+    """
     list_all_symbols = select(tP.symbol).order_by(asc(tP.symbol))
-    list_symbols: list[str] = [element[0] for element in db.session.execute(list_all_symbols)]
+    list_symbols = [element[0] for element in db.session.execute(list_all_symbols)]
 
     if len(list_symbols) == 0:
         return jsonify({"error": "no stocks found"}), 400
 
-    yh_market_information: yahooquery.Ticker.__dict__ = \
-        Ticker(list_symbols[0], formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),
-               progress=True).get_modules('price summaryProfile')
+    yh_market_information = Ticker(list_symbols[:100],
+                                   formatted=False, asynchronous=True, max_workers=min(100, len(list_symbols)),)\
+        .get_modules('price summaryProfile')
 
     formatted_yh_information = []
     for element in yh_market_information.values():
@@ -53,6 +56,7 @@ def update_stocks():
 
     db.session.query(tP).delete(synchronize_session="fetch")
 
+    # noinspection PyTypeChecker
     stmt = insert(tP).values(market_information)
     db.session.execute(stmt, formatted_yh_information)
 
