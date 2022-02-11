@@ -1,11 +1,12 @@
 from flask import Blueprint, jsonify, request
+from sqlalchemy.exc import IntegrityError
+
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio
 from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
 from money_maker.models.ticker_prices import TickerPrice
 from money_maker.models.ticker_prices import TickerPrice as tP
-from sqlalchemy.exc import IntegrityError
 
 portfolio_bp = Blueprint("portfolio_bp", __name__, url_prefix="/portfolio")
 
@@ -36,7 +37,7 @@ def get_portfolio_stocks_by_user(user_id: int, portfolio_name: str):
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>", methods=["POST"])
-def add_new_portfolio(user_id: int, portfolio_name: str):
+def create_new_portfolio(user_id: int, portfolio_name: str):
     """
     Creates a new portfolio for the particular user. All portfolios start
     with no stocks.
