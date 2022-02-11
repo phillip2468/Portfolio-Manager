@@ -11,4 +11,5 @@ def test_get_stock_information(client, symbols):
     """
     response = client.get("/task")
     assert response.status_code == HTTP_SUCCESS_CODE
-    assert len(db.session.query(TickerPrice).all()) == 1
+    assert len(db.session.query(TickerPrice).all()) > 1
+    assert len(db.session.query(TickerPrice).filter(TickerPrice.symbol == 'AAPL').all()) == 1
