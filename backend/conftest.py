@@ -1,5 +1,5 @@
 import pytest
-import urllib3
+
 from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
@@ -94,3 +94,10 @@ def logged_in_user_id(client, client_accounts):
     response = client.get("/auth/which_user")
     yield response.get_json()["user_id"]
 
+
+@pytest.fixture
+def sample_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id):
+    portfolio_name = f"""{faker_data.first_name()}_portfolio"""
+    response = client.post(f"""/portfolio/{logged_in_user_id}/{portfolio_name}""")
+    assert response.status_code == HTTP_SUCCESS_CODE
+    yield portfolio_name
