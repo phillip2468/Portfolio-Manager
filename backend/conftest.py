@@ -64,3 +64,10 @@ def symbols(client):
 
     response = client.get("/ticker/refresh-us-symbols")
     assert response.status_code == HTTP_SUCCESS_CODE
+
+
+@pytest.fixture(scope="session")
+def stock_prices(client, symbols):
+    response = client.get("/task")
+    assert response.status_code == HTTP_SUCCESS_CODE
+
