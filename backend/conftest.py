@@ -1,4 +1,5 @@
 import pytest
+from flask.testing import FlaskClient
 
 from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
@@ -23,8 +24,9 @@ LETTER_CASINGS = [[True, True], [True, False], [False, True]]
 def client():
     """
     Creates the sample flask client required for pytests.
-    :return: The flask client
-    :rtype: FlaskClient
+
+    Yields:
+        FlaskClient: The example flask application
     """
     test_app = create_test_app()
     with test_app.test_client() as flask_client:
@@ -38,13 +40,16 @@ def client():
 
 
 @pytest.fixture
-def client_accounts(client):
+def client_accounts(client: FlaskClient) -> list[dict]:
     """
-    Creates a sample user in the database, using random values.
+    Creates a list of sample users in the database, using random values.
     Returns a dictionary containing an email and unhashed password.
 
-    :param client: the flask app
-    :return: dict
+    Args:
+        client: The flask application
+
+    Yields:
+        list[dict[str, str]]: The list of users
     """
     list_of_clients = []
     for i in range(NUMBER_OF_USERS):
@@ -63,7 +68,13 @@ def client_accounts(client):
 
 
 @pytest.fixture
-def symbols(client):
+def symbols(client: FlaskClient) -> None:
+    """
+    A query which creates all the rows that contain the symbols in the database.
+
+    Args:
+        client: The flask application
+    """
     response = client.get("/ticker/refresh-asx-symbols")
     assert response.status_code == HTTP_SUCCESS_CODE
 
@@ -72,22 +83,35 @@ def symbols(client):
 
 
 @pytest.fixture
-def stock_prices(client, symbols):
+def stock_prices(client: FlaskClient, symbols: None) -> None:
     """
     A fixture which updates up to 100 stocks of alphabetically
     ordred stocks.
 
-    :param client: The flask client
-    :type client: FlaskClient
-    :param symbols: The fixture which inserts the stock symbols
-    :type symbols: Any
+    Args:
+        client: The flask application
+        symbols: The query to create stock symbol rows
+
+    Returns:
+
     """
     response = client.get("/task")
     assert response.status_code == HTTP_SUCCESS_CODE
 
 
 @pytest.fixture
-def logged_in_user_id(client, client_accounts):
+def logged_in_user_id(client: FlaskClient, client_accounts: list[dict]) -> int:
+    """
+    Provides the user_id pertaining to the registered user.
+
+    Args:
+        client: The flask application
+        client_accounts: The list of dictionaries of clients
+
+    Yields:
+        The user id of the logged-in user.
+
+    """
     response = client.post("/auth/login", json=client_accounts[0])
     assert response.status_code == HTTP_SUCCESS_CODE
 
@@ -96,7 +120,23 @@ def logged_in_user_id(client, client_accounts):
 
 
 @pytest.fixture
-def sample_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id):
+def sample_portfolio(client: FlaskClient, client_accounts: list[dict], symbols: None,
+                     stock_prices: None, logged_in_user_id: int) -> str:
+    """
+    A fixture which creates a sample portfolio in the database. Note that this does not
+    contain any stocks by itself.
+
+    Args:
+        client: The flask application
+        client_accounts: The list of dictionaries of clients
+        symbols: The query to create stock symbol rows
+        stock_prices: The query to update up to 100 stocks of alphabetically
+        logged_in_user_id: The logged-in user_id
+
+    Returns:
+        The portfolio name as a string.
+
+    """
     portfolio_name = f"""{faker_data.first_name()}_portfolio"""
     response = client.post(f"""/portfolio/{logged_in_user_id}/{portfolio_name}""")
     assert response.status_code == HTTP_SUCCESS_CODE
