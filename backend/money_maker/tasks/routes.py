@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify
-from sqlalchemy import asc, bindparam, select, insert
-from yahooquery import Ticker
-
 from money_maker.extensions import db
-from money_maker.models.ticker_prices import TickerPrice as tP, ticker_price_schema
+from money_maker.models.ticker_prices import TickerPrice as tP
+from money_maker.models.ticker_prices import ticker_price_schema
+from sqlalchemy import asc, bindparam, insert, select
+from yahooquery import Ticker
 
 task_bp = Blueprint("task_bp", __name__, url_prefix="/task")
 
@@ -22,7 +22,7 @@ def update_stocks():
         return jsonify({"error": "no stocks found"}), 400
 
     yh_market_information = Ticker(list_symbols[:100],
-                                   formatted=False, asynchronous=True, max_workers=min(100, len(list_symbols)),)\
+                                   formatted=False, asynchronous=True)\
         .get_modules('price summaryProfile')
 
     formatted_yh_information = []

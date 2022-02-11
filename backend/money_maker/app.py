@@ -1,7 +1,6 @@
 import flask.app
 from flask import Flask
 from mixer.backend.flask import mixer
-
 from money_maker.auth.routes import auth_bp
 from money_maker.extensions import (bcrypt, cache, celery, cors, db,
                                     jwt_manager, marshmallow)
@@ -10,10 +9,10 @@ from money_maker.news.routes import news_stories_bp
 from money_maker.portfolio.routes import portfolio_bp
 from money_maker.quote.routes import quote_bp
 from money_maker.search.routes import search_bp
+from money_maker.tasks.routes import task_bp
 from money_maker.ticker.routes import ticker_bp
 from money_maker.trending.routes import trending_bp
 from money_maker.watchlist.routes import watchlist_bp
-from money_maker.tasks.routes import task_bp
 
 
 def create_test_app():
@@ -29,9 +28,12 @@ def create_test_app():
 
 def configure_test_extensions(app):
     db.init_app(app)
-    mixer.init_app(app)
+    cache.init_app(app)
+    cors.init_app(app)
     jwt_manager.init_app(app)
     bcrypt.init_app(app)
+    marshmallow.init_app(app)
+    mixer.init_app(app)
 
 
 def create_app(testing=False) -> Flask:
