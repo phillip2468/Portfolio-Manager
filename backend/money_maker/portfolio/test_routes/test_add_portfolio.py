@@ -1,10 +1,12 @@
 import pytest
+from flask.testing import FlaskClient
 
 from conftest import HTTP_SUCCESS_CODE, REPEAT_TESTS
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
-def test_add_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id) -> None:
+def test_add_portfolio(client: FlaskClient, client_accounts: list[dict],
+                       symbols: None, stock_prices: None, logged_in_user_id: int) -> None:
     """
     GIVEN a portfolio name
     WHEN a user is logged in and wants to create a portfolio
@@ -21,22 +23,20 @@ def test_add_portfolio(client, client_accounts, symbols, stock_prices, logged_in
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
-def test_invalid_portfolio_name(client, client_accounts, symbols, stock_prices, logged_in_user_id) -> None:
+def test_invalid_portfolio_name(client: FlaskClient, client_accounts: list[dict], symbols: None,
+                                stock_prices: None, logged_in_user_id: int) -> None:
     """
     GIVEN a portfolio name which is empty
     WHEN a user is logged in and wants to create a portfolio
     THEN check the portfolio is not created
 
-    :param client: The flask testing client
-    :type client: FlaskClient
-    :param client_accounts: The users in the database
-    :type client_accounts: dict
-    :param symbols: The stock ticker symbols
-    :type symbols: Any
-    :param stock_prices: A fixture which updates all the stock prices from the symbol's fixture
-    :type stock_prices: Any
-    :param logged_in_user_id: The id of the user
-    :type logged_in_user_id: int
+    Args:
+        client: The flask application
+        client_accounts: The list of dictionaries of clients
+        symbols: The query to create stock symbol rows
+        stock_prices: The query to update up to 100 stocks of alphabetically
+        logged_in_user_id: The logged-in user_id
+
     """
     response = client.post(f"""/portfolio/{logged_in_user_id}/""")
     assert response.status_code != HTTP_SUCCESS_CODE
