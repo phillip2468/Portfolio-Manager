@@ -2,12 +2,11 @@ from __future__ import absolute_import, unicode_literals
 
 import yahooquery
 from celery import shared_task
+from money_maker.extensions import db
+from money_maker.models.ticker_prices import TickerPrice as tP
 from sqlalchemy import asc, bindparam, insert, select
 from sqlalchemy.dialects.postgresql import insert
 from yahooquery import Ticker
-
-from money_maker.extensions import db
-from money_maker.models.ticker_prices import TickerPrice as tP
 
 
 @shared_task()
@@ -57,3 +56,7 @@ def update_yh_stocks():
 
     db.session.execute(on_conflict_statement, formatted_yh_information)
     db.session.commit()
+
+
+def non_celery_update_yh_stocks():
+    return update_yh_stocks()
