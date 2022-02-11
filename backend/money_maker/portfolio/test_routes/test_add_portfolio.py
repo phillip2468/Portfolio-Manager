@@ -1,31 +1,27 @@
 import pytest
+
 from conftest import HTTP_SUCCESS_CODE, REPEAT_TESTS
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
-def test_add_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id):
+def test_add_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id) -> None:
     """
     GIVEN a portfolio name
     WHEN a user is logged in and wants to create a portfolio
     THEN check that the new portfolio has been created.
-
-    :param client: The flask testing client
-    :type client: FlaskClient
-    :param client_accounts: The users in the database
-    :type client_accounts: dict
-    :param symbols: The stock ticker symbols
-    :type symbols: Any
-    :param stock_prices: A fixture which updates all the stock prices from the symbol's fixture
-    :type stock_prices: Any
-    :param logged_in_user_id: The id of the user
-    :type logged_in_user_id: int
+    Args:
+        client: The flask app
+        client_accounts: List of dict
+        symbols: Places symbols into database TickerPrice
+        stock_prices: Places stock prices into database TickerPrice
+        logged_in_user_id: The user id logged in
     """
     response = client.post(f"""/portfolio/{logged_in_user_id}/sample_portfolio""")
     assert response.status_code == HTTP_SUCCESS_CODE
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
-def test_invalid_portfolio_name(client, client_accounts, symbols, stock_prices, logged_in_user_id):
+def test_invalid_portfolio_name(client, client_accounts, symbols, stock_prices, logged_in_user_id) -> None:
     """
     GIVEN a portfolio name which is empty
     WHEN a user is logged in and wants to create a portfolio

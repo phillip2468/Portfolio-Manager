@@ -3,7 +3,7 @@ from money_maker.extensions import db, faker_data
 from money_maker.models.portfolio import Portfolio
 
 
-def test_add_stock_to_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id, sample_portfolio):
+def test_add_stock_to_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id, sample_portfolio) -> None:
     """
     GIVEN a stock id
     WHEN a user is logged in and wants to add a stock to portfolio
@@ -24,7 +24,7 @@ def test_add_stock_to_portfolio(client, client_accounts, symbols, stock_prices, 
                .filter(Portfolio.user_id == logged_in_user_id, Portfolio.stock_id == 1).all()) == 1
 
 
-def test_add_multiple_stocks_to_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id, sample_portfolio):
+def test_add_multiple_stocks_to_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id, sample_portfolio) -> None:
     """
     GIVEN multiple stock_ids
     WHEN a user is logged in and wants to add a stock to portfolio
@@ -47,7 +47,7 @@ def test_add_multiple_stocks_to_portfolio(client, client_accounts, symbols, stoc
     assert len(db.session.query(Portfolio).filter(Portfolio.user_id == logged_in_user_id).all()) == 10
 
 
-def test_add_multiple_stocks_to_different_portfolios(client, client_accounts, symbols, stock_prices, logged_in_user_id, sample_portfolio):
+def test_add_multiple_stocks_to_different_portfolios(client, client_accounts, symbols, stock_prices, logged_in_user_id, sample_portfolio) -> None:
     """
     GIVEN multiple stock_ids
     WHEN a user is logged in and wants to add a stock to a particular portfolio (and already has multiple portfolios)
@@ -74,7 +74,7 @@ def test_add_multiple_stocks_to_different_portfolios(client, client_accounts, sy
                                                   Portfolio.portfolio_name == sample_portfolio).all()) == 10
 
 
-def test_add_invalid_stock_to_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id, sample_portfolio):
+def test_add_invalid_stock_to_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id, sample_portfolio) -> None:
     """
     GIVEN an invalid stock_id
     WHEN a user is logged in and wants to add a stock to a particular portfolio
