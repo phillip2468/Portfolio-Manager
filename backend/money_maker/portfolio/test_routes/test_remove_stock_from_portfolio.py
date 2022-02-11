@@ -3,7 +3,7 @@ from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio
 
 
-def test_add_stock_to_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id):
+def test_remove_stock_from_portfolio(client, client_accounts, symbols, stock_prices, logged_in_user_id):
     """
     GIVEN a stock id
     WHEN a user is logged in and wants to remove a stock from a portfolio
