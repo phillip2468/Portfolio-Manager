@@ -21,6 +21,11 @@ LETTER_CASINGS = [[True, True], [True, False], [False, True]]
 
 @pytest.fixture(scope="function")
 def client():
+    """
+    Creates the sample flask client required for pytests.
+    :return: The flask client
+    :rtype: FlaskClient
+    """
     test_app = create_test_app()
     with test_app.test_client() as flask_client:
         with test_app.app_context():
@@ -57,7 +62,7 @@ def client_accounts(client):
     yield list_of_clients
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def symbols(client):
     response = client.get("/ticker/refresh-asx-symbols")
     assert response.status_code == HTTP_SUCCESS_CODE
@@ -66,13 +71,22 @@ def symbols(client):
     assert response.status_code == HTTP_SUCCESS_CODE
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def stock_prices(client, symbols):
+    """
+    A fixture which updates up to 100 stocks of alphabetically
+    ordred stocks.
+
+    :param client: The flask client
+    :type client: FlaskClient
+    :param symbols: The fixture which inserts the stock symbols
+    :type symbols: Any
+    """
     response = client.get("/task")
     assert response.status_code == HTTP_SUCCESS_CODE
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def logged_in_user_id(client, client_accounts):
     response = client.post("/auth/login", json=client_accounts[0])
     assert response.status_code == HTTP_SUCCESS_CODE

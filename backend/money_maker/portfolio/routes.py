@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify, request
 from money_maker.extensions import db
+from money_maker.models.portfolio import Portfolio
 from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
+from money_maker.models.ticker_prices import TickerPrice
 from money_maker.models.ticker_prices import TickerPrice as tP
 from sqlalchemy.exc import IntegrityError
 
@@ -61,11 +63,18 @@ def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int):
     :param stock_id: The stock id
     :return: flask.Response
     """
+    if len(db.session.query(TickerPrice).filter(TickerPrice.stock_id == stock_id).all()) == 0:
+        return jsonify({"msg": "Stock not found"}), 400
+
+    if (len(db.session.query(Portfolio)
+                    .filter(Portfolio.portfolio_name == portfolio_name, Portfolio.user_id == user_id).all())) == 0:
+        return jsonify({"msg": "Portfolio not found"}), 400
+
     stock = pF(stock_id=stock_id, portfolio_name=portfolio_name, user_id=user_id, units_price=0, units_purchased=0)
     db.session.add(stock)
     db.session.commit()
 
-    return jsonify({"msg":  "Successfully added stock"}), 200
+    return jsonify({"msg": "Successfully added stock"}), 200
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["DELETE"])
@@ -79,7 +88,8 @@ def remove_stock_from_portfolio(user_id: int, portfolio_name: str, stock_id: int
     :param stock_id: The stock id
     :return: flask.Response
     """
-    db.session.query(pF).filter(pF.stock_id == stock_id, pF.portfolio_name == portfolio_name, pF.user_id == user_id).delete()
+    db.session.query(pF).filter(pF.stock_id == stock_id, pF.portfolio_name == portfolio_name,
+                                pF.user_id == user_id).delete()
     db.session.commit()
 
     return jsonify({"msg": "Successfully deleted the stock"}), 200
