@@ -129,6 +129,17 @@ def user_accounts(flask_application: FlaskClient) -> list[dict]:
 
 @pytest.fixture(scope="function")
 def user_account_logged_in(flask_application: FlaskClient, user_account: dict) -> dict:
+    """
+    Given a registered user, log this user into the flask application. Note that
+    the response back will provide cookies and an encoded jwt to verify other requests.
+
+    Args:
+        flask_application (FlaskClient):  The test client flask application.
+        user_account (dict): A singular registered user account
+
+    Returns:
+        The dictionary details of the registered user.
+    """
     response = flask_application.post("/auth/login", json=user_account)
     assert response.status_code == HTTP_SUCCESS_CODE
     yield user_account

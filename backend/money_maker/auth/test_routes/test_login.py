@@ -30,7 +30,7 @@ def test_valid_multiple_logins(flask_application: FlaskClient, user_accounts: li
 
     Args:
         flask_application (FlaskClient): The flask application
-        user_accounts (list[dict]): A list of registered user
+        user_accounts (list[dict]): A list of registered users
     """
     for index in range(NUMBER_OF_USERS):
         response = flask_application.post("/auth/login", json=user_accounts[index])
