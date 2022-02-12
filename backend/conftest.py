@@ -1,6 +1,5 @@
 import pytest
 from flask.testing import FlaskClient
-
 from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
@@ -21,7 +20,15 @@ LETTER_CASINGS = [[True, True], [True, False], [False, True]]
 
 
 @pytest.fixture(scope="session")
-def flask_application():
+def flask_application() -> FlaskClient:
+    """
+    Creates the test flask client required for the application.
+    Also creates the databases and fills the TickerPrice database
+    with the relevant stock symbols.
+
+    Yields:
+        The flask test client application.
+    """
     flask_app = create_test_app()
     with flask_app.test_client() as test_client:
         with flask_app.app_context():
@@ -34,7 +41,14 @@ def flask_application():
             test_client.cookie_jar.clear_session_cookies()
 
 
-def insert_stock_prices(flask_test_client):
+def insert_stock_prices(flask_test_client: FlaskClient) -> None:
+    """
+    Inserts the stock symbols and information into TickerPrice, necessary for
+    querying. Returns nothing.
+
+    Args:
+        flask_test_client (FlaskClient):  The test client flask application.
+    """
     response = flask_test_client.get("/ticker/refresh-asx-symbols")
     assert response.status_code == HTTP_SUCCESS_CODE
     response = flask_test_client.get("/ticker/refresh-us-symbols")
@@ -42,6 +56,36 @@ def insert_stock_prices(flask_test_client):
     response = flask_test_client.get("/task")
     assert response.status_code == HTTP_SUCCESS_CODE
 
+
+@pytest.fixture(scope="function")
+def user_account(flask_application: FlaskClient) -> dict:
+    """
+    Generates a sample user for use in the database.
+    Once random details has been created return the user
+    details. Then after use, the user is deleted and removed from the database.
+
+    Args:
+        flask_application (FlaskClient): The test client flask application.
+
+    Yields: A dictionary containing the email and password of the user.
+
+    """
+    email = faker_data.ascii_email()
+    password = faker_data.password(length=PASSWORD_LENGTH, special_chars=False)
+    body = {
+        "email": email,
+        "password": password
+    }
+    response = flask_application.post("/auth/register", json=body)
+    assert response.status_code == HTTP_SUCCESS_CODE
+    assert len(db.session.query(User).filter(User.email == body["email"]).all()) == 1
+    yield body
+
+    response = flask_application.post("/auth/logout")
+    assert response.status_code == HTTP_SUCCESS_CODE
+    flask_application.cookie_jar.clear()
+    db.session.query(User).filter(User.email == body["email"]).delete(synchronize_session="fetch")
+    assert len(db.session.query(User).filter(User.email == body["email"]).all()) == 0
 
 
 @pytest.fixture(scope="function")
