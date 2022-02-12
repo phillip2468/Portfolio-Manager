@@ -107,7 +107,6 @@ def test_invalid_register_short_pw(client: FlaskClient) -> None:
                                             )
         }
         client.post("/auth/register", json=body)
-    pytest.exit("Exited!")
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
