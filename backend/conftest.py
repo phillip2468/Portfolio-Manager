@@ -21,6 +21,26 @@ LETTER_CASINGS = [[True, True], [True, False], [False, True]]
 
 
 @pytest.fixture(scope="session")
+def flask_application():
+    flask_app = create_test_app()
+    with flask_app.test_client() as test_client:
+        with flask_app.app_context():
+            db.create_all()
+            insert_stock_prices(test_client)
+
+            yield test_client
+            db.drop_all()
+            test_client.cookie_jar.clear()
+            test_client.cookie_jar.clear_session_cookies()
+
+
+def insert_stock_prices(flask_test_client):
+    response = flask_test_client.get("/ticker/refresh-asx-symbols")
+    assert response.status_code == HTTP_SUCCESS_CODE
+    response = flask_test_client.get("/ticker/refresh-us-symbols")
+    assert response.status_code == HTTP_SUCCESS_CODE
+    response = flask_test_client.get("/task")
+    assert response.status_code == HTTP_SUCCESS_CODE
 
 
 
@@ -32,9 +52,9 @@ def client():
     Yields:
         FlaskClient: The example flask application
     """
-    test_app = create_test_app()
-    with test_app.test_client() as flask_client:
-        with test_app.app_context():
+    flask_app = create_test_app()
+    with flask_app.test_client() as flask_client:
+        with flask_app.app_context():
             db.create_all()
             yield flask_client
             db.session.remove()
@@ -74,7 +94,8 @@ def client_accounts(client: FlaskClient) -> list[dict]:
 @pytest.fixture
 def symbols(client: FlaskClient) -> None:
     """
-    A query which creates all the rows that contain the symbols in the database.
+    A query which creates all the rows that contain the symbols in the database. Note that this
+    will not add any actual data to the rows.
 
     Args:
         client: The flask application
