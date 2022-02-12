@@ -1,5 +1,6 @@
 import pytest
 from flask.testing import FlaskClient
+
 from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
@@ -143,6 +144,24 @@ def user_account_logged_in(flask_application: FlaskClient, user_account: dict) -
     response = flask_application.post("/auth/login", json=user_account)
     assert response.status_code == HTTP_SUCCESS_CODE
     yield user_account
+
+
+@pytest.fixture(scope="function")
+def user_id(flask_application: FlaskClient, user_account_logged_in: dict) -> int:
+    """
+    Given a registerd logged-in user, return the user_id of this particular user.
+
+    Args:
+        flask_application (FlaskClient):  The test client flask application.
+        user_account_logged_in (dict): A singular registered user account that is logged into the application
+
+    Returns:
+        The user id as an integer
+
+    """
+    response = flask_application.get("/auth/which_user")
+    assert response.status_code == HTTP_SUCCESS_CODE
+    yield response.get_json()["user_id"]
 
 
 @pytest.fixture(scope="function")
