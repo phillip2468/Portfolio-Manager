@@ -127,6 +127,12 @@ def user_accounts(flask_application: FlaskClient) -> list[dict]:
     flask_application.cookie_jar.clear()
 
 
+@pytest.fixture(scope="function")
+def user_account_logged_in(flask_application: FlaskClient, user_account: dict) -> dict:
+    response = flask_application.post("/auth/login", json=user_account)
+    assert response.status_code == HTTP_SUCCESS_CODE
+    yield user_account
+
 
 @pytest.fixture(scope="function")
 def client():
