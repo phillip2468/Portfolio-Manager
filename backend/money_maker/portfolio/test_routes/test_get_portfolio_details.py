@@ -1,61 +1,66 @@
+import pytest
 from flask.testing import FlaskClient
 
-from conftest import HTTP_SUCCESS_CODE
+from conftest import HTTP_SUCCESS_CODE, REPEAT_TESTS
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio
 
+NUMBER_OF_PORTFOLIOS = 5
+NUMBER_OF_STOCKS = 10
 
-def test_get_all_portfolios(client: FlaskClient, client_accounts: list[dict], symbols: None,
-                            stock_prices: None, logged_in_user_id: int) -> None:
+
+@pytest.mark.repeat(REPEAT_TESTS)
+def test_get_all_portfolios(flask_application: FlaskClient, user_account_logged_in: dict,
+                            user_id: int, sample_portfolio: str) -> None:
     """
-    GIVEN a user id
-    WHEN a user is logged in
+    GIVEN a user with a new portfolio name
+    WHEN a user is logged in and wants to create a new portfolio
     THEN check that all portfolios are returned for the user
 
     Args:
-        client: The flask application
-        client_accounts: The list of dictionaries of clients
-        symbols: The query to create stock symbol rows
-        stock_prices: The query to update up to 100 stocks of alphabetically
-        logged_in_user_id: The logged-in user_id
+        flask_application: The flask application
+        user_account_logged_in: The single registered user logged in.
+        user_id: The id of the user
+        sample_portfolio: The name of the sample portfolio
     """
 
-    for i in range(1, 5):
-        response = client.post(f"""/portfolio/{logged_in_user_id}/sample_portfolio{i}""")
+    for pf in range(1, NUMBER_OF_PORTFOLIOS):
+        response = flask_application.post(f"""/portfolio/{user_id}/other_pf_{pf}""")
         assert response.status_code == HTTP_SUCCESS_CODE
 
-    assert len(db.session.query(Portfolio)
-               .filter(Portfolio.user_id == logged_in_user_id).all()) > 1
+    assert len(db.session.query(Portfolio).all()) == NUMBER_OF_PORTFOLIOS
 
-    response = client.get(f"""/portfolio/{logged_in_user_id}""")
-    assert response.status_code == HTTP_SUCCESS_CODE
-    assert len(response.get_json()) > 1
+    db.session.query(Portfolio).filter(Portfolio.user_id == user_id).delete(synchronize_session="fetch")
+    db.session.commit()
+
+    assert len(db.session.query(Portfolio.user_id == user_id).all()) == 0
 
 
-def test_get_all_stocks_from_portfolio(client: FlaskClient, client_accounts: list[dict], symbols: None,
-                                       stock_prices: None, logged_in_user_id: int, sample_portfolio: str) -> None:
+@pytest.mark.repeat(REPEAT_TESTS)
+def test_get_all_stocks_from_portfolios(flask_application: FlaskClient, user_account_logged_in: dict,
+                                        user_id: int, sample_portfolio: str) -> None:
     """
-    GIVEN a user id
-    WHEN a user is logged in
-    THEN check that all stocks from a portfolios are returned for the user
+    GIVEN a user with a portfolio
+    WHEN a user is logged in, created a portfolio with stocks in it
+    THEN check that stocks are returned from it
 
     Args:
-        client: The flask application
-        client_accounts: The list of dictionaries of clients
-        symbols: The query to create stock symbol rows
-        stock_prices: The query to update up to 100 stocks of alphabetically
-        logged_in_user_id: The logged-in user_id
-        sample_portfolio: Places sample portfolio into database portfolio
-
+        flask_application: The flask application
+        user_account_logged_in: The single registered user logged in.
+        user_id: The id of the user
+        sample_portfolio: The name of the sample portfolio
     """
 
-    assert len(db.session.query(Portfolio)
-               .filter(Portfolio.user_id == logged_in_user_id).all()) == 1
+    for i in range(1, NUMBER_OF_STOCKS + 1):
+        response = flask_application.post(f"""/portfolio/{user_id}/{sample_portfolio}/{i}""")
+        assert response.status_code == HTTP_SUCCESS_CODE
+        assert response.get_json()["msg"] == "Successfully added stock"
 
-    for i in range(1, 10):
-        response = client.post(f"""/portfolio/{logged_in_user_id}/{sample_portfolio}/{i}""")
-        assert response.status_code == 200
-
-    response = client.get(f"""/portfolio/{logged_in_user_id}/{sample_portfolio}""")
+    response = flask_application.get(f"""/portfolio/{user_id}/{sample_portfolio}""")
     assert response.status_code == HTTP_SUCCESS_CODE
-    assert len(response.get_json()) == 9
+    assert len(response.get_json()) == NUMBER_OF_STOCKS
+
+    db.session.query(Portfolio).filter(Portfolio.user_id == user_id).delete(synchronize_session="fetch")
+    db.session.commit()
+
+    assert len(db.session.query(Portfolio.user_id == user_id).all()) == 0
