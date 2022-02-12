@@ -20,6 +20,10 @@ MAX_LENGTH_EMAIL = 100
 LETTER_CASINGS = [[True, True], [True, False], [False, True]]
 
 
+@pytest.fixture(scope="session")
+
+
+
 @pytest.fixture(scope="function")
 def client():
     """
