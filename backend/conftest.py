@@ -85,7 +85,49 @@ def user_account(flask_application: FlaskClient) -> dict:
     assert response.status_code == HTTP_SUCCESS_CODE
     flask_application.cookie_jar.clear()
     db.session.query(User).filter(User.email == body["email"]).delete(synchronize_session="fetch")
+    db.session.commit()
     assert len(db.session.query(User).filter(User.email == body["email"]).all()) == 0
+    assert len(db.session.query(User).all()) == 0
+
+
+@pytest.fixture(scope="function")
+def user_accounts(flask_application: FlaskClient) -> list[dict]:
+    """
+    Generates a list of sample users for use in the database.
+    Once random details has been created return the list of user
+    details. Then after use, each user is deleted and removed from the database.
+    Args:
+        flask_application (FlaskClient):  The test client flask application.
+
+    Yields:
+        The list of user details as a list of dictionaries.
+    """
+    list_of_users = []
+    for i in range(NUMBER_OF_USERS):
+        email = faker_data.ascii_email()
+        password = faker_data.password(length=PASSWORD_LENGTH, special_chars=False)
+        user_details = {
+            "email": email,
+            "password": password
+        }
+        response = flask_application.post("/auth/register", json=user_details)
+        assert response.status_code == HTTP_SUCCESS_CODE
+        assert len(db.session.query(User).filter(User.email == user_details["email"]).all()) == 1
+        list_of_users.append(user_details)
+        flask_application.cookie_jar.clear()
+
+    print(list_of_users)
+    # Remember that range is a 0 based index
+    assert len(db.session.query(User).all()) == NUMBER_OF_USERS
+    yield list_of_users
+
+    for user in list_of_users:
+        db.session.query(User).filter(User.email == user["email"]).delete(synchronize_session="fetch")
+        db.session.commit()
+
+    assert len(db.session.query(User).all()) == 0
+    flask_application.cookie_jar.clear()
+
 
 
 @pytest.fixture(scope="function")
