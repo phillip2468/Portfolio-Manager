@@ -118,3 +118,35 @@ def test_invalid_multiple_password_logins(flask_application: FlaskClient, user_a
         response = flask_application.post("/auth/login", json=altered_account)
         assert response.status_code != HTTP_SUCCESS_CODE
         assert response.get_json()["error"] == "Missing credentials or wrong login"
+
+
+def test_no_json_login(flask_application: FlaskClient) -> None:
+    """
+    GIVEN a request that provides no json
+    WHEN a user attempts to log in
+    THEN check the application rejects this login
+
+    Args:
+        flask_application (FlaskClient): The flask application
+    """
+    response = flask_application.post("/auth/login")
+    assert response.status_code != HTTP_SUCCESS_CODE
+    assert response.get_json() is None
+
+
+def test_empty_login(flask_application: FlaskClient) -> None:
+    """
+    GIVEN a request that provides empty user details
+    WHEN a user attempts to log in
+    THEN check the application rejects this login
+
+    Args:
+        flask_application (FlaskClient): The flask application
+    """
+    user_details = {
+        "email": "",
+        "password": ""
+    }
+    response = flask_application.post("/auth/login", json=user_details)
+    assert response.status_code != HTTP_SUCCESS_CODE
+    assert response.get_json()["error"] == "Missing credentials or wrong login"

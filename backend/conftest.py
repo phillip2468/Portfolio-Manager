@@ -116,8 +116,6 @@ def user_accounts(flask_application: FlaskClient) -> list[dict]:
         list_of_users.append(user_details)
         flask_application.cookie_jar.clear()
 
-    print(list_of_users)
-    # Remember that range is a 0 based index
     assert len(db.session.query(User).all()) == NUMBER_OF_USERS
     yield list_of_users
 
