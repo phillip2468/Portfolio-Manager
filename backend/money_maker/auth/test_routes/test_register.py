@@ -4,6 +4,8 @@ import pytest
 from conftest import (HTTP_SUCCESS_CODE, LETTER_CASINGS, MAX_LENGTH_EMAIL,
                       MIN_LENGTH_EMAIL, NUMBER_OF_USERS, REPEAT_TESTS)
 from flask.testing import FlaskClient
+from hypothesis import assume, given
+from hypothesis import strategies as st
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
 
@@ -64,48 +66,14 @@ def test_valid__mutliple_registers(flask_application: FlaskClient) -> None:
     assert len(db.session.query(User).all()) == 0
 
 
-@pytest.mark.repeat(REPEAT_TESTS)
-def test_valid_multiple_register(client: FlaskClient) -> None:
-    """
-    GIVEN multiple Users
-    WHEN each User registers
-    THEN check that each user in the database exists by checking
-    the length of rows in the database.
-
-    Args:
-        client: The flask application
-
-    """
-    random_iterations = random.randint(2, 10)
-    for i in range(random_iterations):
-        body = {
-            "email": faker_data.ascii_email(),
-            "password": faker_data.password(length=10, special_chars=False)
-        }
-        response = client.post("/auth/register", json=body)
-        assert response.status_code == HTTP_SUCCESS_CODE
-        # Note that we must always add 1 to the index as range is a 0 based index
-        assert len(db.session.query(User).all()) == i + 1
-
-    assert len(db.session.query(User).all()) == random_iterations
-
-
-@pytest.mark.repeat(REPEAT_TESTS)
-def test_invalid_register_email(client: FlaskClient) -> None:
-    """
-    GIVEN a user with a first name as their email address
-    WHEN a User registers
-    THEN check that the model raises a valuerror and does not insert the user
-
-    Args:
-        client: The flask application
-
-    """
-
+@given(invalid_email=st.from_regex(r'^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'))
+def test_invalid_register_email(flask_application: FlaskClient, invalid_email: str) -> None:
+    assume(len(invalid_email) > 0)
+    print(invalid_email)
     with pytest.raises(ValueError):
         random_num = random.randint(MIN_LENGTH_EMAIL, MAX_LENGTH_EMAIL)
-        body = {
-            "email": faker_data.name(),
+        user = {
+            "email": invalid_email,
             "password": faker_data.password(length=random_num,
                                             special_chars=False,
                                             digits=random.choice([True, False]),
@@ -113,7 +81,7 @@ def test_invalid_register_email(client: FlaskClient) -> None:
                                             lower_case=True
                                             )
         }
-        client.post("/auth/register", json=body)
+        flask_application.post("/auth/register", json=user)
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
@@ -139,6 +107,7 @@ def test_invalid_register_short_pw(client: FlaskClient) -> None:
                                             )
         }
         client.post("/auth/register", json=body)
+    pytest.exit("Exited!")
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
