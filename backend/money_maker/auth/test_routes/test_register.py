@@ -70,7 +70,6 @@ def test_valid__mutliple_registers(flask_application: FlaskClient) -> None:
 @given(invalid_email=st.emails())
 def test_invalid_register_email(flask_application: FlaskClient, invalid_email: str) -> None:
     assume(len(invalid_email) > 0)
-    print(invalid_email)
     with pytest.raises(ValueError):
         random_num = random.randint(MIN_LENGTH_EMAIL, MAX_LENGTH_EMAIL)
         user = {
