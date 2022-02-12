@@ -120,7 +120,7 @@ def test_invalid_multiple_password_logins(flask_application: FlaskClient, user_a
         assert response.get_json()["error"] == "Missing credentials or wrong login"
 
 
-def test_no_json_login(flask_application: FlaskClient) -> None:
+def test_invalid_no_json_login(flask_application: FlaskClient) -> None:
     """
     GIVEN a request that provides no json
     WHEN a user attempts to log in
@@ -134,7 +134,7 @@ def test_no_json_login(flask_application: FlaskClient) -> None:
     assert response.get_json() is None
 
 
-def test_empty_login(flask_application: FlaskClient) -> None:
+def test_invalid_empty_login(flask_application: FlaskClient) -> None:
     """
     GIVEN a request that provides empty user details
     WHEN a user attempts to log in
