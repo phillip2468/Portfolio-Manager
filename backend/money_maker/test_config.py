@@ -15,10 +15,12 @@ TESTING = True
 JWT_COOKIE_SECURE = True
 JWT_TOKEN_LOCATION = ["cookies"]
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)
-JWT_COOKIE_CSRF_PROTECT = True
 JWT_ACCESS_CSRF_HEADER_NAME = "X-CSRF-TOKEN-ACCESS"
 JWT_REFRESH_CSRF_HEADER_NAME = "X-CSRF-TOKEN-REFRESH"
-JWT_CSRF_IN_COOKIES = True
+
+# Note that in production these values would be true
+JWT_COOKIE_CSRF_PROTECT = False
+JWT_CSRF_IN_COOKIES = False
 
 CELERY = {
     "broker_url": "memory://",
