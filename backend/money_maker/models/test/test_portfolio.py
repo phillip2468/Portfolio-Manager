@@ -15,10 +15,9 @@ def test_valid_portfolio_create(user_id: int) -> None:
     THEN check the portflio can be successfully created
     """
     random_length = random.randint(1, 16)
-    print(user_id)
     pf_data = {
         "portfolio_name": faker_data.lexify(text=random_length*"?"),
-        "user_id": f"""{user_id}"""
+        "user_id": user_id
     }
     result = portfolio_schema.load(data=pf_data, partial=True)
     assert result is not None

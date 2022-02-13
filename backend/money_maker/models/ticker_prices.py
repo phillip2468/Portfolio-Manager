@@ -4,7 +4,6 @@ from alembic_utils.pg_function import PGFunction
 from alembic_utils.pg_trigger import PGTrigger
 from flask_marshmallow import Schema
 from marshmallow import post_load
-
 from money_maker.extensions import db, marshmallow
 from sqlalchemy import Column
 from sqlalchemy.sql import func
@@ -45,6 +44,9 @@ class TickerPrice(db.Model):
 class TickerPriceSchema(marshmallow.SQLAlchemyAutoSchema):
     class Meta:
         model = TickerPrice
+        load_instance = True
+        include_fk = True
+        include_relationships = True
 
     @post_load
     def make_user(self, data, **kwargs):

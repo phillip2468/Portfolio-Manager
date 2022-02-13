@@ -1,11 +1,10 @@
 from flask_marshmallow import Schema
-from sqlalchemy import (TIMESTAMP, Column, ForeignKey,
-                        Integer, String, func, UniqueConstraint)
-from sqlalchemy.orm import relationship
-
+from marshmallow import fields
 from money_maker.extensions import db, marshmallow
 from money_maker.models.ticker_prices import TickerPriceSchema
-from marshmallow import fields
+from sqlalchemy import (TIMESTAMP, Column, ForeignKey, Integer, String,
+                        UniqueConstraint, func)
+from sqlalchemy.orm import relationship
 
 
 class Watchlist(db.Model):
@@ -30,6 +29,9 @@ class WatchlistSchema(marshmallow.SQLAlchemyAutoSchema):
 
     class Meta:
         model = Watchlist
+        load_instance = True
+        include_fk = True
+        include_relationships = True
 
 
 watchlist_schema: Schema = WatchlistSchema()

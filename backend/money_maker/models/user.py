@@ -1,10 +1,9 @@
 import re
 
 from flask_marshmallow import Schema
+from money_maker.extensions import bcrypt, db, marshmallow
 from sqlalchemy import TIMESTAMP, Column, Integer, Text, func
 from sqlalchemy.orm import validates
-
-from money_maker.extensions import bcrypt, db, marshmallow
 
 # This model inspired by below link
 # https://flask-praetorian.readthedocs.io/en/latest/notes.html#requirements-for-the-user-class
@@ -43,6 +42,9 @@ class User(db.Model):
 class UserSchema(marshmallow.SQLAlchemyAutoSchema):
     class Meta:
         model = User
+        load_instance = True
+        include_fk = True
+        include_relationships = True
 
 
 users_schema: Schema = UserSchema()
