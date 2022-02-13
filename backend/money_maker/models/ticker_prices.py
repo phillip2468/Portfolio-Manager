@@ -44,9 +44,6 @@ class TickerPrice(db.Model):
 class TickerPriceSchema(marshmallow.SQLAlchemyAutoSchema):
     class Meta:
         model = TickerPrice
-        load_instance = True
-        include_fk = True
-        include_relationships = True
 
     @post_load
     def make_user(self, data, **kwargs):

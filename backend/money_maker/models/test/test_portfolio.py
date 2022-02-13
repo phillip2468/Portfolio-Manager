@@ -30,7 +30,11 @@ def test_invalid_portfolio_empty_name_create(user_id: int) -> None:
     THEN check the portflio CANNOT be successfully created
     """
     with pytest.raises(ValueError):
-        assert Portfolio(portfolio_name=faker_data.lexify(text=""), user_id=user_id) is None
+        pf_data = {
+            "portfolio_name": "",
+            "user_id": user_id
+        }
+        assert portfolio_schema.load(pf_data) is None
 
 
 def test_invalid_portfolio_no_user_create() -> None:
