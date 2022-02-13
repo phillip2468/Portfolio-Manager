@@ -1,10 +1,10 @@
 import pytest
-
+from conftest import REPEAT_TESTS
 from money_maker.extensions import faker_data
 from money_maker.models.user import User
 
 
-@pytest.mark.repeat(100)
+@pytest.mark.repeat(REPEAT_TESTS)
 def test_valid_register_user_details():
     """
     GIVEN valid user_details
