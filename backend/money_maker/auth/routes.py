@@ -58,14 +58,14 @@ def login() -> flask.Response:
 
 
 @auth_bp.route("/logout", methods=["POST"])
-def logout():
+def logout() -> flask.Response:
     """
     Logs out a user from the frontend. Note that
     a jwt is not required as potentially jwt's may be expired
     or non-existant.
 
-    :return: The flask reponse
-    :rtype: flask.Response
+    Returns:
+        A flask response indicating if the user was successful
     """
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
@@ -79,6 +79,7 @@ def register() -> flask.Response:
     route automatically validates correct user details with the database.
 
     Returns:
+        A flask response indicating if the user was successful
 
     """
     req = request.get_json(force=True)
@@ -100,16 +101,19 @@ def register() -> flask.Response:
     return make_response(response, 200)
 
 
-@auth_bp.route("/protected", methods=["GET"])
-@jwt_required()
-def protected():
-    return jsonify(foo="bar")
-
-
 @auth_bp.route("/which_user", methods=["GET"])
 @jwt_required()
 def which_user():
+    """
+    Using the cookie which contains the user_id of the particular user,
+    check with the database to find out the indicated user.
+
+    Returns:
+        A flask response indicating if the user was successful
+    """
     user = db.session.query(User.user_id).filter(User.user_id == get_jwt()["sub"]).one_or_none()
+    if user is None:
+        return make_response(jsonify({"error": "error finding user"}), 400)
     return users_schema.jsonify(user)
 
 
