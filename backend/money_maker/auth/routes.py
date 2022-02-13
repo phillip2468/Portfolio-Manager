@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
 
+import flask
 import sqlalchemy.exc
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 from flask_jwt_extended import (create_access_token, get_jwt, get_jwt_identity,
                                 jwt_required, set_access_cookies,
                                 unset_jwt_cookies)
@@ -72,14 +73,15 @@ def logout():
     return response
 
 
-@auth_bp.route("/protected", methods=["GET"])
-@jwt_required()
-def protected():
-    return jsonify(foo="bar")
-
-
 @auth_bp.route("/register", methods=["POST"])
-def register():
+def register() -> flask.Response:
+    """
+    Registers a new user account with an email and password. Note that this
+    route automatically validates correct user details with the database.
+
+    Returns:
+
+    """
     req = request.get_json(force=True)
     email = req.get("email", None)
     password = req.get("password", None)
@@ -91,13 +93,19 @@ def register():
         db.session.commit()
     except sqlalchemy.exc.IntegrityError as e:
         db.session.rollback()
-        return jsonify({"error": "error while inserting into database"}), 400
+        return make_response(jsonify({"error": "error while inserting into database"}), 400)
 
     response = jsonify({"msg":  "register successful"})
     access_token = create_access_token(identity=new_user.user_id)
     set_access_cookies(response, access_token)
 
-    return response, 200
+    return make_response(response, 200)
+
+
+@auth_bp.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    return jsonify(foo="bar")
 
 
 @auth_bp.route("/which_user", methods=["GET"])

@@ -9,7 +9,7 @@ def test_text():
     THEN check that the email and password are created
 
     """
-    email = faker_data.ascii_safe_email()
+    email = ""
     password = faker_data.password(length=10, special_chars=False)
     new_user = User(email=email, hashed_password=password)
     assert new_user.email == email
