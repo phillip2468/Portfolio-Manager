@@ -76,7 +76,7 @@ def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int) -> 
     db.session.add(stock)
     db.session.commit()
 
-    return make_response(jsonify(msg="Successfully added the stock"), 200)
+    return make_response(jsonify(msg="Successfully added stock"), 200)
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["DELETE"])
