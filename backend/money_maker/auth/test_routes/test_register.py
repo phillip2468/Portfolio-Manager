@@ -74,20 +74,20 @@ def test_invalid_register_email(flask_application: FlaskClient) -> None:
     Args:
         flask_application: The flask application
     """
-    with pytest.raises(ValueError):
-        random_num = random.randint(MIN_LENGTH_EMAIL, MAX_LENGTH_EMAIL)
-        user = {
-            "email": "",
-            "password": faker_data.password(length=random_num,
-                                            special_chars=False,
-                                            digits=random.choice([True, False]),
-                                            upper_case=random.choice([True, False]),
-                                            lower_case=True
-                                            )
-        }
-        response = flask_application.post("/auth/register", json=user)
-        assert response.status_code != HTTP_SUCCESS_CODE
-        assert response.get_json()["error"] == "error while inserting into database"
+    random_num = random.randint(MIN_LENGTH_EMAIL, MAX_LENGTH_EMAIL)
+    user = {
+        "email": "",
+        "password": faker_data.password(length=random_num,
+                                        special_chars=False,
+                                        digits=random.choice([True, False]),
+                                        upper_case=random.choice([True, False]),
+                                        lower_case=True
+                                        )
+    }
+    response = flask_application.post("/auth/register", json=user)
+    assert response.status_code != HTTP_SUCCESS_CODE
+    assert response.get_json()["error"] == "error with user details"
+    assert len(db.session.query(User).all()) == 0
 
 
 def test_invalid_register_password(flask_application: FlaskClient) -> None:
@@ -99,11 +99,12 @@ def test_invalid_register_password(flask_application: FlaskClient) -> None:
     Args:
         flask_application: The flask application
     """
-    with pytest.raises(ValueError):
-        user = {
-            "email": faker_data.ascii_email(),
-            "password": ""
-        }
-        response = flask_application.post("/auth/register", json=user)
-        assert response.status_code != HTTP_SUCCESS_CODE
-        assert response.get_json()["error"] == "error while inserting into database"
+    user = {
+        "email": faker_data.ascii_email(),
+        "password": ""
+    }
+    response = flask_application.post("/auth/register", json=user)
+    assert response.status_code != HTTP_SUCCESS_CODE
+    assert response.get_json()["error"] == "error with user details"
+    assert len(db.session.query(User).all()) == 0
+

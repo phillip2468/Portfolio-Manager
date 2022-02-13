@@ -89,10 +89,9 @@ def register() -> flask.Response:
         new_user = User(email=email, hashed_password=password)
         db.session.add(new_user)
         db.session.commit()
-    except ValueError as e:
-        print(e)
+    except ValueError:
         db.session.rollback()
-        return make_response(jsonify({"error": "error while inserting into database"}), 400)
+        return make_response(jsonify({"error": "error with user details"}), 400)
 
     response = jsonify({"msg":  "register successful"})
     access_token = create_access_token(identity=new_user.user_id)
