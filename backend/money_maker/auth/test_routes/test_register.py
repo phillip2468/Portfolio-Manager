@@ -36,7 +36,7 @@ def test_valid_register(flask_application: FlaskClient) -> None:
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
-def test_valid__mutliple_registers(flask_application: FlaskClient) -> None:
+def test_valid_mutliple_registers(flask_application: FlaskClient) -> None:
     """
     GIVEN multiple valid user details
     WHEN each user attempts to log in
