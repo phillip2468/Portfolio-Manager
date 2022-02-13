@@ -3,10 +3,11 @@ from logging.config import fileConfig
 from alembic import context
 from alembic_utils.pg_grant_table import PGGrantTable
 from alembic_utils.replaceable_entity import register_entities
+from sqlalchemy import engine_from_config, pool
+
 from money_maker.app import create_app
 from money_maker.models.ticker_prices import (on_update_function,
                                               on_update_trigger)
-from sqlalchemy import engine_from_config, pool
 
 register_entities([on_update_function, on_update_trigger])
 

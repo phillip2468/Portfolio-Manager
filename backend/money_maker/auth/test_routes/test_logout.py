@@ -1,19 +1,40 @@
 import pytest
 from conftest import HTTP_SUCCESS_CODE, NUMBER_OF_USERS, REPEAT_TESTS
+from flask.testing import FlaskClient
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
-def test_valid_logout(client, client_accounts) -> None:
+def test_valid_logout(flask_application: FlaskClient, user_account_logged_in: dict) -> None:
     """
-    Login a user into the application with valid account details
-    and then log them out.
+    GIVEN a registered user that is logged in
+    WHEN this user attempts to log out
+    THEN check that the backend provides a 200 response
 
-    :param client: the flask app
-    :param client_accounts: a dictionary containing the user details
+    Args:
+        flask_application: The flask application
+        user_account_logged_in: A registered user logged into the flask application
+
     """
-    for i in range(NUMBER_OF_USERS):
-        response = client.post("/auth/login", json=client_accounts[i])
-        assert response.status_code == HTTP_SUCCESS_CODE
+    response = flask_application.post("/auth/logout")
+    assert response.status_code == HTTP_SUCCESS_CODE
+    assert response.get_json()["msg"] == "logout successful"
 
-        response = client.post("/auth/logout")
+
+@pytest.mark.repeat(REPEAT_TESTS)
+def test_multiple_valid_logouts(flask_application: FlaskClient, user_accounts: dict) -> None:
+    """
+    GIVEN a list of registered users
+    WHEN this user attempts to log out
+    THEN check that the backend provides a 200 response
+    Args:
+        flask_application (FlaskClient):  The flask application
+        user_accounts (list[dict]): A list of registered users
+    """
+
+    for user in user_accounts:
+        response = flask_application.post("/auth/login", json=user)
+        assert response.status_code == 200
+
+        response = flask_application.post("/auth/logout")
         assert response.status_code == HTTP_SUCCESS_CODE
+        assert response.get_json()["msg"] == "logout successful"
