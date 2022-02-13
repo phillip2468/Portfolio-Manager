@@ -2,8 +2,6 @@ import random
 
 import pytest
 from flask.testing import FlaskClient
-from hypothesis import assume, given
-from hypothesis import strategies as st
 
 from conftest import (HTTP_SUCCESS_CODE, MAX_LENGTH_EMAIL,
                       MIN_LENGTH_EMAIL, NUMBER_OF_USERS, REPEAT_TESTS)
@@ -38,7 +36,7 @@ def test_valid_register(flask_application: FlaskClient) -> None:
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
-def test_valid__mutliple_registers(flask_application: FlaskClient) -> None:
+def test_valid_mutliple_registers(flask_application: FlaskClient) -> None:
     """
     GIVEN multiple valid user details
     WHEN each user attempts to log in
@@ -67,18 +65,46 @@ def test_valid__mutliple_registers(flask_application: FlaskClient) -> None:
     assert len(db.session.query(User).all()) == 0
 
 
-@given(invalid_email=st.emails())
-def test_invalid_register_email(flask_application: FlaskClient, invalid_email: str) -> None:
-    assume(len(invalid_email) > 0)
-    with pytest.raises(ValueError):
-        random_num = random.randint(MIN_LENGTH_EMAIL, MAX_LENGTH_EMAIL)
-        user = {
-            "email": invalid_email,
-            "password": faker_data.password(length=random_num,
-                                            special_chars=False,
-                                            digits=random.choice([True, False]),
-                                            upper_case=random.choice([True, False]),
-                                            lower_case=True
-                                            )
-        }
-        flask_application.post("/auth/register", json=user)
+def test_invalid_register_email(flask_application: FlaskClient) -> None:
+    """
+    GIVEN an empty email address
+    WHEN the user attempts to register
+    THEN check that the user is not inserted into the database and a 400
+    response code is returned.
+    Args:
+        flask_application: The flask application
+    """
+    random_num = random.randint(MIN_LENGTH_EMAIL, MAX_LENGTH_EMAIL)
+    user = {
+        "email": "",
+        "password": faker_data.password(length=random_num,
+                                        special_chars=False,
+                                        digits=random.choice([True, False]),
+                                        upper_case=random.choice([True, False]),
+                                        lower_case=True
+                                        )
+    }
+    response = flask_application.post("/auth/register", json=user)
+    assert response.status_code != HTTP_SUCCESS_CODE
+    assert response.get_json()["error"] == "error with user details"
+    assert len(db.session.query(User).all()) == 0
+
+
+def test_invalid_register_password(flask_application: FlaskClient) -> None:
+    """
+    GIVEN an empty password
+    WHEN the user attempts to register
+    THEN check that the user is not inserted into the database and a 400
+    response code is returned.
+    Args:
+        flask_application: The flask application
+    """
+    user = {
+        "email": faker_data.ascii_email(),
+        "password": ""
+    }
+    response = flask_application.post("/auth/register", json=user)
+    assert response.status_code != HTTP_SUCCESS_CODE
+    assert response.get_json()["error"] == "error with user details"
+    assert len(db.session.query(User).all()) == 0
+

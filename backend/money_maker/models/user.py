@@ -1,9 +1,10 @@
 import re
 
 from flask_marshmallow import Schema
-from money_maker.extensions import bcrypt, db, marshmallow
 from sqlalchemy import TIMESTAMP, Column, Integer, Text, func
 from sqlalchemy.orm import validates
+
+from money_maker.extensions import bcrypt, db, marshmallow
 
 # This model inspired by below link
 # https://flask-praetorian.readthedocs.io/en/latest/notes.html#requirements-for-the-user-class
@@ -36,7 +37,7 @@ class User(db.Model):
         pattern = re.compile(password_regex)
         if not bool(pattern.search(password)):
             raise ValueError("Invalid password")
-        return bcrypt.generate_password_hash(password)
+        return bcrypt.generate_password_hash(password).decode("utf-8")
 
 
 class UserSchema(marshmallow.SQLAlchemyAutoSchema):

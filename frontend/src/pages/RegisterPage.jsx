@@ -1,13 +1,16 @@
 import { Grid, Typography } from '@mui/material'
 import EmailAddress from '../components/EmailAddress'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import PasswordField from '../components/Password'
 import Button from '@mui/material/Button'
 import { useNavigate } from 'react-router-dom'
 import { FetchFunction } from '../components/FetchFunction'
+import { ClientContext } from '../store/StoreCredentials'
 
 const RegisterPage = () => {
   const navigate = useNavigate()
+
+  const { loginUser } = useContext(ClientContext)
 
   const [inputs, setInputs] = useState({
     email: '',
@@ -36,7 +39,10 @@ const RegisterPage = () => {
       password: inputs.password
     }
     FetchFunction('POST', 'auth/register', body)
-      .then(() => navigate('/'))
+      .then(() => {
+        loginUser(inputs.email, inputs.password)
+        navigate('/')
+      })
       .catch(error => alert(error))
   }
 

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
-import sqlalchemy.exc
-from flask import Blueprint, jsonify, request
+import flask
+from flask import Blueprint, jsonify, make_response, request
 from flask_jwt_extended import (create_access_token, get_jwt, get_jwt_identity,
                                 jwt_required, set_access_cookies,
                                 unset_jwt_cookies)
@@ -30,13 +30,14 @@ def refresh_expiring_jwts(response):
 
 
 @auth_bp.route("/login", methods=["POST"])
-def login():
+def login() -> flask.Response:
     """
     Logs a user in by parsing a POST request containing user credentials and
-    issuing a JWT token.
-    . example::
-       $ curl http://localhost:5000/auth/login -X POST \
-         -d '{"email":"Walter","password":"calmerthanyouare"}'
+    issuing a JWT token. First checks if the email exists and then verifies the password
+    hash.
+
+    Returns:
+        A flask response indicating if the user was successful
     """
     req = request.get_json(force=True)
     email = req.get("email", None)
@@ -45,64 +46,74 @@ def login():
     user = db.session.query(User).filter(User.email == email).one_or_none()
 
     if not email or not password or not user:
-        return jsonify(error="Missing credentials or wrong login"), 400
+        return make_response(jsonify(error="Missing credentials or wrong login"), 400)
 
     if bcrypt.check_password_hash(user.hashed_password, password):
         response = jsonify({"msg": "login successful"})
         access_token = create_access_token(identity=user.user_id)
         set_access_cookies(response, access_token)
-        return response, 200
+        return make_response(response, 200)
     else:
-        return jsonify(error="Invalid login details"), 400
+        return make_response(jsonify(error="Invalid login details"), 400)
 
 
 @auth_bp.route("/logout", methods=["POST"])
-def logout():
+def logout() -> flask.Response:
     """
     Logs out a user from the frontend. Note that
     a jwt is not required as potentially jwt's may be expired
     or non-existant.
 
-    :return: The flask reponse
-    :rtype: flask.Response
+    Returns:
+        A flask response indicating if the user was successful
     """
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
     return response
 
 
-@auth_bp.route("/protected", methods=["GET"])
-@jwt_required()
-def protected():
-    return jsonify(foo="bar")
-
-
 @auth_bp.route("/register", methods=["POST"])
-def register():
+def register() -> flask.Response:
+    """
+    Registers a new user account with an email and password. Note that this
+    route automatically validates correct user details with the database.
+
+    Returns:
+        A flask response indicating if the user was successful
+
+    """
     req = request.get_json(force=True)
     email = req.get("email", None)
     password = req.get("password", None)
 
-    new_user = User(email=email, hashed_password=password)
-
     try:
+        new_user = User(email=email, hashed_password=password)
         db.session.add(new_user)
         db.session.commit()
-    except sqlalchemy.exc.IntegrityError as e:
+    except ValueError:
         db.session.rollback()
-        return jsonify({"error": "error while inserting into database"}), 400
+        return make_response(jsonify({"error": "error with user details"}), 400)
 
-    response = jsonify({"msg":  "register successful"})
+    response = jsonify({"msg": "register successful"})
     access_token = create_access_token(identity=new_user.user_id)
     set_access_cookies(response, access_token)
 
-    return response, 200
+    return make_response(response, 200)
 
 
 @auth_bp.route("/which_user", methods=["GET"])
 @jwt_required()
-def which_user():
+def which_user() -> flask.Response:
+    """
+    Using the cookie which contains the user_id of the particular user,
+    check with the database to find out the indicated user.
+
+    Returns:
+        A flask response indicating if the user was successful
+    """
     user = db.session.query(User.user_id).filter(User.user_id == get_jwt()["sub"]).one_or_none()
+    if user is None:
+        return make_response(jsonify({"error": "error finding user"}), 400)
     return users_schema.jsonify(user)
 
 
