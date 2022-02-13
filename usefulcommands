@@ -12,3 +12,4 @@ flask db migrate
 
 
 pytest -rP --disable-pytest-warnings
+pytest --hypothesis-show-statistics -x -rP
