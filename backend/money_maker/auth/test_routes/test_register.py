@@ -88,3 +88,22 @@ def test_invalid_register_email(flask_application: FlaskClient) -> None:
         response = flask_application.post("/auth/register", json=user)
         assert response.status_code != HTTP_SUCCESS_CODE
         assert response.get_json()["error"] == "error while inserting into database"
+
+
+def test_invalid_register_password(flask_application: FlaskClient) -> None:
+    """
+    GIVEN an empty password
+    WHEN the user attempts to register
+    THEN check that the user is not inserted into the database and a 400
+    response code is returned.
+    Args:
+        flask_application: The flask application
+    """
+    with pytest.raises(ValueError):
+        user = {
+            "email": faker_data.ascii_email(),
+            "password": ""
+        }
+        response = flask_application.post("/auth/register", json=user)
+        assert response.status_code != HTTP_SUCCESS_CODE
+        assert response.get_json()["error"] == "error while inserting into database"
