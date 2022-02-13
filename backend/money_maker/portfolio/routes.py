@@ -1,13 +1,14 @@
-from flask import Blueprint, jsonify, request, make_response
-from sqlalchemy.exc import IntegrityError
-from werkzeug.wrappers import Response
-
+import flask
+from flask import Blueprint, jsonify, make_response, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio
 from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
 from money_maker.models.ticker_prices import TickerPrice
 from money_maker.models.ticker_prices import TickerPrice as tP
+from sqlalchemy.exc import IntegrityError
+from werkzeug.wrappers import Response
 
 portfolio_bp = Blueprint("portfolio_bp", __name__, url_prefix="/portfolio")
 
@@ -38,20 +39,29 @@ def get_portfolio_stocks_by_user(user_id: int, portfolio_name: str):
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>", methods=["POST"])
-def create_new_portfolio(user_id: int, portfolio_name: str):
+@jwt_required(optional=True)
+def create_new_portfolio(user_id: int, portfolio_name: str) -> flask.Response:
     """
     Creates a new portfolio for the particular user. All portfolios start
     with no stocks.
-    :param user_id: The user id
-    :param portfolio_name: The portfolio name
-    :return: flask.Response
-    """
+    Args:
+        user_id (int): The user id
+        portfolio_name (): The portfolio name
 
-    new_portfilio = pF(portfolio_name=portfolio_name, user_id=user_id)
-    db.session.add(new_portfilio)
+    Returns:
+    A response containing user success.
+    """
+    current_identity = get_jwt_identity()
+    print(current_identity)
+    pf_data = {
+        "portfolio_name": portfolio_name,
+        "user_id": user_id
+    }
+    new_pf = portfolio_schema.load(pf_data)
+    db.session.add(new_pf)
     db.session.commit()
 
-    return jsonify({"msg": "Successfully created a new portfolio"}), 200
+    return make_response({"msg": "Successfully created a new portfolio"}, 200)
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["POST"])

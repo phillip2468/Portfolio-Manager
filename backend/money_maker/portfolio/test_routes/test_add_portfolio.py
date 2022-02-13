@@ -1,7 +1,6 @@
 import pytest
-from flask.testing import FlaskClient
-
 from conftest import HTTP_SUCCESS_CODE, REPEAT_TESTS
+from flask.testing import FlaskClient
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio
 
@@ -18,8 +17,13 @@ def test_add_portfolio(flask_application: FlaskClient, user_account_logged_in: d
         user_account_logged_in: The single registered user logged in.
         user_id: The id of the user
     """
-
+    print(flask_application.cookie_jar)
+    response = flask_application.get("/auth/which_user")
+    print(response.get_json())
+    response = flask_application.get("/auth/which_user")
+    print(response.get_json())
     response = flask_application.post(f"""/portfolio/{user_id}/example""")
+    print(response)
     assert response.status_code == HTTP_SUCCESS_CODE
     assert response.get_json()["msg"] == "Successfully created a new portfolio"
     assert len(db.session.query(Portfolio).all()) == 1
