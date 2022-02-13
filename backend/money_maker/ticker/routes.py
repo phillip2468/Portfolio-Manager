@@ -6,11 +6,10 @@ import csv
 import flask
 import requests
 from flask import Blueprint, jsonify
-from pytickersymbols import PyTickerSymbols
-
 from money_maker.extensions import cache, db
 from money_maker.models.ticker_prices import TickerPrice as tP
 from money_maker.models.ticker_prices import ticker_price_schema
+from pytickersymbols import PyTickerSymbols
 from sqlalchemy import func, text
 
 ticker_bp = Blueprint("ticker_bp", __name__, url_prefix="/ticker")
@@ -64,8 +63,7 @@ def refresh_au_symbols() -> flask.Response:
     """
     db.session.query(tP).filter(tP.symbol.contains(".AX")).delete(synchronize_session="fetch")
 
-    url = 'https://asx.api.markitdigital.com/asx-research/1.0/companies/directory/file?access_token' \
-          '=83ff96335c2d45a094df02a206a39ff4 '
+    url = 'https://asx.api.markitdigital.com/asx-research/1.0/companies/directory/file?access_token=83ff96335c2d45a094df02a206a39ff4 '
 
     with requests.Session() as s:
         download = s.get(url)

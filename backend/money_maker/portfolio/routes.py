@@ -1,9 +1,12 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 from sqlalchemy.exc import IntegrityError
+from werkzeug.wrappers import Response
 
 from money_maker.extensions import db
+from money_maker.models.portfolio import Portfolio
 from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
+from money_maker.models.ticker_prices import TickerPrice
 from money_maker.models.ticker_prices import TickerPrice as tP
 
 portfolio_bp = Blueprint("portfolio_bp", __name__, url_prefix="/portfolio")
@@ -35,7 +38,7 @@ def get_portfolio_stocks_by_user(user_id: int, portfolio_name: str):
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>", methods=["POST"])
-def add_new_portfolio(user_id: int, portfolio_name: str):
+def create_new_portfolio(user_id: int, portfolio_name: str):
     """
     Creates a new portfolio for the particular user. All portfolios start
     with no stocks.
@@ -48,11 +51,11 @@ def add_new_portfolio(user_id: int, portfolio_name: str):
     db.session.add(new_portfilio)
     db.session.commit()
 
-    return jsonify({"msg", "Successfully created a new portfolio"}), 200
+    return jsonify({"msg": "Successfully created a new portfolio"}), 200
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["POST"])
-def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int):
+def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int) -> Response:
     """
     Add a stock to a particular portfolio, using their stock_id from the database.
     Returns a message indicating user success.
@@ -62,28 +65,41 @@ def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int):
     :param stock_id: The stock id
     :return: flask.Response
     """
+    if len(db.session.query(TickerPrice).filter(TickerPrice.stock_id == stock_id).all()) == 0:
+        return make_response(jsonify(msg="Stock not found"), 400)
+
+    if (len(db.session.query(Portfolio)
+                    .filter(Portfolio.portfolio_name == portfolio_name, Portfolio.user_id == user_id).all())) == 0:
+        return make_response(jsonify(msg="Portfolio not found"), 400)
+
     stock = pF(stock_id=stock_id, portfolio_name=portfolio_name, user_id=user_id, units_price=0, units_purchased=0)
     db.session.add(stock)
     db.session.commit()
 
-    return jsonify({"msg":  "Successfully added stock"}), 200
+    return make_response(jsonify(msg="Successfully added stock"), 200)
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["DELETE"])
-def remove_stock_from_portfolio(user_id: int, portfolio_name: str, stock_id: int):
+def remove_stock_from_portfolio(user_id: int, portfolio_name: str, stock_id: int) -> Response:
     """
-    Removes a particular stock from a users portfiolio, using their stock_id from the database.
-    Returns a message indicating user success.
+    Removes a particular stock from a user's portfolio, using their stock_id from the database.
+    Returns a message indicating user success. Note that stock ids that don't exist WILL NOT raise any errors.
 
-    :param user_id: The user id
-    :param portfolio_name: The portfolio name
-    :param stock_id: The stock id
-    :return: flask.Response
+    Args:
+        user_id: The user id as an integer
+        portfolio_name: The portfolio name as a string
+        stock_id: The stock id as written in the database.
+
+    Returns:
+        A flask response indicating success.
+
     """
-    db.session.query(pF).filter(pF.stock_id == stock_id, pF.portfolio_name == portfolio_name, pF.user_id == user_id).delete()
+
+    db.session.query(pF).filter(pF.stock_id == stock_id, pF.portfolio_name == portfolio_name,
+                                pF.user_id == user_id).delete(synchronize_session="fetch")
     db.session.commit()
 
-    return jsonify({"msg": "Successfully deleted the stock"}), 200
+    return make_response(jsonify(msg="Successfully deleted the stock"), 200)
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["PATCH"])

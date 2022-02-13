@@ -19,3 +19,11 @@ JWT_COOKIE_CSRF_PROTECT = True
 JWT_ACCESS_CSRF_HEADER_NAME = "X-CSRF-TOKEN-ACCESS"
 JWT_REFRESH_CSRF_HEADER_NAME = "X-CSRF-TOKEN-REFRESH"
 JWT_CSRF_IN_COOKIES = True
+
+CELERY = {
+    "broker_url": "memory://",
+    "result_backend": 'rpc',
+    "result_serializer": 'json'
+}
+CELERY_ALWAYS_EAGER = True
+CELERY_EAGER_PROPAGATES = True

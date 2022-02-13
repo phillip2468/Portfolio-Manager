@@ -4,7 +4,8 @@ particular symbol
 """
 import flask
 import yahooquery
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, make_response
+
 from money_maker.extensions import db
 from money_maker.models.ticker_prices import TickerPrice as tP
 from money_maker.models.ticker_prices import \
@@ -16,18 +17,21 @@ quote_bp = Blueprint("quote_bp", __name__, url_prefix="/quote")
 @quote_bp.route("/<stock_symbol>", methods=["GET"])
 def get_stock_info_from_database(stock_symbol: str) -> flask.Response:
     """
-    Using the keyword from the url, return the matching information
-    about a certain company from the database. Refer to the TickerPrice
-    model to see which attributes are returned.
+    Given a stock symbol from the url, return the matching information
+    pertaining to the company from the database. Refer to TickerPrice
+    for all attributes that are returned for a stock symbol.
+    Args:
+        stock_symbol: The stock symbol
 
+    Returns:
+        A flask response object containing a TickerPrice object and status code
 
-    :param stock_symbol: The ticker for the company
-    :type stock_symbol: str
-    :return: A flask response object (list of dictionaries)
-    :rtype: flask.Response
     """
-    results: list[tP] = db.session.query(tP).filter(tP.symbol == stock_symbol).all()
-    return ticker_schema.jsonify(results, many=True)
+    stock_information = db.session.query(tP).filter(tP.symbol == stock_symbol).one_or_none()
+    if stock_information is None:
+        return make_response(jsonify({"error": "Invalid stock symbol"}), 400)
+
+    return ticker_schema.jsonify(stock_information)
 
 
 @quote_bp.route("/<stock_symbol>&period=<period>&interval=<interval>")

@@ -1,22 +1,29 @@
-from __future__ import absolute_import, unicode_literals
-
-import yahooquery
-from celery import shared_task
+from flask import Blueprint, jsonify
 from money_maker.extensions import db
 from money_maker.models.ticker_prices import TickerPrice as tP
+from money_maker.models.ticker_prices import ticker_price_schema
 from sqlalchemy import asc, bindparam, insert, select
-from sqlalchemy.dialects.postgresql import insert
 from yahooquery import Ticker
 
+task_bp = Blueprint("task_bp", __name__, url_prefix="/task")
 
-@shared_task()
-def update_yh_stocks():
-    list_asx_symbols = select(tP.symbol).order_by(asc(tP.symbol))
-    list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
 
-    yh_market_information: yahooquery.Ticker.__dict__ = \
-        Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),
-               progress=True).get_modules('price summaryProfile')
+# noinspection DuplicatedCode
+@task_bp.route("", methods=["GET"])
+def update_stocks():
+    """
+    Note that this function will only update the first 100 stocks.
+    :return:
+    """
+    list_all_symbols = select(tP.symbol).order_by(asc(tP.symbol))
+    list_symbols = [element[0] for element in db.session.execute(list_all_symbols)]
+
+    if len(list_symbols) == 0:
+        return jsonify({"error": "no stocks found"}), 400
+
+    yh_market_information = Ticker(list_symbols[:100],
+                                   formatted=False, asynchronous=True)\
+        .get_modules('price summaryProfile')
 
     formatted_yh_information = []
     for element in yh_market_information.values():
@@ -47,16 +54,13 @@ def update_yh_stocks():
         'symbol': bindparam('symbol')
     }
 
+    db.session.query(tP).delete(synchronize_session="fetch")
+
+    # noinspection PyTypeChecker
     stmt = insert(tP).values(market_information)
+    db.session.execute(stmt, formatted_yh_information)
 
-    on_conflict_statement = stmt.on_conflict_do_update(
-        index_elements=['symbol'],
-        set_=market_information
-    )
-
-    db.session.execute(on_conflict_statement, formatted_yh_information)
     db.session.commit()
+    results = db.session.query(tP).all()
 
-
-def non_celery_update_yh_stocks():
-    return update_yh_stocks()
+    return ticker_price_schema.jsonify(results, many=True)
