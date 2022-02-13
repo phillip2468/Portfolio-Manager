@@ -27,10 +27,9 @@ def test_remove_stock_from_portfolio(flask_application: FlaskClient, user_accoun
     assert response.get_json()["msg"] == "Successfully added stock"
 
     response = flask_application.delete(f"""/portfolio/{user_id}/{sample_portfolio}/1""")
+    print(type(response))
     assert response.status_code == HTTP_SUCCESS_CODE
     assert response.get_json()["msg"] == "Successfully deleted the stock"
 
     # Remember that the empty portfolio still exists in the database
     assert len(db.session.query(Portfolio.user_id == user_id).all()) == 1
-
-
