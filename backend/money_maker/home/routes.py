@@ -1,6 +1,6 @@
 import flask
 import yahooquery.ticker
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, make_response
 from money_maker.extensions import db
 from money_maker.models.ticker_prices import TickerPrice as tP
 from sqlalchemy import desc
@@ -15,7 +15,9 @@ def trending_tickers() -> flask.Response:
     Provides a dictionary set of tickers containing
     relevant data to the date. Note that this only returns
     US trending stocks.
-    :return: flask.Response
+
+    Returns:
+        A response containing a dictionary of the wanted keys of the stocks.
     """
     trending_yh_tickers: dict = yahooquery.get_trending()
 
@@ -35,13 +37,17 @@ def trending_tickers() -> flask.Response:
 
 
 @home_bp.route("/actively-traded")
-def most_actively_traded_stocks():
+def most_actively_traded_stocks() -> flask.Response:
     """
     Provides a general overview for popular stocks that are traded using a simple
     formula of volumne * current price / market cap. Only provides the first
     5 results.
-    :return: flask.Response
+    Returns:
+        A response containing each stock, with their relevant details
     """
+    if len(db.session.query(tP).all()) == 0:
+        return make_response(jsonify({"error": "No stocks in the database!"}), 400)
+
     result = db.session.query(tP.symbol, ((tP.market_volume * tP.market_current_price) / tP.market_cap).label("volume"),
                               tP.market_change_percentage, tP.market_change_percentage, tP.market_current_price,
                               tP.stock_name) \
