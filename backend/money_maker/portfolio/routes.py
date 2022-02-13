@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.wrappers import Response
 
 from money_maker.extensions import db
+from money_maker.helpers import verify_user
 from money_maker.models.portfolio import Portfolio
 from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
@@ -41,6 +42,7 @@ def get_portfolio_stocks_by_user(user_id: int, portfolio_name: str):
 
 @portfolio_bp.route("<user_id>/<portfolio_name>", methods=["POST"])
 @jwt_required()
+@verify_user
 def create_new_portfolio(user_id: int, portfolio_name: str) -> flask.Response:
     """
     Creates a new portfolio for the particular user. All portfolios start
@@ -61,6 +63,7 @@ def create_new_portfolio(user_id: int, portfolio_name: str) -> flask.Response:
     db.session.commit()
 
     return make_response({"msg": "Successfully created a new portfolio"}, 200)
+
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["POST"])

@@ -19,6 +19,7 @@ def test_add_portfolio(flask_application: FlaskClient, user_account, user_accoun
         user_id: The id of the user
     """
     response = flask_application.post(f"""/portfolio/{user_id}/example""")
+    print(response)
     assert response.status_code == HTTP_SUCCESS_CODE
     assert response.get_json()["msg"] == "Successfully created a new portfolio"
     assert len(db.session.query(Portfolio).all()) == 1
