@@ -13,3 +13,5 @@ flask db migrate
 
 pytest -rP --disable-pytest-warnings
 pytest --hypothesis-show-statistics -x -rP
+
+git branch | %{ $_.Trim() } | ?{ $_ -ne 'master' } | %{ git branch -D $_ }
