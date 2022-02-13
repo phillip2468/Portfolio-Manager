@@ -1,5 +1,5 @@
 import pytest
-from conftest import HTTP_SUCCESS_CODE, NUMBER_OF_USERS, REPEAT_TESTS
+from conftest import HTTP_SUCCESS_CODE, REPEAT_TESTS
 from flask.testing import FlaskClient
 
 
