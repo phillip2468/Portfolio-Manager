@@ -103,7 +103,7 @@ def register() -> flask.Response:
 
 @auth_bp.route("/which_user", methods=["GET"])
 @jwt_required()
-def which_user():
+def which_user() -> flask.Response:
     """
     Using the cookie which contains the user_id of the particular user,
     check with the database to find out the indicated user.
