@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
 import flask
-import sqlalchemy.exc
 from flask import Blueprint, jsonify, request, make_response
 from flask_jwt_extended import (create_access_token, get_jwt, get_jwt_identity,
                                 jwt_required, set_access_cookies,
@@ -86,12 +85,12 @@ def register() -> flask.Response:
     email = req.get("email", None)
     password = req.get("password", None)
 
-    new_user = User(email=email, hashed_password=password)
-
     try:
+        new_user = User(email=email, hashed_password=password)
         db.session.add(new_user)
         db.session.commit()
-    except sqlalchemy.exc.IntegrityError as e:
+    except ValueError as e:
+        print(e)
         db.session.rollback()
         return make_response(jsonify({"error": "error while inserting into database"}), 400)
 
