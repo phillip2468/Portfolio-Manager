@@ -1,12 +1,13 @@
 import flask
 from flask import Blueprint, jsonify, make_response, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from money_maker.extensions import db
+from money_maker.extensions import db, jwt_manager
 from money_maker.models.portfolio import Portfolio
 from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
 from money_maker.models.ticker_prices import TickerPrice
 from money_maker.models.ticker_prices import TickerPrice as tP
+from money_maker.models.user import User
 from sqlalchemy.exc import IntegrityError
 from werkzeug.wrappers import Response
 
