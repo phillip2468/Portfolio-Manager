@@ -170,7 +170,7 @@ def user_id(flask_application: FlaskClient, user_account_logged_in: dict) -> int
 @pytest.fixture(scope="function")
 def sample_portfolio(flask_application: FlaskClient, user_account_logged_in: dict, user_id: int) -> str:
     """
-    Creates a sample portfolio for the user and once used, drops it from the database. Verify
+    Creates a sample portfolio for the user and once used, drops it from the database.
 
     Args:
         flask_application: The test client flask application.
