@@ -84,14 +84,15 @@ def remove_portfolio(user_id: int, portfolio_name: str) -> Response:
         A flask response indicating success.
 
     """
+    pf_data = {
+        "portfolio_name": portfolio_name,
+        "user_id": user_id
+    }
+    old_pf = portfolio_schema.load(pf_data)
+    db.session.delete(old_pf)
 
-    rows_deleted = db.session.query(pF).filter(pF.portfolio_name == portfolio_name,
-                                               pF.user_id == user_id).delete(synchronize_session="fetch")
-    if rows_deleted > 0:
-        db.session.commit()
-        return make_response(jsonify(msg="Successfully deleted the stock"), 200)
-    else:
-        return make_response(jsonify(error="The portofolio could not be found"), 400)
+    db.session.commit()
+    return make_response(jsonify(msg="Successfully deleted the portfolio"), 200)
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["POST"])
