@@ -14,7 +14,7 @@ NUMBER_OF_USERS = 3
 MIN_LENGTH_EMAIL = 8
 MAX_LENGTH_EMAIL = 100
 
-SAMPLE_PORTFOLIO_NAME = "user_portoflio"
+SAMPLE_PORTFOLIO_NAME = "sample_portfolio"
 
 # 'Passwords must contain a lowercase and uppercase letter, a digit and be greater than 8 characters.'
 # 'Email addresses should be longer than 10 characters, contain an @ symbol and should contain a domain.'
