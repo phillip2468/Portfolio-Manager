@@ -1,5 +1,6 @@
 import pytest
 from flask.testing import FlaskClient
+
 from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
 from money_maker.models.portfolio import Portfolio
@@ -24,6 +25,7 @@ LETTER_CASINGS = [[True, True], [True, False], [False, True]]
 LOGIN_SUCCESS_MSG = "login successful"
 CREATE_PORTFOLIO_MSG = "Successfully created a new portfolio"
 DELETE_PORTFOLIO_MSG = "Successfully deleted the portfolio"
+UPDATE_PORTFOLIO_MSG = "Successfully updated the portfolio name"
 
 ADD_STOCK_TO_PORTFOLIO = "Successfully added stock"
 DELETE_STOCK_TO_PORTFOLIO = "Successfully deleted the stock"

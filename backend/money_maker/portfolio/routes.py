@@ -1,6 +1,9 @@
 import flask
 from flask import Blueprint, jsonify, make_response, request
 from flask_jwt_extended import jwt_required
+from sqlalchemy.exc import IntegrityError
+from werkzeug.wrappers import Response
+
 from money_maker.extensions import db
 from money_maker.helpers import verify_user
 from money_maker.models.portfolio import Portfolio
@@ -8,8 +11,6 @@ from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
 from money_maker.models.ticker_prices import TickerPrice
 from money_maker.models.ticker_prices import TickerPrice as tP
-from sqlalchemy.exc import IntegrityError
-from werkzeug.wrappers import Response
 
 portfolio_bp = Blueprint("portfolio_bp", __name__, url_prefix="/portfolio")
 
@@ -97,6 +98,30 @@ def remove_portfolio(user_id: int, portfolio_name: str) -> Response:
                                 pF.portfolio_name == portfolio_name).delete(synchronize_session="fetch")
     db.session.commit()
     return make_response(jsonify(msg="Successfully deleted the portfolio"), 200)
+
+
+@portfolio_bp.route("<user_id>/<portfolio_name>", methods=["PATCH"])
+@jwt_required()
+@verify_user
+def update_portfolio_name(user_id: int, portfolio_name: str) -> Response:
+    """
+    Update a portfolio's name by a user.
+
+    Args:
+        user_id: The user id as an integer
+        portfolio_name: The portfolio name as a string
+
+    Returns:
+        A flask response indicating success.
+
+    """
+    req = request.get_json(force=True)
+    new_pf_name = req.get("portfolio_name", None)
+
+    db.session.query(pF).filter(pF.user_id == user_id, pF.portfolio_name == portfolio_name)\
+        .update({"portfolio_name": new_pf_name}, synchronize_session="fetch")
+    db.session.commit()
+    return make_response(jsonify(msg="Successfully updated the portfolio name"), 200)
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["POST"])
