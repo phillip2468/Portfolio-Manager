@@ -29,6 +29,7 @@ UPDATE_PORTFOLIO_MSG = "Successfully updated the portfolio name"
 
 ADD_STOCK_TO_PORTFOLIO = "Successfully added stock"
 DELETE_STOCK_TO_PORTFOLIO = "Successfully deleted the stock"
+UPDATE_STOCK_TO_PORTFOLIO = "Successfully updated the stock details"
 
 
 @pytest.fixture(scope="session")

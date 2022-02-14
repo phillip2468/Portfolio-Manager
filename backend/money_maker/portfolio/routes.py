@@ -105,7 +105,8 @@ def remove_portfolio(user_id: int, portfolio_name: str) -> Response:
 @verify_user
 def update_portfolio_name(user_id: int, portfolio_name: str) -> Response:
     """
-    Update a portfolio's name by a user.
+    Update a portfolio's name by a user. Note that the new name for the portfolio
+    must be sent within the body of the request.
 
     Args:
         user_id: The user id as an integer
@@ -117,6 +118,9 @@ def update_portfolio_name(user_id: int, portfolio_name: str) -> Response:
     """
     req = request.get_json(force=True)
     new_pf_name = req.get("portfolio_name", None)
+
+    if len(new_pf_name) < 1:
+        return make_response(jsonify(msg="Portfolio names can't be empty"), 400)
 
     db.session.query(pF).filter(pF.user_id == user_id, pF.portfolio_name == portfolio_name)\
         .update({"portfolio_name": new_pf_name}, synchronize_session="fetch")
@@ -197,7 +201,7 @@ def update_stock_in_portfolio(user_id: int, portfolio_name: str, stock_id: int):
         .update(values={"units_price": units_price, "units_purchased": units_purchased}, synchronize_session="fetch")
     db.session.commit()
 
-    return jsonify({"msg": "Successfully updated the stock"}), 200
+    return jsonify({"msg": "Successfully updated the stock details"}), 200
 
 
 @portfolio_bp.errorhandler(IntegrityError)
