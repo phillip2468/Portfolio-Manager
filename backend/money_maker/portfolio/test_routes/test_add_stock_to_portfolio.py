@@ -1,7 +1,6 @@
 import pytest
-from flask.testing import FlaskClient
-
 from conftest import HTTP_SUCCESS_CODE, REPEAT_TESTS
+from flask.testing import FlaskClient
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio
 
@@ -109,3 +108,40 @@ def test_invalid_add_stock_to_portfolio(flask_application: FlaskClient, user_acc
     # Remember that the original portfolio still has a length of 1!
     assert len(db.session.query(Portfolio).all()) == 1
 
+
+@pytest.mark.repeat(REPEAT_TESTS)
+def test_invalid_add_stock_to_other_users_portfolio(flask_application: FlaskClient, user_accounts: list[dict]) -> None:
+    """
+    GIVEN a valid stock id
+    WHEN a user is logged in and attempts to add a portfolio from another user
+    THEN check that the new stock has been not been added
+
+    This method first logins a user and queries to find the user_id of the particular user.
+    Then they create a portfolio and then another user logins. When this user logins
+    they attempt to add a portfolio_stock to the original user.
+
+    Args:
+        flask_application: The flask application
+        user_accounts: List of dictionaries of other accounts
+    """
+
+    response = flask_application.post("/auth/login", json=user_accounts[0])
+    assert response.status_code == HTTP_SUCCESS_CODE
+    assert response.get_json()["msg"] == "login successful"
+
+    response = flask_application.get("/auth/which_user")
+    assert response.status_code == HTTP_SUCCESS_CODE
+    user_id = int(response.get_json()["user_id"])
+
+    response = flask_application.post(f"""/portfolio/{user_id}/user_1_pf""")
+    assert response.status_code == HTTP_SUCCESS_CODE
+
+    response = flask_application.post("/auth/login", json=user_accounts[1])
+    assert response.status_code == HTTP_SUCCESS_CODE
+    assert response.get_json()["msg"] == "login successful"
+
+    response = flask_application.post(f"""/portfolio/{user_id}/user_1_pf/1""")
+    assert response.status_code != HTTP_SUCCESS_CODE
+
+    db.session.query(Portfolio).filter(Portfolio.user_id == user_id).delete(synchronize_session="fetch")
+    db.session.commit()

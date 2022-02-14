@@ -14,13 +14,22 @@ NUMBER_OF_USERS = 3
 MIN_LENGTH_EMAIL = 8
 MAX_LENGTH_EMAIL = 100
 
-SAMPLE_PORTFOLIO_NAME = "user_portoflio"
+SAMPLE_PORTFOLIO_NAME = "sample_portfolio"
 
 # 'Passwords must contain a lowercase and uppercase letter, a digit and be greater than 8 characters.'
 # 'Email addresses should be longer than 10 characters, contain an @ symbol and should contain a domain.'
 
 # Remember that you can't have [False, False] for casing as there would be no letters!
 LETTER_CASINGS = [[True, True], [True, False], [False, True]]
+
+LOGIN_SUCCESS_MSG = "login successful"
+CREATE_PORTFOLIO_MSG = "Successfully created a new portfolio"
+DELETE_PORTFOLIO_MSG = "Successfully deleted the portfolio"
+UPDATE_PORTFOLIO_MSG = "Successfully updated the portfolio name"
+
+ADD_STOCK_TO_PORTFOLIO = "Successfully added stock"
+DELETE_STOCK_TO_PORTFOLIO = "Successfully deleted the stock"
+UPDATE_STOCK_TO_PORTFOLIO = "Successfully updated the stock details"
 
 
 @pytest.fixture(scope="session")

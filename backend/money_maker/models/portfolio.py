@@ -4,7 +4,7 @@ from money_maker.extensions import db, marshmallow
 from money_maker.models.ticker_prices import TickerPriceSchema
 from sqlalchemy import (DATE, TIMESTAMP, Column, ForeignKey, Integer, Numeric,
                         String, UniqueConstraint, func)
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 
 class Portfolio(db.Model):
@@ -17,7 +17,7 @@ class Portfolio(db.Model):
     __tablename__ = 'portfolio'
     portfolio_id = Column(Integer, primary_key=True, autoincrement=True)
     portfolio_name = Column(String(length=100))
-    user_id = Column(Integer, ForeignKey('user.user_id'))
+    user_id = Column(Integer, ForeignKey('user.user_id'), nullable=False)
     stock_id = Column(Integer, ForeignKey('ticker_prices.stock_id'))
     units_purchased = Column(Integer)
     units_price = Column(Numeric)
@@ -29,12 +29,22 @@ class Portfolio(db.Model):
                          name="unique_stock_in_portfolio_by_user"),
     )
 
+    @validates('portfolio_name')
+    def validate_portfolio_name(self, key, portfolio_name):
+        if len(portfolio_name) < 1:
+            raise ValueError("Invalid portfolio name")
+        return portfolio_name
+
 
 class PortfolioSchema(marshmallow.SQLAlchemyAutoSchema):
     stock_details = fields.Nested(TickerPriceSchema)
 
     class Meta:
         model = Portfolio
+        load_instance = True
+        include_fk = True
+        include_relationships = True
 
 
-portfolio_schema: Schema = PortfolioSchema()
+portfolio_schema: marshmallow.Schema = PortfolioSchema()
+
