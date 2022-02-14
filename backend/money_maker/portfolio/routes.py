@@ -1,9 +1,6 @@
 import flask
 from flask import Blueprint, jsonify, make_response, request
 from flask_jwt_extended import jwt_required
-from sqlalchemy.exc import IntegrityError
-from werkzeug.wrappers import Response
-
 from money_maker.extensions import db
 from money_maker.helpers import verify_user
 from money_maker.models.portfolio import Portfolio
@@ -11,11 +8,15 @@ from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
 from money_maker.models.ticker_prices import TickerPrice
 from money_maker.models.ticker_prices import TickerPrice as tP
+from sqlalchemy.exc import IntegrityError
+from werkzeug.wrappers import Response
 
 portfolio_bp = Blueprint("portfolio_bp", __name__, url_prefix="/portfolio")
 
 
 @portfolio_bp.route("<user_id>", methods=["GET"])
+@jwt_required()
+@verify_user
 def get_portfolio_names_by_user(user_id: int):
     """
     Returns all the portfolio names that a particular user
@@ -28,6 +29,8 @@ def get_portfolio_names_by_user(user_id: int):
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>", methods=["GET"])
+@jwt_required()
+@verify_user
 def get_portfolio_stocks_by_user(user_id: int, portfolio_name: str):
     """
     Returns all the stocks that are under the particular portfolio name.
@@ -65,8 +68,9 @@ def create_new_portfolio(user_id: int, portfolio_name: str) -> flask.Response:
     return make_response({"msg": "Successfully created a new portfolio"}, 200)
 
 
-
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["POST"])
+@jwt_required()
+@verify_user
 def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int) -> Response:
     """
     Add a stock to a particular portfolio, using their stock_id from the database.
@@ -92,6 +96,8 @@ def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int) -> 
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["DELETE"])
+@jwt_required()
+@verify_user
 def remove_stock_from_portfolio(user_id: int, portfolio_name: str, stock_id: int) -> Response:
     """
     Removes a particular stock from a user's portfolio, using their stock_id from the database.
@@ -115,6 +121,8 @@ def remove_stock_from_portfolio(user_id: int, portfolio_name: str, stock_id: int
 
 
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["PATCH"])
+@jwt_required()
+@verify_user
 def update_stock_in_portfolio(user_id: int, portfolio_name: str, stock_id: int):
     """
     Updates a stock in a portfolio. The attributes that can be changed
