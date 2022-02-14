@@ -30,16 +30,17 @@ def test_add_portfolio(flask_application: FlaskClient, user_account, user_accoun
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
-def test_invalid_user_add_portfolio(flask_application: FlaskClient, user_account, user_account_logged_in: dict,
+def test_invalid_user_add_portfolio(flask_application: FlaskClient, user_account: dict, user_account_logged_in: dict,
                                     user_id: int) -> None:
     """
     GIVEN a portfolio name
-    WHEN ANOTHER USER attempts to
+    WHEN ANOTHER USER attempts to add a portfolio to the another user's account
+    THEN check that the request is rejected and an error code is presented.
+
     Args:
-        flask_application ():
-        user_account ():
-        user_account_logged_in ():
-        user_id ():
+        flask_application : The flask application
+        user_account : The single registered user logged in.
+        user_account_logged_in : The id of the user
 
     """
     other_user = {
@@ -56,3 +57,6 @@ def test_invalid_user_add_portfolio(flask_application: FlaskClient, user_account
 
     db.session.query(User).filter(User.email == other_user["email"]).delete(synchronize_session="fetch")
     db.session.commit()
+
+    assert len(db.session.query(User).all()) == 1
+
