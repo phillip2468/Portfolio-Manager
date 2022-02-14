@@ -22,7 +22,11 @@ SAMPLE_PORTFOLIO_NAME = "user_portoflio"
 LETTER_CASINGS = [[True, True], [True, False], [False, True]]
 
 LOGIN_SUCCESS_MSG = "login successful"
-NEW_PORTFOLIO_SUCCESS_MSG = "Successfully created a new portfolio"
+CREATE_PORTFOLIO_MSG = "Successfully created a new portfolio"
+DELETE_PORTFOLIO_MSG = "Successfully deleted the portfolio"
+
+ADD_STOCK_TO_PORTFOLIO = "Successfully added stock"
+DELETE_STOCK_TO_PORTFOLIO = "Successfully deleted the stock"
 
 
 @pytest.fixture(scope="session")

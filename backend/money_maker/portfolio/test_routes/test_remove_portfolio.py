@@ -1,5 +1,5 @@
-from conftest import (HTTP_SUCCESS_CODE, LOGIN_SUCCESS_MSG,
-                      NEW_PORTFOLIO_SUCCESS_MSG)
+from conftest import (CREATE_PORTFOLIO_MSG, DELETE_PORTFOLIO_MSG,
+                      HTTP_SUCCESS_CODE, LOGIN_SUCCESS_MSG)
 from flask.testing import FlaskClient
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio
@@ -19,11 +19,11 @@ def test_remove_portfolio(flask_application: FlaskClient, user_account_logged_in
 
     response = flask_application.post(f"""/portfolio/{user_id}/sample_portfolio""")
     assert response.status_code == HTTP_SUCCESS_CODE
-    assert response.get_json()["msg"] == "Successfully created a new portfolio"
+    assert response.get_json()["msg"] == CREATE_PORTFOLIO_MSG
 
     response = flask_application.delete(f"""/portfolio/{user_id}/sample_portfolio""")
     assert response.status_code == HTTP_SUCCESS_CODE
-    assert response.get_json()["msg"] == "Successfully deleted the portfolio"
+    assert response.get_json()["msg"] == DELETE_PORTFOLIO_MSG
 
     assert len(db.session.query(Portfolio).filter(Portfolio.user_id == user_id).all()) == 0
 
@@ -48,7 +48,7 @@ def test_invalid_remove_other_user_portfolio(flask_application: FlaskClient, use
 
     response = flask_application.post(f"""/portfolio/{user_id}/sample_portfolio""")
     assert response.status_code == HTTP_SUCCESS_CODE
-    assert response.get_json()["msg"] == NEW_PORTFOLIO_SUCCESS_MSG
+    assert response.get_json()["msg"] == CREATE_PORTFOLIO_MSG
 
     response = flask_application.post("/auth/login", json=user_accounts[1])
     assert response.status_code == HTTP_SUCCESS_CODE
