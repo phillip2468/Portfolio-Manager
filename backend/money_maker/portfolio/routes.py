@@ -59,12 +59,13 @@ def create_new_portfolio(user_id: int, portfolio_name: str) -> flask.Response:
     """
     Creates a new portfolio for the particular user. All portfolios start
     with no stocks.
+
     Args:
-        user_id (int): The user id
-        portfolio_name (str): The portfolio name
+        user_id: The user id
+        portfolio_name: The portfolio name
 
     Returns:
-    A response containing user success.
+        A response containing user success.
     """
     pf_data = {
         "portfolio_name": portfolio_name,
@@ -136,11 +137,18 @@ def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int) -> 
     Add a stock to a particular portfolio, using their stock_id from the database.
     Returns a message indicating user success.
 
-    :param user_id: The user id
-    :param portfolio_name: The portfolio name
-    :param stock_id: The stock id
-    :return: flask.Response
+    If either the stock is not found in the database, or the portfolio entry does not exist
+    returns a message indicating failure.
+
+    Args:
+        user_id: The user id
+        portfolio_name: The portfolio name
+        stock_id: The stock id
+
+    Returns:
+        A flask response indicating success.
     """
+
     if len(db.session.query(TickerPrice).filter(TickerPrice.stock_id == stock_id).all()) == 0:
         return make_response(jsonify(msg="Stock not found"), 400)
 
