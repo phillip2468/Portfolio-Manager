@@ -183,16 +183,21 @@ def remove_stock_from_portfolio(user_id: int, portfolio_name: str, stock_id: int
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["PATCH"])
 @jwt_required()
 @verify_user
-def update_stock_in_portfolio(user_id: int, portfolio_name: str, stock_id: int):
+def update_stock_in_portfolio(user_id: int, portfolio_name: str, stock_id: int) -> flask.Response:
     """
     Updates a stock in a portfolio. The attributes that can be changed
-    are the units_purchased or units_price attributes.
+    are the units_purchased or units_price attributes. Note that the details
+    to be updated must be within the body of the request.
 
-    :param user_id: The user id
-    :param portfolio_name: The portfolio name
-    :param stock_id: The stock id
-    :return: flask.Response
+    Args:
+        user_id: The user id
+        portfolio_name: The portfolio name
+        stock_id: The stock id
+
+    Returns:
+        A message indicating the portofolio stock details have been updated
     """
+
     req = request.get_json(force=True)
     units_price = req.get("units_price", None)
     units_purchased = req.get("units_purchased", None)
@@ -201,7 +206,7 @@ def update_stock_in_portfolio(user_id: int, portfolio_name: str, stock_id: int):
         .update(values={"units_price": units_price, "units_purchased": units_purchased}, synchronize_session="fetch")
     db.session.commit()
 
-    return jsonify({"msg": "Successfully updated the stock details"}), 200
+    return make_response(jsonify(msg="Successfully updated the stock details"), 200)
 
 
 @portfolio_bp.errorhandler(IntegrityError)
