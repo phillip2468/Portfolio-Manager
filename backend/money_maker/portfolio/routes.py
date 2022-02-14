@@ -68,6 +68,32 @@ def create_new_portfolio(user_id: int, portfolio_name: str) -> flask.Response:
     return make_response({"msg": "Successfully created a new portfolio"}, 200)
 
 
+@portfolio_bp.route("<user_id>/<portfolio_name>", methods=["DELETE"])
+@jwt_required()
+@verify_user
+def remove_portfolio(user_id: int, portfolio_name: str) -> Response:
+    """
+    Remove an entire portfolio from a user, using their user_id, portfolio_name.
+    Returns a message indicating user success. Note that stock ids that don't exist WILL NOT raise any errors.
+
+    Args:
+        user_id: The user id as an integer
+        portfolio_name: The portfolio name as a string
+
+    Returns:
+        A flask response indicating success.
+
+    """
+
+    rows_deleted = db.session.query(pF).filter(pF.portfolio_name == portfolio_name,
+                                               pF.user_id == user_id).delete(synchronize_session="fetch")
+    if rows_deleted > 0:
+        db.session.commit()
+        return make_response(jsonify(msg="Successfully deleted the stock"), 200)
+    else:
+        return make_response(jsonify(error="The portofolio could not be found"), 400)
+
+
 @portfolio_bp.route("<user_id>/<portfolio_name>/<stock_id>", methods=["POST"])
 @jwt_required()
 @verify_user
