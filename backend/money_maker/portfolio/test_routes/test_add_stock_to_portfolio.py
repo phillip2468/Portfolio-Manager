@@ -117,6 +117,10 @@ def test_invalid_add_stock_to_other_users_portfolio(flask_application: FlaskClie
     WHEN a user is logged in and attempts to add a portfolio from another user
     THEN check that the new stock has been not been added
 
+    This method first logins a user and queries to find the user_id of the particular user.
+    Then they create a portfolio and then another user logins. When this user logins
+    they attempt to add a portfolio_stock to the original user.
+
     Args:
         flask_application: The flask application
         user_accounts: List of dictionaries of other accounts
