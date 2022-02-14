@@ -104,3 +104,47 @@ def test_update_portfolio_name_with_stocks(flask_application: FlaskClient, user_
                                                   Portfolio.portfolio_name == "new_pf_name").all()) == 10
     db.session.query(Portfolio).delete(synchronize_session="fetch")
     db.session.commit()
+
+
+def test_update_one_portfolio_name_with_stocks(flask_application: FlaskClient, user_account_logged_in: dict,
+                                               user_id: int) -> None:
+    """
+    GIVEN a user that has 5 portfolios
+    WHEN a user wants to update the name of a portfolio
+    THEN check that the portfolio's name has been changed to the new entry along and that other portfolio's name
+    has not been changed
+
+    Args:
+        flask_application: The flask application
+        user_account_logged_in: The single registered user logged in.
+        user_id: The id of the user
+    """
+
+    for i in range(1, 5):
+        response = flask_application.post(f"""/portfolio/{user_id}/sample_portfolio_{i}""")
+        assert response.status_code == HTTP_SUCCESS_CODE
+        assert response.get_json()["msg"] == CREATE_PORTFOLIO_MSG
+        for j in range(1, 10):
+            response = flask_application.post(f"""/portfolio/{user_id}/sample_portfolio_{i}/{j}""")
+            assert response.status_code == HTTP_SUCCESS_CODE
+            assert response.get_json()["msg"] == ADD_STOCK_TO_PORTFOLIO
+
+    new_pf_name = {
+        "portfolio_name": "new_pf_name"
+    }
+    response = flask_application.patch(f"""/portfolio/{user_id}/sample_portfolio_1""", json=new_pf_name)
+    assert response.status_code == HTTP_SUCCESS_CODE
+    assert response.get_json()["msg"] == UPDATE_PORTFOLIO_MSG
+
+    assert len(db.session.query(Portfolio).filter(Portfolio.user_id == user_id,
+                                                  Portfolio.portfolio_name == "sample_portfolio_1").all()) == 0
+
+    for i in range(2, 5):
+        assert len(db.session.query(Portfolio).filter(Portfolio.user_id == user_id,
+                                                      Portfolio.portfolio_name == f"""sample_portfolio_{i}""").all()) \
+               == 10
+
+    assert len(db.session.query(Portfolio).filter(Portfolio.user_id == user_id,
+                                                  Portfolio.portfolio_name == "new_pf_name").all()) == 10
+    db.session.query(Portfolio).delete(synchronize_session="fetch")
+    db.session.commit()
