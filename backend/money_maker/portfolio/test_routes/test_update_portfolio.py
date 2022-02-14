@@ -8,8 +8,8 @@ from money_maker.models.portfolio import Portfolio
 def test_update_portfolio_name(flask_application: FlaskClient, user_account_logged_in: dict, user_id: int) -> None:
     """
     GIVEN a user that has a portfolio
-    WHEN a user wants to remove this portfolio
-    THEN check that the portfolio is removed
+    WHEN a user wants to update the name of this portfolio
+    THEN check that the portfolio's name has been changed to the new entry
 
     Args:
         flask_application: The flask application
@@ -36,3 +36,37 @@ def test_update_portfolio_name(flask_application: FlaskClient, user_account_logg
     db.session.query(Portfolio).delete(synchronize_session="fetch")
     db.session.commit()
 
+
+def test_update_one_portfolio_name(flask_application: FlaskClient, user_account_logged_in: dict, user_id: int) -> None:
+    """
+    GIVEN a user that has multiple portfolios
+    WHEN a user wants to update the name of one of their portolfios
+    THEN check that ONLY one of these portfolios is changed
+
+    Args:
+        flask_application: The flask application
+        user_account_logged_in: The single registered user logged in.
+        user_id: The id of the user
+    """
+
+    for i in range(1, 5):
+        response = flask_application.post(f"""/portfolio/{user_id}/sample_portfolio_{i}""")
+        assert response.status_code == HTTP_SUCCESS_CODE
+        assert response.get_json()["msg"] == CREATE_PORTFOLIO_MSG
+
+    new_pf_name = {
+        "portfolio_name": "new_pf_name"
+    }
+    response = flask_application.patch(f"""/portfolio/{user_id}/sample_portfolio_1""", json=new_pf_name)
+    assert response.status_code == HTTP_SUCCESS_CODE
+    assert response.get_json()["msg"] == UPDATE_PORTFOLIO_MSG
+
+    for i in range(2, 5):
+        assert len(db.session.query(Portfolio).filter(Portfolio.user_id == user_id,
+                                                      Portfolio.portfolio_name == f"""sample_portfolio_{i}""")
+                   .all()) == 1
+
+    assert len(db.session.query(Portfolio).filter(Portfolio.user_id == user_id,
+                                                  Portfolio.portfolio_name == "new_pf_name").all()) == 1
+    db.session.query(Portfolio).delete(synchronize_session="fetch")
+    db.session.commit()
