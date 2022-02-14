@@ -17,12 +17,16 @@ portfolio_bp = Blueprint("portfolio_bp", __name__, url_prefix="/portfolio")
 @portfolio_bp.route("<user_id>", methods=["GET"])
 @jwt_required()
 @verify_user
-def get_portfolio_names_by_user(user_id: int):
+def get_portfolio_names_by_user(user_id: int) -> flask.Response:
     """
-    Returns all the portfolio names that a particular user
-    has.
-    :param user_id: The user id
-    :return: flask.Response
+    Returns all portfolio names belonging to a particular user
+    that is logged in.
+
+    Args:
+        user_id (int): The user id
+
+    Returns:
+        The flask response as a list of dictionaries of Portfolio objects.
     """
     results = db.session.query(pF.portfolio_name).distinct(pF.portfolio_name).filter(pF.user_id == user_id).all()
     return portfolio_schema.jsonify(results, many=True)
@@ -31,13 +35,17 @@ def get_portfolio_names_by_user(user_id: int):
 @portfolio_bp.route("<user_id>/<portfolio_name>", methods=["GET"])
 @jwt_required()
 @verify_user
-def get_portfolio_stocks_by_user(user_id: int, portfolio_name: str):
+def get_portfolio_stocks_by_user(user_id: int, portfolio_name: str) -> flask.Response:
     """
-    Returns all the stocks that are under the particular portfolio name.
+    Returns all stocks details from a particular portfolio name
+    belonging to a particular user.
 
-    :param user_id: The user id
-    :param portfolio_name: The portfolio name
-    :return: flask.Response
+    Args:
+        user_id (int): The user id
+        portfolio_name (): The portfolio name of the user.
+
+    Returns:
+        The flask response as a list of portfolio objects,
     """
     results = db.session.query(pF).filter(pF.user_id == user_id, pF.portfolio_name == portfolio_name).join(tP).all()
     return portfolio_schema.jsonify(results, many=True)
