@@ -3,7 +3,6 @@ from conftest import HTTP_SUCCESS_CODE, REPEAT_TESTS
 from flask.testing import FlaskClient
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio
-from money_maker.models.user import User
 
 NUMBER_OF_PFS = 5
 NUMBER_OF_STOCKS = 10

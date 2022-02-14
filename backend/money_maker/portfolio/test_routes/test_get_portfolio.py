@@ -1,5 +1,4 @@
-import pytest
-from conftest import HTTP_SUCCESS_CODE, REPEAT_TESTS
+from conftest import HTTP_SUCCESS_CODE
 from flask.testing import FlaskClient
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio
@@ -8,7 +7,6 @@ NUMBER_OF_PORTFOLIOS = 5
 NUMBER_OF_STOCKS = 10
 
 
-@pytest.mark.repeat(REPEAT_TESTS)
 def test_get_all_portfolios(flask_application: FlaskClient, user_account_logged_in: dict,
                             user_id: int) -> None:
     """
@@ -35,7 +33,6 @@ def test_get_all_portfolios(flask_application: FlaskClient, user_account_logged_
     assert len(db.session.query(Portfolio.user_id == user_id).all()) == 0
 
 
-@pytest.mark.repeat(REPEAT_TESTS)
 def test_invalid_user_get_all_portfolios(flask_application: FlaskClient, user_accounts: list[dict]) -> None:
     """
     GIVEN another user from the registered users list
@@ -72,7 +69,6 @@ def test_invalid_user_get_all_portfolios(flask_application: FlaskClient, user_ac
     assert len(db.session.query(Portfolio.user_id == user_id).all()) == 0
 
 
-@pytest.mark.repeat(REPEAT_TESTS)
 def test_get_all_stocks_from_a_portfolios(flask_application: FlaskClient, user_account_logged_in: dict,
                                           user_id: int, sample_portfolio: str) -> None:
     """

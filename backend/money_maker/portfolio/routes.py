@@ -82,7 +82,8 @@ def create_new_portfolio(user_id: int, portfolio_name: str) -> flask.Response:
 def remove_portfolio(user_id: int, portfolio_name: str) -> Response:
     """
     Remove an entire portfolio from a user, using their user_id, portfolio_name.
-    Returns a message indicating user success. Note that stock ids that don't exist WILL NOT raise any errors.
+    Returns a message indicating user success. Note that portfolios that don't exist will not return
+    any error messages.
 
     Args:
         user_id: The user id as an integer
@@ -92,13 +93,8 @@ def remove_portfolio(user_id: int, portfolio_name: str) -> Response:
         A flask response indicating success.
 
     """
-    pf_data = {
-        "portfolio_name": portfolio_name,
-        "user_id": user_id
-    }
-    old_pf = portfolio_schema.load(pf_data)
-    db.session.delete(old_pf)
-
+    db.session.query(pF).filter(pF.user_id == user_id,
+                                pF.portfolio_name == portfolio_name).delete(synchronize_session="fetch")
     db.session.commit()
     return make_response(jsonify(msg="Successfully deleted the portfolio"), 200)
 

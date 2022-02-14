@@ -1,6 +1,5 @@
 import pytest
 from flask.testing import FlaskClient
-
 from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
 from money_maker.models.portfolio import Portfolio
@@ -21,6 +20,9 @@ SAMPLE_PORTFOLIO_NAME = "user_portoflio"
 
 # Remember that you can't have [False, False] for casing as there would be no letters!
 LETTER_CASINGS = [[True, True], [True, False], [False, True]]
+
+LOGIN_SUCCESS_MSG = "login successful"
+NEW_PORTFOLIO_SUCCESS_MSG = "Successfully created a new portfolio"
 
 
 @pytest.fixture(scope="session")
