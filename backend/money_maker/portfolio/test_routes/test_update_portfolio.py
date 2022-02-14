@@ -1,6 +1,7 @@
 from flask.testing import FlaskClient
 
-from conftest import (CREATE_PORTFOLIO_MSG, HTTP_SUCCESS_CODE, UPDATE_PORTFOLIO_MSG, ADD_STOCK_TO_PORTFOLIO)
+from conftest import (CREATE_PORTFOLIO_MSG, HTTP_SUCCESS_CODE, UPDATE_PORTFOLIO_MSG, ADD_STOCK_TO_PORTFOLIO,
+                      LOGIN_SUCCESS_MSG)
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio
 
@@ -147,4 +148,43 @@ def test_update_one_portfolio_name_with_stocks(flask_application: FlaskClient, u
     assert len(db.session.query(Portfolio).filter(Portfolio.user_id == user_id,
                                                   Portfolio.portfolio_name == "new_pf_name").all()) == 10
     db.session.query(Portfolio).delete(synchronize_session="fetch")
+    db.session.commit()
+
+
+def test_invalid_update_portfolio_name(flask_application: FlaskClient, user_accounts: list[dict]) -> None:
+    """
+    GIVEN a portfolio
+    WHEN another user attempts to update a portfolio that is not theirs
+    THEN check that the new portfolio name IS NOT applied
+
+    Args:
+        flask_application: The flask application
+        user_accounts: The list of dictionaries of registered users
+    """
+    response = flask_application.post("/auth/login", json=user_accounts[0])
+    assert response.status_code == HTTP_SUCCESS_CODE
+    assert response.get_json()["msg"] == LOGIN_SUCCESS_MSG
+
+    response = flask_application.get("/auth/which_user")
+    assert response.status_code == HTTP_SUCCESS_CODE
+    user_id = response.get_json()["user_id"]
+
+    response = flask_application.post(f"""/portfolio/{user_id}/sample_portfolio""")
+    assert response.status_code == HTTP_SUCCESS_CODE
+    assert response.get_json()["msg"] == CREATE_PORTFOLIO_MSG
+
+    response = flask_application.post("/auth/login", json=user_accounts[1])
+    assert response.status_code == HTTP_SUCCESS_CODE
+    assert response.get_json()["msg"] == LOGIN_SUCCESS_MSG
+
+    new_pf_name = {
+        "portfolio_name": "new_pf_name"
+    }
+    response = flask_application.patch(f"""/portfolio/{user_id}/sample_portfolio""", json=new_pf_name)
+    assert response.status_code != HTTP_SUCCESS_CODE
+
+    # Remember that the empty portfolio still exists in the database
+    assert len(db.session.query(Portfolio.user_id == user_id).all()) == 1
+
+    db.session.query(Portfolio).filter(Portfolio.user_id == user_id).delete(synchronize_session="fetch")
     db.session.commit()
