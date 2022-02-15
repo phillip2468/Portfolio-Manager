@@ -15,10 +15,13 @@ watchlist_bp = Blueprint("watchlist_bp", __name__, url_prefix="/watchlist")
 @verify_user
 def get_watchlist_names_by_user(user_id: int) -> flask.Response:
     """
-    Returns all the watchlists names that a particular user
-    has.
-    :param user_id: The user id
-    :return: flask.Response
+    Returns all the watchlists names that a particular user has.
+
+    Args:
+        user_id: The user id
+
+    Returns:
+        A response message containing a list of dictionaries of watchlist names.
     """
     results = db.session.query(wL.watchlist_name).distinct(wL.watchlist_name).filter(wL.user_id == user_id).all()
     return watchlist_schema.jsonify(results, many=True)
@@ -27,13 +30,16 @@ def get_watchlist_names_by_user(user_id: int) -> flask.Response:
 @watchlist_bp.route("<user_id>/<watchlist_name>", methods=["GET"])
 @jwt_required()
 @verify_user
-def get_portfolio_stocks_by_user(user_id: int, watchlist_name: str):
+def get_watchlist_stocks_by_user(user_id: int, watchlist_name: str):
     """
-    Returns all the stocks that are a partcular watchlist.
+    Returns all stocks related to a particular watchlists.
 
-    :param user_id: The user id
-    :param watchlist_name: The watchlist name
-    :return: flask.Response
+    Args:
+        user_id: The user id
+        watchlist_name: The watchlist name
+
+    Returns:
+        A response message containing a list of dictionaries of watchlist stocks.
     """
     results = db.session.query(wL).filter(wL.user_id == user_id, wL.watchlist_name == watchlist_name).join(tP).all()
     return watchlist_schema.jsonify(results, many=True)
@@ -42,7 +48,7 @@ def get_portfolio_stocks_by_user(user_id: int, watchlist_name: str):
 @watchlist_bp.route("<user_id>/<watchlist_name>", methods=["POST"])
 @jwt_required()
 @verify_user
-def add_new_watchlist(user_id: int, watchlist_name: str) -> flask.Response:
+def add_watchlist(user_id: int, watchlist_name: str) -> flask.Response:
     """
     Creates a new watchlist for the particular user. All watchlists start
     with no stocks.
@@ -139,7 +145,7 @@ def add_stock_to_watchlist(user_id: int, watchlist_name: str, stock_id: int):
 @watchlist_bp.route("<user_id>/<watchlist_name>/<stock_id>", methods=["DELETE"])
 @jwt_required()
 @verify_user
-def remove_stock_from_portfolio(user_id: int, watchlist_name: str, stock_id: int):
+def remove_stock_from_watchlist(user_id: int, watchlist_name: str, stock_id: int):
     """
     Removes a particular stock from a users watchlist, using their stock_id from the database.
     Returns a message indicating user success.
