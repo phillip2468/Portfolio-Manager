@@ -1,5 +1,5 @@
 import flask
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, make_response
 from flask_jwt_extended import jwt_required
 
 from money_maker.extensions import db
@@ -42,13 +42,18 @@ def get_portfolio_stocks_by_user(user_id: int, watchlist_name: str):
 @watchlist_bp.route("<user_id>/<watchlist_name>", methods=["POST"])
 @jwt_required()
 @verify_user
-def add_new_portfolio(user_id: int, watchlist_name: str):
+def add_new_watchlist(user_id: int, watchlist_name: str) -> flask.Response:
     """
     Creates a new watchlist for the particular user. All watchlists start
     with no stocks.
-    :param user_id: The user id
-    :param watchlist_name: The watchlist name
-    :return: flask.Response
+
+    Args:
+        user_id: The user id
+        watchlist_name: The watchlist name
+
+    Returns:
+        A flask response containing a success message.
+
     """
     wl_data = {
         "watchlist_name": watchlist_name,
@@ -57,14 +62,36 @@ def add_new_portfolio(user_id: int, watchlist_name: str):
     new_wl = watchlist_schema.load(wl_data)
     db.session.add(new_wl)
     db.session.commit()
+    return make_response(jsonify({"msg": "Successfully created a new watchlist"}), 200)
 
-    return jsonify({"msg": "Successfully created a new watchlist"}), 200
+
+@watchlist_bp.route("<user_id>/<watchlist_name>", methods=["DELETE"])
+@jwt_required()
+@verify_user
+def remove_watchlist(user_id: int, watchlist_name: str) -> flask.Response:
+    """
+    Removes a watchlist for a particular user. Will not return any error
+    messages if this watchlist does not exist.
+
+    Args:
+        user_id: The user id
+        watchlist_name: The watchlist name
+
+    Returns:
+        A flask response containing a success message.
+
+    """
+    db.session.query(wL).filter(wL.user_id == user_id,
+                                wL.watchlist_name == watchlist_name).delete(synchronize_session="fetch")
+    db.session.commit()
+
+    return make_response(jsonify({"msg": "Successfully removed the watchlist"}), 200)
 
 
 @watchlist_bp.route("<user_id>/<watchlist_name>/<stock_id>", methods=["POST"])
 @jwt_required()
 @verify_user
-def add_stock_to_portfolio(user_id: int, watchlist_name: str, stock_id: int):
+def add_stock_to_watchlist(user_id: int, watchlist_name: str, stock_id: int):
     """
     Add a stock to a particular watchlist, using their stock_id from the database.
     Returns a message indicating user success.
