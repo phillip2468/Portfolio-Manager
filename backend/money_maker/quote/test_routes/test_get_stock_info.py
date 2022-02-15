@@ -24,8 +24,7 @@ def test_get_stock_info(flask_application: FlaskClient) -> None:
         assert request.get_json()["symbol"] == stock.symbol
 
 
-def test_invalid_stock_info_from_database(flask_application: FlaskClient, user_account_logged_in: dict,
-                                          user_id: int) -> None:
+def test_invalid_stock_info_from_database(flask_application: FlaskClient) -> None:
     """
     GIVEN a request to check stock information
     WHEN an invalid stock symbol is entered
@@ -33,8 +32,6 @@ def test_invalid_stock_info_from_database(flask_application: FlaskClient, user_a
 
     Args:
         flask_application: The flask application
-        user_account_logged_in: The single registered user logged in.
-        user_id: The id of the user
     """
     response = flask_application.get(f"""/quote/{invalid_stock_symbol}""")
     assert response.status_code != HTTP_SUCCESS_CODE
