@@ -236,3 +236,15 @@ def sample_watchlist(flask_application: FlaskClient, user_account_logged_in: dic
     db.session.commit()
 
     assert len(db.session.query(Watchlist).filter(Watchlist.user_id).all()) == 0
+
+
+def cleanup_wl_db(user_id) -> None:
+    """
+    A helper function to remove existing watchlists by user id
+
+    Args:
+        user_id: The user id
+    """
+    db.session.query(Watchlist).filter(Watchlist.user_id == user_id).delete(synchronize_session="fetch")
+    db.session.commit()
+    assert len(db.session.query(Watchlist).filter(Watchlist.user_id == user_id).all()) == 0

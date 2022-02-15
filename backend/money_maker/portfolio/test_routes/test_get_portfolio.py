@@ -1,5 +1,6 @@
-from conftest import HTTP_SUCCESS_CODE
 from flask.testing import FlaskClient
+
+from conftest import HTTP_SUCCESS_CODE, LOGIN_SUCCESS_MSG
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio
 
@@ -45,6 +46,7 @@ def test_invalid_user_get_all_portfolios(flask_application: FlaskClient, user_ac
     """
     response = flask_application.post("/auth/login", json=user_accounts[0])
     assert response.status_code == HTTP_SUCCESS_CODE
+    assert response.get_json()["msg"] == LOGIN_SUCCESS_MSG
 
     response = flask_application.get("/auth/which_user")
     assert response.status_code == HTTP_SUCCESS_CODE

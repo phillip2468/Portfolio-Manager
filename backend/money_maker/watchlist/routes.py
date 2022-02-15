@@ -25,6 +25,8 @@ def get_watchlist_names_by_user(user_id: int) -> flask.Response:
 
 
 @watchlist_bp.route("<user_id>/<watchlist_name>", methods=["GET"])
+@jwt_required()
+@verify_user
 def get_portfolio_stocks_by_user(user_id: int, watchlist_name: str):
     """
     Returns all the stocks that are a partcular watchlist.
@@ -38,6 +40,8 @@ def get_portfolio_stocks_by_user(user_id: int, watchlist_name: str):
 
 
 @watchlist_bp.route("<user_id>/<watchlist_name>", methods=["POST"])
+@jwt_required()
+@verify_user
 def add_new_portfolio(user_id: int, watchlist_name: str):
     """
     Creates a new watchlist for the particular user. All watchlists start
@@ -58,6 +62,8 @@ def add_new_portfolio(user_id: int, watchlist_name: str):
 
 
 @watchlist_bp.route("<user_id>/<watchlist_name>/<stock_id>", methods=["POST"])
+@jwt_required()
+@verify_user
 def add_stock_to_portfolio(user_id: int, watchlist_name: str, stock_id: int):
     """
     Add a stock to a particular watchlist, using their stock_id from the database.
@@ -76,6 +82,8 @@ def add_stock_to_portfolio(user_id: int, watchlist_name: str, stock_id: int):
 
 
 @watchlist_bp.route("<user_id>/<watchlist_name>/<stock_id>", methods=["DELETE"])
+@jwt_required()
+@verify_user
 def remove_stock_from_portfolio(user_id: int, watchlist_name: str, stock_id: int):
     """
     Removes a particular stock from a users watchlist, using their stock_id from the database.
