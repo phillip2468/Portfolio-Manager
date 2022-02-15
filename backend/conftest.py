@@ -38,6 +38,7 @@ DELETE_WATCHLIST_MSG = "Successfully removed the watchlist"
 UPDATE_WATCHLIST_MSG = "Successfully updated the watchlist name"
 
 NUMBER_OF_WATCHLISTS = 5
+NUMBER_OF_STOCKS = 10
 
 
 @pytest.fixture(scope="session")
