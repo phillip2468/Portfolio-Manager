@@ -19,11 +19,13 @@ def search_company(keyword: str) -> flask.Response:
     in sqlalchemy to match items. Only returns the first 4
     results.
 
-    :param keyword: The search term query
-    :type keyword: String
-    :return: The result as a list of dictionaries.
-    :rtype: flask.Response
+    Args:
+        keyword: The search term query
+
+    Returns:
+        A response containing a list of dictionaries of the first 4 results
     """
+
     keyword = "%{}%".format(keyword).upper()
     results = db.session.query(tP.stock_id, tP.stock_name, tP.symbol, tP.market_current_price,
                                tP.market_change_percentage) \

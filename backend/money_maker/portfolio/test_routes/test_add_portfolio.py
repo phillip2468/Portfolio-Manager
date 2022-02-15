@@ -1,13 +1,14 @@
 import pytest
-from conftest import HTTP_SUCCESS_CODE, REPEAT_TESTS
 from flask.testing import FlaskClient
+
+from conftest import HTTP_SUCCESS_CODE, REPEAT_TESTS
 from money_maker.extensions import db
 from money_maker.models.portfolio import Portfolio
 from money_maker.models.user import User
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
-def test_add_portfolio(flask_application: FlaskClient, user_account, user_account_logged_in: dict, user_id: int) -> None:
+def test_add_portfolio(flask_application: FlaskClient, user_account: dict, user_account_logged_in: dict, user_id: int) -> None:
     """
     GIVEN a portfolio name
     WHEN a user is logged in and wants to create a portfolio
