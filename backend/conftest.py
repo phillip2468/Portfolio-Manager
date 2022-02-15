@@ -35,6 +35,7 @@ UPDATE_STOCK_TO_PORTFOLIO = "Successfully updated the stock details"
 
 CREATE_WATCHLIST_MSG = "Successfully created a new watchlist"
 DELETE_WATCHLIST_MSG = "Successfully removed the watchlist"
+UPDATE_WATCHLIST_MSG = "Successfully updated the watchlist name"
 
 NUMBER_OF_WATCHLISTS = 5
 

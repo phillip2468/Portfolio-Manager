@@ -1,5 +1,5 @@
 import flask
-from flask import Blueprint, jsonify, make_response
+from flask import Blueprint, jsonify, make_response, request
 from flask_jwt_extended import jwt_required
 
 from money_maker.extensions import db
@@ -86,6 +86,34 @@ def remove_watchlist(user_id: int, watchlist_name: str) -> flask.Response:
     db.session.commit()
 
     return make_response(jsonify({"msg": "Successfully removed the watchlist"}), 200)
+
+
+@watchlist_bp.route("<user_id>/<watchlist_name>", methods=["PATCH"])
+@jwt_required()
+@verify_user
+def update_watchlist_name(user_id: int, watchlist_name: str) -> flask.Response:
+    """
+    Update a watchlist's name by a user. Note that the new name for the watchlist
+    must be sent within the body of the request.
+
+    Args:
+        user_id: The user id as an integer
+        watchlist_name: The portfolio name as a string
+
+    Returns:
+        A flask response indicating success.
+
+    """
+    req = request.get_json(force=True)
+    new_wl_name = req.get("watchlist_name", None)
+
+    if len(new_wl_name) < 1:
+        return make_response(jsonify(msg="Watchlist names can't be empty"), 400)
+
+    db.session.query(wL).filter(wL.user_id == user_id, wL.watchlist_name == watchlist_name) \
+        .update({"watchlist_name": new_wl_name}, synchronize_session="fetch")
+    db.session.commit()
+    return make_response(jsonify(msg="Successfully updated the watchlist name"), 200)
 
 
 @watchlist_bp.route("<user_id>/<watchlist_name>/<stock_id>", methods=["POST"])
