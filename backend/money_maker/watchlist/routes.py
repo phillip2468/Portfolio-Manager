@@ -1,6 +1,9 @@
+import flask
 from flask import Blueprint, jsonify
+from flask_jwt_extended import jwt_required
 
 from money_maker.extensions import db
+from money_maker.helpers import verify_user
 from money_maker.models.ticker_prices import TickerPrice as tP
 from money_maker.models.watchlist import Watchlist as wL, watchlist_schema
 
@@ -8,7 +11,9 @@ watchlist_bp = Blueprint("watchlist_bp", __name__, url_prefix="/watchlist")
 
 
 @watchlist_bp.route("<user_id>", methods=["GET"])
-def get_watchlist_names_by_user(user_id: int):
+@jwt_required()
+@verify_user
+def get_watchlist_names_by_user(user_id: int) -> flask.Response:
     """
     Returns all the watchlists names that a particular user
     has.
@@ -41,9 +46,12 @@ def add_new_portfolio(user_id: int, watchlist_name: str):
     :param watchlist_name: The watchlist name
     :return: flask.Response
     """
-
-    new_portfilio = wL(watchlist_name=watchlist_name, user_id=user_id)
-    db.session.add(new_portfilio)
+    wl_data = {
+        "watchlist_name": watchlist_name,
+        "user_id": user_id
+    }
+    new_wl = watchlist_schema.load(wl_data)
+    db.session.add(new_wl)
     db.session.commit()
 
     return jsonify({"msg": "Successfully created a new watchlist"}), 200

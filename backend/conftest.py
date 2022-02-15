@@ -5,6 +5,7 @@ from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
 from money_maker.models.portfolio import Portfolio
 from money_maker.models.user import User
+from money_maker.models.watchlist import Watchlist
 
 REPEAT_TESTS = 1
 HTTP_SUCCESS_CODE = 200
@@ -15,6 +16,7 @@ MIN_LENGTH_EMAIL = 8
 MAX_LENGTH_EMAIL = 100
 
 SAMPLE_PORTFOLIO_NAME = "sample_portfolio"
+SAMPLE_WATCHLIST_NAME = "sample_watchlist"
 
 # 'Passwords must contain a lowercase and uppercase letter, a digit and be greater than 8 characters.'
 # 'Email addresses should be longer than 10 characters, contain an @ symbol and should contain a domain.'
@@ -30,6 +32,10 @@ UPDATE_PORTFOLIO_MSG = "Successfully updated the portfolio name"
 ADD_STOCK_TO_PORTFOLIO = "Successfully added stock"
 DELETE_STOCK_TO_PORTFOLIO = "Successfully deleted the stock"
 UPDATE_STOCK_TO_PORTFOLIO = "Successfully updated the stock details"
+
+CREATE_WATCHLIST_MSG = "Successfully created a new watchlist"
+
+NUMBER_OF_WATCHLISTS = 5
 
 
 @pytest.fixture(scope="session")
@@ -193,6 +199,7 @@ def sample_portfolio(flask_application: FlaskClient, user_account_logged_in: dic
     pf_name = SAMPLE_PORTFOLIO_NAME + user_account_logged_in["email"]
     response = flask_application.post(f"""/portfolio/{user_id}/{pf_name}""")
     assert response.status_code == HTTP_SUCCESS_CODE
+    assert response.get_json()["msg"] == CREATE_PORTFOLIO_MSG
 
     yield pf_name
 
@@ -202,3 +209,30 @@ def sample_portfolio(flask_application: FlaskClient, user_account_logged_in: dic
 
     assert len(db.session.query(Portfolio).filter(Portfolio.user_id).all()) == 0
 
+
+@pytest.fixture(scope="function")
+def sample_watchlist(flask_application: FlaskClient, user_account_logged_in: dict, user_id: int) -> str:
+    """
+    Creates a sample watchlist for the user and once used, drops it from the database.
+
+    Args:
+        flask_application:
+        user_account_logged_in:
+        user_id:
+
+    Returns:
+        The watchlist name as SAMPLE_WATCHLIST_NAME + user_account_logged_in["email"]
+    """
+    wl_name = SAMPLE_WATCHLIST_NAME + user_account_logged_in["email"]
+    response = flask_application.post(f"""/watchlist/{user_id}/{wl_name}""")
+    assert response.status_code == HTTP_SUCCESS_CODE
+    assert response.get_json()["msg"] == CREATE_WATCHLIST_MSG
+
+    yield wl_name
+
+    db.session.query(Watchlist).filter(Watchlist.user_id == user_id,
+                                       Watchlist.watchlist_name == wl_name
+                                       ).delete(synchronize_session="fetch")
+    db.session.commit()
+
+    assert len(db.session.query(Watchlist).filter(Watchlist.user_id).all()) == 0
