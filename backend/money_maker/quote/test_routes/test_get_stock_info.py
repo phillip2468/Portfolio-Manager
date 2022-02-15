@@ -1,12 +1,10 @@
-import pytest
 from flask.testing import FlaskClient
 
-from conftest import HTTP_SUCCESS_CODE, REPEAT_TESTS
+from conftest import HTTP_SUCCESS_CODE
 from money_maker.extensions import db
 from money_maker.models.ticker_prices import TickerPrice
 
 
-@pytest.mark.repeat(REPEAT_TESTS)
 def test_remove_stock_from_portfolio(flask_application: FlaskClient, user_account_logged_in: dict,
                                      user_id: int) -> None:
     """
@@ -27,7 +25,6 @@ def test_remove_stock_from_portfolio(flask_application: FlaskClient, user_accoun
         assert request.get_json()["symbol"] == stock.symbol
 
 
-@pytest.mark.repeat(REPEAT_TESTS)
 def test_invalid_stock_info_from_database(flask_application: FlaskClient, user_account_logged_in: dict,
                                           user_id: int) -> None:
     """
@@ -43,4 +40,3 @@ def test_invalid_stock_info_from_database(flask_application: FlaskClient, user_a
     response = flask_application.get(f"""/quote/JMNDKLADSAMJKDJMKASDJKMNA12312""")
     assert response.status_code != HTTP_SUCCESS_CODE
     assert response.get_json()["error"] == "Invalid stock symbol"
-
