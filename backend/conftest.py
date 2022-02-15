@@ -38,6 +38,7 @@ DELETE_WATCHLIST_MSG = "Successfully removed the watchlist"
 UPDATE_WATCHLIST_MSG = "Successfully updated the watchlist name"
 
 ADD_STOCK_TO_WATCHLIST = "Successfully added stock to the watchlist"
+REMOVE_STOCK_TO_WATCHLIST = "Successfully deleted the stock from the watchlist"
 
 NUMBER_OF_WATCHLISTS = 5
 NUMBER_OF_STOCKS = 10

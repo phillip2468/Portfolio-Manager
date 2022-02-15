@@ -158,5 +158,5 @@ def remove_stock_from_watchlist(user_id: int, watchlist_name: str, stock_id: int
     db.session.query(wL).filter(wL.stock_id == stock_id, wL.watchlist_name == watchlist_name, wL.user_id == user_id).delete()
     db.session.commit()
 
-    return jsonify({"msg": "Successfully deleted the stock"}), 200
+    return jsonify({"msg": "Successfully deleted the stock from the watchlist"}), 200
 
