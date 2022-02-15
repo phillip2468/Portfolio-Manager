@@ -57,7 +57,6 @@ def get_historical_data(stock_symbol: str, period: str, interval: str) -> flask.
 
     historical_price = yahooquery.Ticker(stock_symbol).history(period=period, interval=interval, adj_timezone=False)
     price_now = yahooquery.Ticker(stock_symbol).price[stock_symbol]
-    print(historical_price)
     if not isinstance(historical_price, pd.DataFrame):
         return make_response(jsonify({"err": error_message}), 400)
     custom_dict = {
