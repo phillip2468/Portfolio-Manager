@@ -1,15 +1,15 @@
 # coding: utf-8
-
 from alembic_utils.pg_function import PGFunction
 from alembic_utils.pg_trigger import PGTrigger
 from flask_marshmallow import Schema
 from marshmallow import post_load
-from money_maker.extensions import db, marshmallow
 from sqlalchemy import Column
 from sqlalchemy.sql import func
 from sqlalchemy.types import (TIMESTAMP, BigInteger, Float, Integer, Numeric,
                               String)
 from sqlalchemy_utils import force_auto_coercion
+
+from money_maker.extensions import db, marshmallow
 
 force_auto_coercion()
 
