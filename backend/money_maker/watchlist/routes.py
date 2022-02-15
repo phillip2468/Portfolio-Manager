@@ -135,8 +135,13 @@ def add_stock_to_watchlist(user_id: int, watchlist_name: str, stock_id: int):
     :param stock_id: The stock id
     :return: flask.Response
     """
-    stock = wL(stock_id=stock_id, watchlist_name=watchlist_name, user_id=user_id)
-    db.session.add(stock)
+    stock_info = {
+        "stock_id": stock_id,
+        "watchlist_name": watchlist_name,
+        "user_id": user_id
+    }
+    new_stock = watchlist_schema.load(stock_info)
+    db.session.add(new_stock)
     db.session.commit()
 
     return jsonify({"msg":  "Successfully added stock to the watchlist"}), 200
@@ -155,7 +160,8 @@ def remove_stock_from_watchlist(user_id: int, watchlist_name: str, stock_id: int
     :param stock_id: The stock id
     :return: flask.Response
     """
-    db.session.query(wL).filter(wL.stock_id == stock_id, wL.watchlist_name == watchlist_name, wL.user_id == user_id).delete()
+    db.session.query(wL).filter(wL.stock_id == stock_id, wL.watchlist_name == watchlist_name, wL.user_id == user_id)\
+        .delete(synchronize_session="fetch")
     db.session.commit()
 
     return jsonify({"msg": "Successfully deleted the stock from the watchlist"}), 200

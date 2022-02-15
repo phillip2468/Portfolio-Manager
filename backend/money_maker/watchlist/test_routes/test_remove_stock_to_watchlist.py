@@ -24,10 +24,6 @@ def test_remove_stocks_to_watchlist(flask_application: FlaskClient, user_id: int
         assert response.status_code == HTTP_SUCCESS_CODE
         assert response.get_json()["msg"] == ADD_STOCK_TO_WATCHLIST
 
-    response = flask_application.get(f"""/watchlist/{user_id}/{sample_watchlist}""")
-    assert response.status_code == HTTP_SUCCESS_CODE
-    assert len(response.get_json()) == NUMBER_OF_STOCKS
-
     assert len(db.session.query(Watchlist).filter(Watchlist.watchlist_name == sample_watchlist
                                                   ).all()) == NUMBER_OF_STOCKS + 1
 

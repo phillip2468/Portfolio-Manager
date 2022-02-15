@@ -234,6 +234,8 @@ def sample_watchlist(flask_application: FlaskClient, user_account_logged_in: dic
     assert response.status_code == HTTP_SUCCESS_CODE
     assert response.get_json()["msg"] == CREATE_WATCHLIST_MSG
 
+    assert (db.session.query(Watchlist).filter(Watchlist.user_id == user_id,
+                                               Watchlist.watchlist_name == wl_name).one_or_none()) is not None
     yield wl_name
 
     db.session.query(Watchlist).filter(Watchlist.user_id == user_id,

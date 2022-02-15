@@ -18,15 +18,11 @@ def test_add_stocks_to_watchlist(flask_application: FlaskClient, user_id: int, s
         sample_watchlist: The example watchlist created
 
     """
-
+    
     for i in range(1, NUMBER_OF_STOCKS + 1):
         response = flask_application.post(f"""/watchlist/{user_id}/{sample_watchlist}/{i}""")
         assert response.status_code == HTTP_SUCCESS_CODE
         assert response.get_json()["msg"] == ADD_STOCK_TO_WATCHLIST
-
-    response = flask_application.get(f"""/watchlist/{user_id}/{sample_watchlist}""")
-    assert response.status_code == HTTP_SUCCESS_CODE
-    assert len(response.get_json()) == NUMBER_OF_STOCKS
 
     assert len(db.session.query(Watchlist).filter(Watchlist.watchlist_name == sample_watchlist
                                                   ).all()) == NUMBER_OF_STOCKS + 1
