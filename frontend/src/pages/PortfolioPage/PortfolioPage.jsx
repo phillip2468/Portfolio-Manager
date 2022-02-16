@@ -93,12 +93,12 @@ const PortfolioPage = () => {
       <Grid item>
         <Grid container justifyContent={'center'}>
           <Button onClick={() => setOpen(true)} variant={'contained'}>
-            Create a new watchlist
+            Create a new portfolio
           </Button>
         </Grid>
       </Grid>
 
-      <AddPortfolio onClick={() => setOpen(true)} onClose={() => setOpen(false)} open={open}/>
+      <AddPortfolio onClick={() => setOpen(false)} onClose={() => setOpen(false)} open={open}/>
 
       <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
                       route={'portfolio'} selectedItem={selectedPortfolio} userId={userId}/>

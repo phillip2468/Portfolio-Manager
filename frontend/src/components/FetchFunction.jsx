@@ -3,10 +3,12 @@ export const FetchFunction = (method, path, body) => {
     method: method,
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': getCookie('csrf_access_token')
+      'X-CSRF-TOKEN': getCookie('csrf_access_token')[0]
     },
     credentials: 'include'
   }
+
+  console.log(requestOptions)
   if (body !== null) {
     requestOptions.body = JSON.stringify(body)
   }
