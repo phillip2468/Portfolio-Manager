@@ -1,9 +1,6 @@
 import flask
 from flask import Blueprint, jsonify, make_response, request
 from flask_jwt_extended import jwt_required
-from sqlalchemy.exc import IntegrityError
-from werkzeug.wrappers import Response
-
 from money_maker.extensions import db
 from money_maker.helpers import verify_user
 from money_maker.models.portfolio import Portfolio
@@ -11,6 +8,8 @@ from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
 from money_maker.models.ticker_prices import TickerPrice
 from money_maker.models.ticker_prices import TickerPrice as tP
+from sqlalchemy.exc import IntegrityError
+from werkzeug.wrappers import Response
 
 portfolio_bp = Blueprint("portfolio_bp", __name__, url_prefix="/portfolio")
 
@@ -67,6 +66,7 @@ def create_new_portfolio(user_id: int, portfolio_name: str) -> flask.Response:
     Returns:
         A response containing user success.
     """
+    print("HERE")
     pf_data = {
         "portfolio_name": portfolio_name,
         "user_id": user_id

@@ -3,12 +3,11 @@ export const FetchFunction = (method, path, body) => {
     method: method,
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': getCookie('csrf_access_token')[0]
+      'X-CSRF-TOKEN': getCookie('csrf_access_token')
     },
-    credentials: 'include'
+    credentials: 'same-origin'
   }
 
-  console.log(requestOptions)
   if (body !== null) {
     requestOptions.body = JSON.stringify(body)
   }
@@ -35,5 +34,5 @@ export const FetchFunction = (method, path, body) => {
 function getCookie (name) {
   const value = `; ${document.cookie}`
   const parts = value.split(`; ${name}=`)
-  if (parts.length === 2) return parts.pop().split(';')
+  if (parts.length === 2) return parts.pop().split(';').shift()
 }
