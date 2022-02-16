@@ -1,10 +1,10 @@
 import random
 
 import pytest
+from conftest import (HTTP_SUCCESS_CODE, MAX_LENGTH_EMAIL, MIN_LENGTH_EMAIL,
+                      NUMBER_OF_USERS, REGISTER_FAILURE_MSG,
+                      REGISTER_SUCESS_MSG, REPEAT_TESTS)
 from flask.testing import FlaskClient
-
-from conftest import (HTTP_SUCCESS_CODE, MAX_LENGTH_EMAIL,
-                      MIN_LENGTH_EMAIL, NUMBER_OF_USERS, REPEAT_TESTS)
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
 
@@ -26,7 +26,7 @@ def test_valid_register(flask_application: FlaskClient) -> None:
     }
     response = flask_application.post("/auth/register", json=body)
     assert response.status_code == HTTP_SUCCESS_CODE
-    assert response.get_json()["msg"] == "register successful"
+    assert response.get_json()["msg"] == REGISTER_SUCESS_MSG
     assert len(db.session.query(User).all()) == 1
 
     db.session.query(User).filter(User.email == body["email"]).delete(synchronize_session="fetch")
@@ -54,7 +54,7 @@ def test_valid_mutliple_registers(flask_application: FlaskClient) -> None:
     for index, user in enumerate(list_of_users):
         response = flask_application.post("/auth/register", json=user)
         assert response.status_code == HTTP_SUCCESS_CODE
-        assert response.get_json()["msg"] == "register successful"
+        assert response.get_json()["msg"] == REGISTER_SUCESS_MSG
         # Remember that ranges have a zero based index!
         assert len(db.session.query(User).all()) == index + 1
 
@@ -86,7 +86,7 @@ def test_invalid_register_email(flask_application: FlaskClient) -> None:
     }
     response = flask_application.post("/auth/register", json=user)
     assert response.status_code != HTTP_SUCCESS_CODE
-    assert response.get_json()["error"] == "error with user details"
+    assert response.get_json()["error"] == REGISTER_FAILURE_MSG
     assert len(db.session.query(User).all()) == 0
 
 
@@ -105,6 +105,6 @@ def test_invalid_register_password(flask_application: FlaskClient) -> None:
     }
     response = flask_application.post("/auth/register", json=user)
     assert response.status_code != HTTP_SUCCESS_CODE
-    assert response.get_json()["error"] == "error with user details"
+    assert response.get_json()["error"] == REGISTER_FAILURE_MSG
     assert len(db.session.query(User).all()) == 0
 
