@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom'
 const LoginPage = () => {
   const navigate = useNavigate()
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('testemail1234@email.com')
+  const [password, setPassword] = useState('Password12345')
 
   const { loginUser } = useContext(ClientContext)
 
