@@ -1,5 +1,5 @@
 import pytest
-from conftest import HTTP_SUCCESS_CODE, REPEAT_TESTS
+from conftest import HTTP_SUCCESS_CODE, LOGOUT_SUCCESS_MSG, REPEAT_TESTS
 from flask.testing import FlaskClient
 
 
@@ -17,7 +17,7 @@ def test_valid_logout(flask_application: FlaskClient, user_account_logged_in: di
     """
     response = flask_application.post("/auth/logout")
     assert response.status_code == HTTP_SUCCESS_CODE
-    assert response.get_json()["msg"] == "logout successful"
+    assert response.get_json()["msg"] == LOGOUT_SUCCESS_MSG
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
@@ -37,4 +37,4 @@ def test_multiple_valid_logouts(flask_application: FlaskClient, user_accounts: d
 
         response = flask_application.post("/auth/logout")
         assert response.status_code == HTTP_SUCCESS_CODE
-        assert response.get_json()["msg"] == "logout successful"
+        assert response.get_json()["msg"] == LOGOUT_SUCCESS_MSG

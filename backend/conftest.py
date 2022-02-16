@@ -26,6 +26,10 @@ LETTER_CASINGS = [[True, True], [True, False], [False, True]]
 LOGIN_SUCCESS_MSG = "login successful"
 LOGIN_FAILURE_MSG = "Missing credentials or wrong login"
 
+LOGOUT_SUCCESS_MSG = "logout successful"
+
+REGISTER_SUCESS_MSG = "register successful"
+REGISTER_FAILURE_MSG = "error with user details"
 
 CREATE_PORTFOLIO_MSG = "Successfully created a new portfolio"
 DELETE_PORTFOLIO_MSG = "Successfully deleted the portfolio"
