@@ -13,16 +13,18 @@ const AddStockDialog = (props) => {
     if (searchValue !== '') {
       FetchFunction('GET', `search/${searchValue}`, null)
         .then(res => setSuggestions(res))
-        .catch(error => console.log(error))
     }
   }, [searchValue])
 
   const handleSubmit = () => {
     FetchFunction('POST', `${props.route}/${props.userId}/${props.selectedItem}/${selectedStock.stock_id}`)
-      .then(() => {
+      .then((msg) => {
         return props.onClose()
       })
-      .catch(error => console.log(error))
+      .catch((error) => {
+        alert(error)
+        console.log(error)
+      })
   }
 
   return <Dialog onClose={() => {

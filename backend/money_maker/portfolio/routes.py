@@ -66,7 +66,6 @@ def create_new_portfolio(user_id: int, portfolio_name: str) -> flask.Response:
     Returns:
         A response containing user success.
     """
-    print("HERE")
     pf_data = {
         "portfolio_name": portfolio_name,
         "user_id": user_id
@@ -156,9 +155,12 @@ def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int) -> 
                     .filter(Portfolio.portfolio_name == portfolio_name, Portfolio.user_id == user_id).all())) == 0:
         return make_response(jsonify(msg="Portfolio not found"), 400)
 
-    stock = pF(stock_id=stock_id, portfolio_name=portfolio_name, user_id=user_id, units_price=0, units_purchased=0)
-    db.session.add(stock)
-    db.session.commit()
+    try:
+        stock = pF(stock_id=stock_id, portfolio_name=portfolio_name, user_id=user_id, units_price=0, units_purchased=0)
+        db.session.add(stock)
+        db.session.commit()
+    except IntegrityError:
+        return make_response(jsonify(err="Stock already exists!"), 400)
 
     return make_response(jsonify(msg="Successfully added stock"), 200)
 

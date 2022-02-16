@@ -25,7 +25,13 @@ function AddPortfolio (props) {
 
   const submitPfName = () => {
     FetchFunction('POST', `portfolio/${userId}/${pfName}`, null)
-      .then(() => props.onClick)
+      .then(() => {
+        setPfName('')
+        props.onClick()
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   return <Dialog onClose={props.onClose} open={props.open}>
