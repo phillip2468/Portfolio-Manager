@@ -1,4 +1,4 @@
-import { Grid, MenuItem, Typography } from '@mui/material'
+import { Grid, MenuItem } from '@mui/material'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ClientContext } from '../../store/StoreCredentials'
 import { FetchFunction } from '../../components/FetchFunction'
@@ -8,6 +8,7 @@ import TableOfStocks from '../../components/TableOfStocks'
 import Columns from './components/Columns'
 import AddPortfolio from './components/AddPortfolio'
 import CurrentPortfolios from './components/CurrentPortfolios'
+import Title from '../../components/Title'
 
 const PortfolioPage = () => {
   const { userId } = useContext(ClientContext)
@@ -85,9 +86,7 @@ const PortfolioPage = () => {
   return (
     <>
       <Grid item>
-        <Typography align={'center'} variant={'h5'}>
-          Portfolio page
-        </Typography>
+        <Title title={'Portfolio page'}/>
       </Grid>
 
       <Grid item>
@@ -102,6 +101,7 @@ const PortfolioPage = () => {
 
       <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
                       route={'portfolio'} selectedItem={selectedPortfolio} userId={userId}/>
+
       <Grid item>
         <CurrentPortfolios callbackfn={element =>
           <MenuItem
