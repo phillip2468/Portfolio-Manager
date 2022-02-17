@@ -8,7 +8,7 @@ import TableOfStocks from '../../components/TableOfStocks'
 import Columns from './components/Columns'
 import AddPortfolio from './components/AddPortfolio'
 import CurrentPortfolios from './components/CurrentPortfolios'
-import Title from '../../components/Title'
+import Title from '../../components/Title/Title'
 
 const PortfolioPage = () => {
   const { userId } = useContext(ClientContext)
