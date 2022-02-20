@@ -6,8 +6,6 @@ import { FetchFunction } from '../FetchFunction'
 import { ClientContext } from '../../store/StoreCredentials'
 
 const CreateList = (props) => {
-  const [openDialog, setOpenDialog] = useState(false)
-
   const [listName, setListName] = useState('')
 
   const { userId } = useContext(ClientContext)
@@ -30,22 +28,30 @@ const CreateList = (props) => {
     FetchFunction('POST', `${props.listRoute}/${userId}/${listName}`, null)
       .then(() => {
         setListName('')
-        setOpenDialog(false)
+        props.dialogOpen = true
       })
       .catch(error => {
         alert(error)
       })
   }
 
+  const closeDialog = () => {
+    props.dialogOpen = false
+  }
+
+  const openDialog = () => {
+    props.dialogOpen = true
+  }
+
   return (
     <>
       <Grid item>
-        <Button onClick={() => setOpenDialog(true)} variant={'contained'}>
+        <Button onClick={openDialog} variant={'contained'}>
           {props.buttonText}
         </Button>
       </Grid>
 
-      <Dialog open={openDialog}>
+      <Dialog open={props.dialogOpen}>
         <DialogTitle>
           {props.dialogTitle}
         </DialogTitle>
@@ -67,7 +73,7 @@ const CreateList = (props) => {
           />
 
           <DialogActions>
-            <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+            <Button onClick={closeDialog}>Cancel</Button>
             <Button disabled={disableSubmit} onClick={submitForm}>Add</Button>
           </DialogActions>
         </DialogContent>
@@ -84,7 +90,8 @@ CreateList.propTypes = {
   dialogContent: PropTypes.string,
   textFieldLabel: PropTypes.string,
   listID: PropTypes.string,
-  listRoute: PropTypes.string
+  listRoute: PropTypes.string,
+  dialogOpen: PropTypes.bool
 }
 
 export default CreateList

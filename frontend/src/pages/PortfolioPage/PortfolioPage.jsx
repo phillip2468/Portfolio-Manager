@@ -6,7 +6,6 @@ import Button from '@mui/material/Button'
 import AddStockDialog from '../../components/AddStockDialog'
 import TableOfStocks from '../../components/TableOfStocks'
 import Columns from './components/Columns'
-import AddPortfolio from './components/AddPortfolio'
 import CurrentPortfolios from './components/CurrentPortfolios'
 import Title from '../../components/Title/Title'
 import CreateList from '../../components/CreateList/CreateList'
@@ -14,13 +13,13 @@ import CreateList from '../../components/CreateList/CreateList'
 const PortfolioPage = () => {
   const { userId } = useContext(ClientContext)
 
+  const [openDialog, setOpenDialog] = useState(false)
+
   const [listOfPortfolios, setListOfPortfolios] = useState([])
 
   const [selectedPortfolio, setSelectedPortfolio] = useState('')
 
   const [listOfStocks, setListOfStocks] = useState([])
-
-  const [open, setOpen] = useState(false)
 
   const [selectedRows, setSelectedRows] = useState([])
 
@@ -102,16 +101,6 @@ const PortfolioPage = () => {
           />
         </Grid>
       </Grid>
-
-      <Grid item>
-        <Grid container justifyContent={'center'}>
-          <Button onClick={() => setOpen(true)} variant={'contained'}>
-            Create a new portfolio
-          </Button>
-        </Grid>
-      </Grid>
-
-      <AddPortfolio onClick={() => setOpen(false)} onClose={() => setOpen(false)} open={open}/>
 
       <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
                       route={'portfolio'} selectedItem={selectedPortfolio} userId={userId}/>
