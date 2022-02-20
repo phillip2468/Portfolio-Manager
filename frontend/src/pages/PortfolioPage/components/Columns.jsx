@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/await-async-query */
 import { useMemo } from 'react'
 import { FetchFunction } from '../../../components/FetchFunction'
 import { Link } from 'react-router-dom'

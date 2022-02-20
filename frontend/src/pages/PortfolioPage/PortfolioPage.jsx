@@ -9,6 +9,7 @@ import Columns from './components/Columns'
 import AddPortfolio from './components/AddPortfolio'
 import CurrentPortfolios from './components/CurrentPortfolios'
 import Title from '../../components/Title/Title'
+import CreateList from '../../components/CreateList/CreateList'
 
 const PortfolioPage = () => {
   const { userId } = useContext(ClientContext)
@@ -87,6 +88,19 @@ const PortfolioPage = () => {
     <>
       <Grid item>
         <Title title={'Portfolio page'}/>
+      </Grid>
+
+      <Grid item>
+        <Grid container justifyContent={'center'}>
+          <CreateList
+            buttonText={'Create a new portfolio'}
+            dialogContent={'Enter a title for your portfolio here'}
+            dialogTitle={'Add a new portfolio'}
+            listID={'portfolio_name'}
+            listRoute={'portfolio'}
+            textFieldLabel={'Portfolio name'}
+          />
+        </Grid>
       </Grid>
 
       <Grid item>
