@@ -18,7 +18,7 @@ const CurrentList = (props) => {
         value={props.currentValue}
         variant={'standard'}
       >
-        <MenuItem disabled value="">
+        <MenuItem disabled value={''}>
           <em>Select...</em>
         </MenuItem>
 

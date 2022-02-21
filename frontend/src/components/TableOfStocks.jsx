@@ -19,7 +19,10 @@ const TableOfStocks = (props) => {
     theme={'dark'}
     title={
     <ListOfTitle
+      changedValue={props.changedTitle}
       currentValue={`${props.selectedItem}`}
+      route={'portfolio'}
+      setChangedValue={props.setChangedTitle}
     />}
   />
 }
@@ -32,7 +35,8 @@ TableOfStocks.propTypes = {
   data: PropTypes.arrayOf(PropTypes.any),
   onSelectedRowsChange: PropTypes.func,
   selectedItem: PropTypes.string,
-  setSelectedItem: PropTypes.func
+  setChangedTitle: PropTypes.func,
+  changedTitle: PropTypes.bool
 }
 
 export default TableOfStocks

@@ -27,6 +27,8 @@ const PortfolioPage = () => {
 
   const [stockDialogOpen, setStockDialogOpen] = useState(false)
 
+  const [changedTitle, setChangedTitle] = useState(false)
+
   const getStocksFromPortfolio = (portfolioName) => {
     FetchFunction('GET', `portfolio/${userId}/${portfolioName}`)
       .then(res => setListOfStocks(res))
@@ -72,16 +74,19 @@ const PortfolioPage = () => {
   useEffect(() => {
     if (userId !== null) {
       FetchFunction('GET', `portfolio/${userId}`, null)
-        .then(res => setListOfPortfolios(res))
+        .then(res => {
+          setListOfPortfolios(res)
+          setSelectedPortfolio('')
+        })
         .catch(res => console.log(res))
     }
-  }, [userId, openListDialog])
+  }, [userId, openListDialog, changedTitle])
 
   useEffect(() => {
     if (selectedPortfolio !== '') {
       getStocksFromPortfolio(selectedPortfolio)
     }
-  }, [selectedPortfolio, stockDialogOpen])
+  }, [selectedPortfolio, stockDialogOpen, changedTitle])
 
   // noinspection JSValidateTypes
   return (
@@ -119,12 +124,14 @@ const PortfolioPage = () => {
       <Grid item>
         <TableOfStocks
           actions={renderAddStock()}
+          changedTitle={changedTitle}
           clearSelectedRows={toggleCleared}
           columns={columns}
           contextActions={contextActions}
           data={listOfStocks}
           onSelectedRowsChange={handleRowsSelected}
           selectedItem={selectedPortfolio}
+          setChangedTitle={setChangedTitle}
         />
       </Grid>
     </>

@@ -9,8 +9,6 @@ const ListOfTitle = props => {
 
   const [newTitle, setNewTitle] = useState('')
 
-  console.log(props.currentValue)
-
   useEffect(() => {
     setNewTitle(props.currentValue)
   }, [props.currentValue])
@@ -20,8 +18,11 @@ const ListOfTitle = props => {
       const body = {
         portfolio_name: newTitle
       }
-      FetchFunction('PATCH', `portfolio/${userId}/${props.currentValue}`, body)
-        .then(res => console.log(res))
+      FetchFunction('PATCH', `${props.route}/${userId}/${props.currentValue}`, body)
+        .then(res => {
+          console.log(res)
+          props.setChangedValue(prevState => !prevState)
+        })
         .catch(error => console.log(error))
     }
   }
@@ -40,7 +41,9 @@ const ListOfTitle = props => {
 
 ListOfTitle.propTypes = {
   currentValue: PropTypes.string,
-  route: PropTypes.string
+  setChangedValue: PropTypes.func,
+  route: PropTypes.string,
+  changedValue: PropTypes.bool
 }
 
 export default ListOfTitle
