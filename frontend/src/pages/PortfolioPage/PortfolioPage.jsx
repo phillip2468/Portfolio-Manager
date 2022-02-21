@@ -74,7 +74,7 @@ const PortfolioPage = () => {
         .then(res => setListOfPortfolios(res))
         .catch(res => console.log(res))
     }
-  }, [userId])
+  }, [userId, openDialog])
 
   useEffect(() => {
     if (selectedPortfolio !== '') {
@@ -94,9 +94,10 @@ const PortfolioPage = () => {
           <CreateList
             buttonText={'Create a new portfolio'}
             dialogContent={'Enter a title for your portfolio here'}
+            dialogOpen={openDialog}
             dialogTitle={'Add a new portfolio'}
-            listID={'portfolio_name'}
             listRoute={'portfolio'}
+            setDialogOpen={setOpenDialog}
             textFieldLabel={'Portfolio name'}
           />
         </Grid>

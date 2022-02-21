@@ -13,10 +13,10 @@ const CreateList = (props) => {
   const [disableSubmit, setDisabledSubmit] = useState(true)
 
   const controlDisabled = () => {
-    if (listName !== '') {
-      setDisabledSubmit(false)
-    } else {
+    if (listName === '') {
       setDisabledSubmit(true)
+    } else {
+      setDisabledSubmit(false)
     }
   }
 
@@ -28,25 +28,17 @@ const CreateList = (props) => {
     FetchFunction('POST', `${props.listRoute}/${userId}/${listName}`, null)
       .then(() => {
         setListName('')
-        props.dialogOpen = true
+        props.setDialogOpen(false)
       })
       .catch(error => {
         alert(error)
       })
   }
 
-  const closeDialog = () => {
-    props.dialogOpen = false
-  }
-
-  const openDialog = () => {
-    props.dialogOpen = true
-  }
-
   return (
     <>
       <Grid item>
-        <Button onClick={openDialog} variant={'contained'}>
+        <Button onClick={() => props.setDialogOpen(true)} variant={'contained'}>
           {props.buttonText}
         </Button>
       </Grid>
@@ -63,7 +55,6 @@ const CreateList = (props) => {
 
           <TextField autoFocus
                      fullWidth
-                     id={'portfolio_name'}
                      label={props.textFieldLabel}
                      margin={'dense'}
                      onChange={(e) => setListName(e.target.value)}
@@ -73,7 +64,7 @@ const CreateList = (props) => {
           />
 
           <DialogActions>
-            <Button onClick={closeDialog}>Cancel</Button>
+            <Button onClick={() => props.setDialogOpen(false)}>Cancel</Button>
             <Button disabled={disableSubmit} onClick={submitForm}>Add</Button>
           </DialogActions>
         </DialogContent>
@@ -89,9 +80,9 @@ CreateList.propTypes = {
   dialogTitle: PropTypes.string,
   dialogContent: PropTypes.string,
   textFieldLabel: PropTypes.string,
-  listID: PropTypes.string,
   listRoute: PropTypes.string,
-  dialogOpen: PropTypes.bool
+  dialogOpen: PropTypes.bool,
+  setDialogOpen: PropTypes.func
 }
 
 export default CreateList
