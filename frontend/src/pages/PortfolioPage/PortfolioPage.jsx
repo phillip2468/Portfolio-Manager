@@ -9,6 +9,7 @@ import Columns from './components/Columns'
 import Title from '../../components/Title/Title'
 import CreateList from '../../components/CreateList/CreateList'
 import CurrentList from '../../components/CurrentList/CurrentList'
+import DeleteList from '../../components/DeleteList/DeleteList'
 
 const PortfolioPage = () => {
   const { userId } = useContext(ClientContext)
@@ -59,14 +60,26 @@ const PortfolioPage = () => {
     return (
       <Button onClick={handleDelete} style={{ background: 'darkred' }} variant={'contained'}>Delete</Button>
     )
-  }, [listOfStocks, selectedRows, toggleCleared])
+  }, [listOfStocks, selectedRows, toggleCleared, selectedPortfolio])
 
   const renderAddStock = () => {
     if (selectedPortfolio) {
       return (
-        <Button
-          onClick={() => setStockDialogOpen(true)}
-          variant={'outlined'}>Add a new stock</Button>
+        <>
+          <Button
+            onClick={() => setStockDialogOpen(true)}
+            variant={'outlined'}
+          >
+            Add a new stock
+          </Button>
+
+          <DeleteList
+            route={'portfolio'}
+            selectedItem={selectedPortfolio}
+            setSelectedItem={setSelectedPortfolio}
+            text={'Delete portfolio'}
+          />
+        </>
       )
     }
   }
@@ -76,11 +89,10 @@ const PortfolioPage = () => {
       FetchFunction('GET', `portfolio/${userId}`, null)
         .then(res => {
           setListOfPortfolios(res)
-          setSelectedPortfolio('')
         })
         .catch(res => console.log(res))
     }
-  }, [userId, openListDialog, changedTitle])
+  }, [userId, openListDialog, changedTitle, selectedPortfolio])
 
   useEffect(() => {
     if (selectedPortfolio !== '') {
@@ -109,8 +121,13 @@ const PortfolioPage = () => {
         </Grid>
       </Grid>
 
-      <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
-                      route={'portfolio'} selectedItem={selectedPortfolio} userId={userId}/>
+      <AddStockDialog
+        onClose={() => setStockDialogOpen(false)}
+        open={stockDialogOpen}
+        route={'portfolio'}
+        selectedItem={selectedPortfolio}
+        userId={userId}
+      />
 
       <Grid item>
         <CurrentList
