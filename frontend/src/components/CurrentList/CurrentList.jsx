@@ -34,7 +34,6 @@ const CurrentList = (props) => {
             )
           })
         }
-        {console.log(props.listOfValues)}
 
       </Select>
     </Grid>

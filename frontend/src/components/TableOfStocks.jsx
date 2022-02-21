@@ -1,5 +1,6 @@
 import DataTable from 'react-data-table-component'
 import * as PropTypes from 'prop-types'
+import ListOfTitle from './ListOfTitle/ListOfTitle'
 
 const TableOfStocks = (props) => {
   return <DataTable
@@ -16,7 +17,10 @@ const TableOfStocks = (props) => {
     pointerOnHover={true}
     selectableRows={true}
     theme={'dark'}
-    title={`${props.selectedItem}'s`}
+    title={
+    <ListOfTitle
+      currentValue={`${props.selectedItem}`}
+    />}
   />
 }
 
@@ -27,7 +31,8 @@ TableOfStocks.propTypes = {
   contextActions: PropTypes.any,
   data: PropTypes.arrayOf(PropTypes.any),
   onSelectedRowsChange: PropTypes.func,
-  selectedItem: PropTypes.string
+  selectedItem: PropTypes.string,
+  setSelectedItem: PropTypes.func
 }
 
 export default TableOfStocks

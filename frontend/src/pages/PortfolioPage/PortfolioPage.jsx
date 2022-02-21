@@ -32,6 +32,7 @@ const PortfolioPage = () => {
       .then(res => setListOfStocks(res))
       .catch(error => console.log(error))
   }
+
   const columns = Columns(listOfStocks, setListOfStocks, userId)
 
   const handleRowsSelected = useCallback(state => {
@@ -116,9 +117,15 @@ const PortfolioPage = () => {
       </Grid>
 
       <Grid item>
-        <TableOfStocks actions={renderAddStock()} clearSelectedRows={toggleCleared} columns={columns}
-                       contextActions={contextActions} data={listOfStocks} onSelectedRowsChange={handleRowsSelected}
-                       selectedItem={selectedPortfolio}/>
+        <TableOfStocks
+          actions={renderAddStock()}
+          clearSelectedRows={toggleCleared}
+          columns={columns}
+          contextActions={contextActions}
+          data={listOfStocks}
+          onSelectedRowsChange={handleRowsSelected}
+          selectedItem={selectedPortfolio}
+        />
       </Grid>
     </>
   )
