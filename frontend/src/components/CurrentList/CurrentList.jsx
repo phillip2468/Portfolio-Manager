@@ -8,6 +8,12 @@ const CurrentList = (props) => {
       <Select
         displayEmpty={true}
         onChange={(e) => props.setCurrentValue(e.target.value)}
+        renderValue={(selected) => {
+          if (selected.length === 0) {
+            return <em>Select a portfolio</em>
+          }
+          return selected
+        }}
         sx={{ width: '210px' }}
         value={props.currentValue}
         variant={'standard'}
@@ -28,6 +34,7 @@ const CurrentList = (props) => {
             )
           })
         }
+        {console.log(props.listOfValues)}
 
       </Select>
     </Grid>
@@ -37,7 +44,9 @@ const CurrentList = (props) => {
 CurrentList.propTypes = {
   currentValue: PropTypes.string,
   setCurrentValue: PropTypes.func,
-  listOfValues: PropTypes.arrayOf(PropTypes.string),
+  listOfValues: PropTypes.arrayOf(PropTypes.shape({
+    iterateValue: PropTypes.string
+  })),
   iterateValue: PropTypes.string
 }
 

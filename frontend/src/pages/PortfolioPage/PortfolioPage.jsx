@@ -1,4 +1,4 @@
-import { Grid, MenuItem } from '@mui/material'
+import { Grid } from '@mui/material'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ClientContext } from '../../store/StoreCredentials'
 import { FetchFunction } from '../../components/FetchFunction'
@@ -6,7 +6,6 @@ import Button from '@mui/material/Button'
 import AddStockDialog from '../../components/AddStockDialog'
 import TableOfStocks from '../../components/TableOfStocks'
 import Columns from './components/Columns'
-import CurrentPortfolios from './components/CurrentPortfolios'
 import Title from '../../components/Title/Title'
 import CreateList from '../../components/CreateList/CreateList'
 import CurrentList from '../../components/CurrentList/CurrentList'
@@ -114,23 +113,6 @@ const PortfolioPage = () => {
           listOfValues={listOfPortfolios}
           setCurrentValue={setSelectedPortfolio}
         />
-      </Grid>
-
-      <Grid item>
-        <CurrentPortfolios callbackfn={element =>
-          <MenuItem
-            key={element.portfolio_name}
-            value={element.portfolio_name}
-          >
-            {element.portfolio_name}
-          </MenuItem>} listOfPortfolios={listOfPortfolios} onChange={(e) => {
-            setSelectedPortfolio(e.target.value)
-          }} renderValue={(selected) => {
-            if (selected.length === 0) {
-              return <em>Select a portfolio</em>
-            }
-            return selected
-          }} value={selectedPortfolio}/>
       </Grid>
 
       <Grid item>
