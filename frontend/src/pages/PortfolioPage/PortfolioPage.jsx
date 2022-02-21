@@ -9,11 +9,12 @@ import Columns from './components/Columns'
 import CurrentPortfolios from './components/CurrentPortfolios'
 import Title from '../../components/Title/Title'
 import CreateList from '../../components/CreateList/CreateList'
+import CurrentList from '../../components/CurrentList/CurrentList'
 
 const PortfolioPage = () => {
   const { userId } = useContext(ClientContext)
 
-  const [openDialog, setOpenDialog] = useState(false)
+  const [openListDialog, setOpenListDialog] = useState(false)
 
   const [listOfPortfolios, setListOfPortfolios] = useState([])
 
@@ -74,7 +75,7 @@ const PortfolioPage = () => {
         .then(res => setListOfPortfolios(res))
         .catch(res => console.log(res))
     }
-  }, [userId, openDialog])
+  }, [userId, openListDialog])
 
   useEffect(() => {
     if (selectedPortfolio !== '') {
@@ -94,10 +95,10 @@ const PortfolioPage = () => {
           <CreateList
             buttonText={'Create a new portfolio'}
             dialogContent={'Enter a title for your portfolio here'}
-            dialogOpen={openDialog}
+            dialogOpen={openListDialog}
             dialogTitle={'Add a new portfolio'}
             listRoute={'portfolio'}
-            setDialogOpen={setOpenDialog}
+            setDialogOpen={setOpenListDialog}
             textFieldLabel={'Portfolio name'}
           />
         </Grid>
@@ -105,6 +106,15 @@ const PortfolioPage = () => {
 
       <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
                       route={'portfolio'} selectedItem={selectedPortfolio} userId={userId}/>
+
+      <Grid item>
+        <CurrentList
+          currentValue={selectedPortfolio}
+          iterateValue={'portfolio_name'}
+          listOfValues={listOfPortfolios}
+          setCurrentValue={setSelectedPortfolio}
+        />
+      </Grid>
 
       <Grid item>
         <CurrentPortfolios callbackfn={element =>
