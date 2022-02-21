@@ -8,7 +8,7 @@ const DeleteList = props => {
   const { userId } = useContext(ClientContext)
 
   const deleteList = () => {
-    FetchFunction('DELETE', `portfolio/${userId}/${props.selectedItem}`)
+    FetchFunction('DELETE', `${props.route}/${userId}/${props.selectedItem}`)
       .then(() => props.setSelectedItem(''))
       .catch(error => console.log(error))
   }

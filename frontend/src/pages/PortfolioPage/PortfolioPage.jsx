@@ -60,7 +60,7 @@ const PortfolioPage = () => {
     return (
       <Button onClick={handleDelete} style={{ background: 'darkred' }} variant={'contained'}>Delete</Button>
     )
-  }, [listOfStocks, selectedRows, toggleCleared, selectedPortfolio])
+  }, [listOfStocks, selectedRows, toggleCleared])
 
   const renderAddStock = () => {
     if (selectedPortfolio) {
@@ -97,6 +97,8 @@ const PortfolioPage = () => {
   useEffect(() => {
     if (selectedPortfolio !== '') {
       getStocksFromPortfolio(selectedPortfolio)
+    } else {
+      setListOfStocks([])
     }
   }, [selectedPortfolio, stockDialogOpen, changedTitle])
 
