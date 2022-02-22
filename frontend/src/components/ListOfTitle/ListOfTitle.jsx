@@ -20,24 +20,22 @@ const ListOfTitle = props => {
   }, [props.currentValue])
 
   const changeTitle = () => {
-    if (newTitle !== '') {
-      const body = {
-        portfolio_name: newTitle
-      }
-      FetchFunction('PATCH', `${props.route}/${userId}/${props.currentValue}`, body)
-        .then(res => {
-          console.log(res)
-          props.setChangedValue(prevState => !prevState)
-        })
-        .catch((error) => {
-          console.log(error)
-          setError(true)
-          setErrorMsg(error.msg)
-        })
+    const body = {
+      portfolio_name: newTitle
     }
+    FetchFunction('PATCH', `${props.route}/${userId}/${props.currentValue}`, body)
+      .then(res => {
+        console.log(res)
+        setError(false)
+        setErrorMsg('')
+        props.setChangedValue(prevState => !prevState)
+      })
+      .catch((error) => {
+        console.log(error)
+        setError(true)
+        setErrorMsg(error.msg)
+      })
   }
-
-  console.log(errorMsg)
 
   return (
     <>
