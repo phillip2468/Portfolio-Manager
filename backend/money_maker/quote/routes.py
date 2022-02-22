@@ -32,7 +32,7 @@ def get_stock_info_from_database(stock_symbol: str) -> flask.Response:
     """
     stock_information = db.session.query(tP).filter(tP.symbol == stock_symbol).one_or_none()
     if stock_information is None:
-        return make_response(jsonify({"error": "Invalid stock symbol"}), 400)
+        return make_response(jsonify({"msg": "Invalid stock symbol"}), 400)
 
     return ticker_schema.jsonify(stock_information)
 
@@ -58,7 +58,7 @@ def get_historical_data(stock_symbol: str, period: str, interval: str) -> flask.
     historical_price = yahooquery.Ticker(stock_symbol).history(period=period, interval=interval, adj_timezone=False)
     price_now = yahooquery.Ticker(stock_symbol).price[stock_symbol]
     if not isinstance(historical_price, pd.DataFrame):
-        return make_response(jsonify({"err": error_message}), 400)
+        return make_response(jsonify({"msg": error_message}), 400)
     custom_dict = {
         "priceList": [{"time": key[1], "open": value} for key, value in historical_price['open'].to_dict().items()],
         "price_now": price_now["regularMarketPrice"],

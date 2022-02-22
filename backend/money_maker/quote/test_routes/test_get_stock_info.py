@@ -46,4 +46,4 @@ def test_invalid_stock_info_from_database(flask_application: FlaskClient) -> Non
     """
     response = flask_application.get(f"""/quote/{invalid_stock_symbol}""")
     assert response.status_code != HTTP_SUCCESS_CODE
-    assert response.get_json()["error"] == "Invalid stock symbol"
+    assert response.get_json()["msg"] == "Invalid stock symbol"
