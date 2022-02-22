@@ -2,6 +2,17 @@ import DataTable from 'react-data-table-component'
 import * as PropTypes from 'prop-types'
 import ListOfTitle from './ListOfTitle/ListOfTitle'
 
+const headerComponent = (props) => {
+  if (props.selectedItem) {
+    return <ListOfTitle
+      changedValue={props.changedTitle}
+      currentValue={`${props.selectedItem}`}
+      route={'portfolio'}
+      setChangedValue={props.setChangedTitle}
+    />
+  }
+}
+
 const TableOfStocks = (props) => {
   return <DataTable
     actions={props.actions}
@@ -17,13 +28,7 @@ const TableOfStocks = (props) => {
     pointerOnHover={true}
     selectableRows={true}
     theme={'dark'}
-    title={
-    <ListOfTitle
-      changedValue={props.changedTitle}
-      currentValue={`${props.selectedItem}`}
-      route={'portfolio'}
-      setChangedValue={props.setChangedTitle}
-    />}
+    title={headerComponent(props)}
   />
 }
 
