@@ -1,6 +1,3 @@
-net stop rabbitmq
-net start rabbitmq
-
 heroku local web -f Procfile.windows
 worker: celery -A backend.money_maker.worker:celery worker -l info -P gevent
 
