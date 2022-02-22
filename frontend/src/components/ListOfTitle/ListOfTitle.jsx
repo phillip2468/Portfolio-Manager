@@ -4,10 +4,16 @@ import { TextField } from '@mui/material'
 import { FetchFunction } from '../FetchFunction'
 import { ClientContext } from '../../store/StoreCredentials'
 
+const placeholderText = 'Enter a name for your portfolio here!'
+
 const ListOfTitle = props => {
   const { userId } = useContext(ClientContext)
 
   const [newTitle, setNewTitle] = useState('')
+
+  const [error, setError] = useState(false)
+
+  const [errorMsg, setErrorMsg] = useState('')
 
   useEffect(() => {
     setNewTitle(props.currentValue)
@@ -23,15 +29,24 @@ const ListOfTitle = props => {
           console.log(res)
           props.setChangedValue(prevState => !prevState)
         })
-        .catch(error => console.log(error))
+        .catch((error) => {
+          console.log(error)
+          setError(true)
+          setErrorMsg(error.msg)
+        })
     }
   }
+
+  console.log(errorMsg)
 
   return (
     <>
       <TextField
+        error={error}
+        helperText={errorMsg}
         onBlur={() => changeTitle()}
         onChange={(e) => setNewTitle(e.target.value)}
+        placeholder={placeholderText}
         value={newTitle}
         variant={'standard'}
       />

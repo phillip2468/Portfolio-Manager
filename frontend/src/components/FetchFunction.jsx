@@ -17,7 +17,7 @@ export const FetchFunction = (method, path, body) => {
       .then(response => {
         if (response.status !== 200) {
           response.json().then((error) => {
-            reject(error.error)
+            reject(error)
           })
         } else {
           response.json().then((data) => {

@@ -1,6 +1,9 @@
 import flask
 from flask import Blueprint, jsonify, make_response, request
 from flask_jwt_extended import jwt_required
+from sqlalchemy.exc import IntegrityError
+from werkzeug.wrappers import Response
+
 from money_maker.extensions import db
 from money_maker.helpers import verify_user
 from money_maker.models.portfolio import Portfolio
@@ -8,8 +11,6 @@ from money_maker.models.portfolio import Portfolio as pF
 from money_maker.models.portfolio import portfolio_schema
 from money_maker.models.ticker_prices import TickerPrice
 from money_maker.models.ticker_prices import TickerPrice as tP
-from sqlalchemy.exc import IntegrityError
-from werkzeug.wrappers import Response
 
 portfolio_bp = Blueprint("portfolio_bp", __name__, url_prefix="/portfolio")
 
@@ -160,7 +161,7 @@ def add_stock_to_portfolio(user_id: int, portfolio_name: str, stock_id: int) -> 
         db.session.add(stock)
         db.session.commit()
     except IntegrityError:
-        return make_response(jsonify(err="Stock already exists!"), 400)
+        return make_response(jsonify(msg="Stock already exists!"), 400)
 
     return make_response(jsonify(msg="Successfully added stock"), 200)
 
@@ -221,4 +222,4 @@ def update_stock_in_portfolio(user_id: int, portfolio_name: str, stock_id: int) 
 
 @portfolio_bp.errorhandler(IntegrityError)
 def exception_handler(e):
-    return jsonify({'message': e}), 400
+    return jsonify({'msg': e}), 400
