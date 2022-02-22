@@ -1,5 +1,6 @@
 import pytest
 from flask.testing import FlaskClient
+
 from money_maker.app import create_test_app
 from money_maker.extensions import db, faker_data
 from money_maker.models.portfolio import Portfolio
@@ -29,7 +30,7 @@ LOGIN_FAILURE_MSG = "Missing credentials or wrong login"
 LOGOUT_SUCCESS_MSG = "logout successful"
 
 REGISTER_SUCESS_MSG = "register successful"
-REGISTER_FAILURE_MSG = "error with user details"
+REGISTER_FAILURE_MSG = "Error with user details"
 
 CREATE_PORTFOLIO_MSG = "Successfully created a new portfolio"
 DELETE_PORTFOLIO_MSG = "Successfully deleted the portfolio"
