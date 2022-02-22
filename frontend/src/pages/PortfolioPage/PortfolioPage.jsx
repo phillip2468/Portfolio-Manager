@@ -1,16 +1,20 @@
-import { Grid, MenuItem, Typography } from '@mui/material'
+import { Grid } from '@mui/material'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ClientContext } from '../../store/StoreCredentials'
 import { FetchFunction } from '../../components/FetchFunction'
 import Button from '@mui/material/Button'
-import AddStockDialog from '../../components/AddStockDialog'
-import TableOfStocks from '../../components/TableOfStocks'
+import AddStockDialog from '../../components/AddStockDialog/AddStockDialog'
+import TableOfStocks from '../../components/TableOfStocks/TableOfStocks'
 import Columns from './components/Columns'
-import AddPortfolio from './components/AddPortfolio'
-import CurrentPortfolios from './components/CurrentPortfolios'
+import Title from '../../components/Title/Title'
+import CreateList from '../../components/CreateList/CreateList'
+import CurrentList from '../../components/CurrentList/CurrentList'
+import DeleteList from '../../components/DeleteList/DeleteList'
 
 const PortfolioPage = () => {
   const { userId } = useContext(ClientContext)
+
+  const [openListDialog, setOpenListDialog] = useState(false)
 
   const [listOfPortfolios, setListOfPortfolios] = useState([])
 
@@ -18,19 +22,20 @@ const PortfolioPage = () => {
 
   const [listOfStocks, setListOfStocks] = useState([])
 
-  const [open, setOpen] = useState(false)
-
   const [selectedRows, setSelectedRows] = useState([])
 
   const [toggleCleared, setToggleCleared] = useState(false)
 
   const [stockDialogOpen, setStockDialogOpen] = useState(false)
 
+  const [changedTitle, setChangedTitle] = useState(false)
+
   const getStocksFromPortfolio = (portfolioName) => {
     FetchFunction('GET', `portfolio/${userId}/${portfolioName}`)
       .then(res => setListOfStocks(res))
       .catch(error => console.log(error))
   }
+
   const columns = Columns(listOfStocks, setListOfStocks, userId)
 
   const handleRowsSelected = useCallback(state => {
@@ -60,9 +65,21 @@ const PortfolioPage = () => {
   const renderAddStock = () => {
     if (selectedPortfolio) {
       return (
-        <Button
-          onClick={() => setStockDialogOpen(true)}
-          variant={'outlined'}>Add a new stock</Button>
+        <>
+          <Button
+            onClick={() => setStockDialogOpen(true)}
+            variant={'outlined'}
+          >
+            Add a new stock
+          </Button>
+
+          <DeleteList
+            route={'portfolio'}
+            selectedItem={selectedPortfolio}
+            setSelectedItem={setSelectedPortfolio}
+            text={'Delete portfolio'}
+          />
+        </>
       )
     }
   }
@@ -70,59 +87,71 @@ const PortfolioPage = () => {
   useEffect(() => {
     if (userId !== null) {
       FetchFunction('GET', `portfolio/${userId}`, null)
-        .then(res => setListOfPortfolios(res))
+        .then(res => {
+          setListOfPortfolios(res)
+        })
         .catch(res => console.log(res))
     }
-  }, [userId])
+  }, [userId, openListDialog, changedTitle, selectedPortfolio])
 
   useEffect(() => {
     if (selectedPortfolio !== '') {
       getStocksFromPortfolio(selectedPortfolio)
+    } else {
+      setListOfStocks([])
     }
-  }, [selectedPortfolio, stockDialogOpen])
+  }, [selectedPortfolio, stockDialogOpen, changedTitle])
 
   // noinspection JSValidateTypes
   return (
     <>
       <Grid item>
-        <Typography align={'center'} variant={'h5'}>
-          Portfolio page
-        </Typography>
+        <Title title={'Portfolio page'}/>
       </Grid>
 
       <Grid item>
         <Grid container justifyContent={'center'}>
-          <Button onClick={() => setOpen(true)} variant={'contained'}>
-            Create a new watchlist
-          </Button>
+          <CreateList
+            buttonText={'Create a new portfolio'}
+            dialogContent={'Enter a title for your portfolio here'}
+            dialogOpen={openListDialog}
+            dialogTitle={'Add a new portfolio'}
+            listRoute={'portfolio'}
+            setDialogOpen={setOpenListDialog}
+            textFieldLabel={'Portfolio name'}
+          />
         </Grid>
       </Grid>
 
-      <AddPortfolio onClick={() => setOpen(true)} onClose={() => setOpen(false)} open={open}/>
+      <AddStockDialog
+        onClose={() => setStockDialogOpen(false)}
+        open={stockDialogOpen}
+        route={'portfolio'}
+        selectedItem={selectedPortfolio}
+        userId={userId}
+      />
 
-      <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
-                      route={'portfolio'} selectedItem={selectedPortfolio} userId={userId}/>
       <Grid item>
-        <CurrentPortfolios callbackfn={element =>
-          <MenuItem
-            key={element.portfolio_name}
-            value={element.portfolio_name}
-          >
-            {element.portfolio_name}
-          </MenuItem>} listOfPortfolios={listOfPortfolios} onChange={(e) => {
-            setSelectedPortfolio(e.target.value)
-          }} renderValue={(selected) => {
-            if (selected.length === 0) {
-              return <em>Select a portfolio</em>
-            }
-            return selected
-          }} value={selectedPortfolio}/>
+        <CurrentList
+          currentValue={selectedPortfolio}
+          iterateValue={'portfolio_name'}
+          listOfValues={listOfPortfolios}
+          setCurrentValue={setSelectedPortfolio}
+        />
       </Grid>
 
       <Grid item>
-        <TableOfStocks actions={renderAddStock()} clearSelectedRows={toggleCleared} columns={columns}
-                       contextActions={contextActions} data={listOfStocks} onSelectedRowsChange={handleRowsSelected}
-                       selectedItem={selectedPortfolio}/>
+        <TableOfStocks
+          actions={renderAddStock()}
+          changedTitle={changedTitle}
+          clearSelectedRows={toggleCleared}
+          columns={columns}
+          contextActions={contextActions}
+          data={listOfStocks}
+          onSelectedRowsChange={handleRowsSelected}
+          selectedItem={selectedPortfolio}
+          setChangedTitle={setChangedTitle}
+        />
       </Grid>
     </>
   )

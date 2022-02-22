@@ -5,8 +5,9 @@ export const FetchFunction = (method, path, body) => {
       'Content-Type': 'application/json',
       'X-CSRF-TOKEN': getCookie('csrf_access_token')
     },
-    credentials: 'include'
+    credentials: 'same-origin'
   }
+
   if (body !== null) {
     requestOptions.body = JSON.stringify(body)
   }
@@ -16,7 +17,7 @@ export const FetchFunction = (method, path, body) => {
       .then(response => {
         if (response.status !== 200) {
           response.json().then((error) => {
-            reject(error.error)
+            reject(error)
           })
         } else {
           response.json().then((data) => {
@@ -33,5 +34,5 @@ export const FetchFunction = (method, path, body) => {
 function getCookie (name) {
   const value = `; ${document.cookie}`
   const parts = value.split(`; ${name}=`)
-  if (parts.length === 2) return parts.pop().split(';')
+  if (parts.length === 2) return parts.pop().split(';').shift()
 }

@@ -47,7 +47,7 @@ def login() -> flask.Response:
     user = db.session.query(User).filter(User.email == email).one_or_none()
 
     if not email or not password or not user:
-        return make_response(jsonify(error="Missing credentials or wrong login"), 400)
+        return make_response(jsonify(msg="Missing credentials or wrong login"), 400)
 
     if bcrypt.check_password_hash(user.hashed_password, password):
         response = jsonify({"msg": "login successful"})
@@ -55,7 +55,7 @@ def login() -> flask.Response:
         set_access_cookies(response, access_token)
         return make_response(response, 200)
     else:
-        return make_response(jsonify(error="Invalid login details"), 400)
+        return make_response(jsonify(msg="Invalid login details"), 400)
 
 
 @auth_bp.route("/logout", methods=["POST"])
@@ -93,7 +93,7 @@ def register() -> flask.Response:
         db.session.commit()
     except ValueError:
         db.session.rollback()
-        return make_response(jsonify({"error": "error with user details"}), 400)
+        return make_response(jsonify({"msg": "Error with user details"}), 400)
 
     response = jsonify({"msg": "register successful"})
     access_token = create_access_token(identity=new_user.user_id)
@@ -114,6 +114,6 @@ def which_user() -> flask.Response:
     """
     user = db.session.query(User.user_id).filter(User.user_id == get_jwt()["sub"]).one_or_none()
     if user is None:
-        return make_response(jsonify({"error": "error finding user"}), 400)
+        return make_response(jsonify({"msg": "Error finding user"}), 400)
     return users_schema.jsonify(user)
 
