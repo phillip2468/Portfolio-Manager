@@ -1,10 +1,11 @@
 import random
 
 import pytest
+from flask.testing import FlaskClient
+
 from conftest import (HTTP_SUCCESS_CODE, MAX_LENGTH_EMAIL, MIN_LENGTH_EMAIL,
                       NUMBER_OF_USERS, REGISTER_FAILURE_MSG,
                       REGISTER_SUCESS_MSG, REPEAT_TESTS)
-from flask.testing import FlaskClient
 from money_maker.extensions import db, faker_data
 from money_maker.models.user import User
 
@@ -86,7 +87,7 @@ def test_invalid_register_email(flask_application: FlaskClient) -> None:
     }
     response = flask_application.post("/auth/register", json=user)
     assert response.status_code != HTTP_SUCCESS_CODE
-    assert response.get_json()["error"] == REGISTER_FAILURE_MSG
+    assert response.get_json()["msg"] == REGISTER_FAILURE_MSG
     assert len(db.session.query(User).all()) == 0
 
 
@@ -105,6 +106,6 @@ def test_invalid_register_password(flask_application: FlaskClient) -> None:
     }
     response = flask_application.post("/auth/register", json=user)
     assert response.status_code != HTTP_SUCCESS_CODE
-    assert response.get_json()["error"] == REGISTER_FAILURE_MSG
+    assert response.get_json()["msg"] == REGISTER_FAILURE_MSG
     assert len(db.session.query(User).all()) == 0
 

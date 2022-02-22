@@ -1,7 +1,8 @@
 import pytest
+from flask.testing import FlaskClient
+
 from conftest import (HTTP_SUCCESS_CODE, LOGIN_FAILURE_MSG, LOGIN_SUCCESS_MSG,
                       NUMBER_OF_USERS, PASSWORD_LENGTH, REPEAT_TESTS)
-from flask.testing import FlaskClient
 from money_maker.extensions import faker_data
 
 
@@ -55,7 +56,7 @@ def test_invalid_email_login(flask_application: FlaskClient, user_account: dict)
     }
     response = flask_application.post("/auth/login", json=altered_account)
     assert response.status_code != HTTP_SUCCESS_CODE
-    assert response.get_json()["error"] == LOGIN_FAILURE_MSG
+    assert response.get_json()["msg"] == LOGIN_FAILURE_MSG
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
@@ -76,7 +77,7 @@ def test_invalid_multiple_email_logins(flask_application: FlaskClient, user_acco
         }
         response = flask_application.post("/auth/login", json=altered_account)
         assert response.status_code != HTTP_SUCCESS_CODE
-        assert response.get_json()["error"] == LOGIN_FAILURE_MSG
+        assert response.get_json()["msg"] == LOGIN_FAILURE_MSG
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
@@ -96,7 +97,7 @@ def test_invalid_password_login(flask_application: FlaskClient, user_account: di
     }
     response = flask_application.post("/auth/login", json=altered_account)
     assert response.status_code != HTTP_SUCCESS_CODE
-    assert response.get_json()["error"] == LOGIN_FAILURE_MSG
+    assert response.get_json()["msg"] == LOGIN_FAILURE_MSG
 
 
 @pytest.mark.repeat(REPEAT_TESTS)
@@ -117,7 +118,7 @@ def test_invalid_multiple_password_logins(flask_application: FlaskClient, user_a
         }
         response = flask_application.post("/auth/login", json=altered_account)
         assert response.status_code != HTTP_SUCCESS_CODE
-        assert response.get_json()["error"] == LOGIN_FAILURE_MSG
+        assert response.get_json()["msg"] == LOGIN_FAILURE_MSG
 
 
 def test_invalid_no_json_login(flask_application: FlaskClient) -> None:
@@ -149,4 +150,4 @@ def test_invalid_empty_login(flask_application: FlaskClient) -> None:
     }
     response = flask_application.post("/auth/login", json=user_details)
     assert response.status_code != HTTP_SUCCESS_CODE
-    assert response.get_json()["error"] == LOGIN_FAILURE_MSG
+    assert response.get_json()["msg"] == LOGIN_FAILURE_MSG
