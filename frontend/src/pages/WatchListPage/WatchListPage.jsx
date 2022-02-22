@@ -1,4 +1,4 @@
-import { Grid, MenuItem, Select } from '@mui/material'
+import { Grid } from '@mui/material'
 import Button from '@mui/material/Button'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FetchFunction } from '../../components/FetchFunction'
@@ -8,6 +8,7 @@ import AddStockDialog from '../../components/AddStockDialog/AddStockDialog'
 import Columns from './components/Columns'
 import Title from '../../components/Title/Title'
 import CreateList from '../../components/CreateList/CreateList'
+import CurrentList from '../../components/CurrentList/CurrentList'
 
 const WatchListPage = () => {
   const { userId } = useContext(ClientContext)
@@ -26,13 +27,15 @@ const WatchListPage = () => {
 
   const [stockDialogOpen, setStockDialogOpen] = useState(false)
 
+  const [changedTitle, setChangedTitle] = useState(false)
+
   useEffect(() => {
     if (userId !== null) {
       FetchFunction('GET', `watchlist/${userId}`, null)
         .then(res => setListOfWL(res))
         .catch(error => console.log(error))
     }
-  }, [userId, openListDialog])
+  }, [userId, openListDialog, changedTitle, selectedWL])
 
   useEffect(() => {
     if (selectedWL !== '') {
@@ -40,7 +43,7 @@ const WatchListPage = () => {
         .then(res => setListOfStocks(res))
         .catch(error => console.log(error))
     }
-  }, [selectedWL, stockDialogOpen, openListDialog])
+  }, [selectedWL, stockDialogOpen, changedTitle])
 
   const columns = Columns(listOfStocks)
 
@@ -107,45 +110,26 @@ const WatchListPage = () => {
       />
 
       <Grid item>
-        <Grid container direction={'row'} justifyContent={'center'} spacing={2}>
-          <Select
-            displayEmpty
-            onChange={(e) => setSelectedWL(e.target.value)}
-            renderValue={(selected) => {
-              if (selected.length === 0) {
-                return <em>Select a watchlist</em>
-              }
-              return selected
-            }}
-            sx={{ width: '210px' }}
-            value={selectedWL}
-            variant={'standard'}
-          >
-            <MenuItem disabled value="">
-              <em>Select...</em>
-            </MenuItem>
-            {
-              listOfWL.map(element =>
-                <MenuItem
-                  key={element.watchlist_name}
-                  value={element.watchlist_name}
-                >
-                  {element.watchlist_name}
-                </MenuItem>
-              )}
-          </Select>
-        </Grid>
+        <CurrentList
+          currentValue={selectedWL}
+          iterateValue={'watchlist_name'}
+          listOfValues={listOfWL}
+          setCurrentValue={setSelectedWL}
+        />
       </Grid>
 
       <Grid item>
         <TableOfStocks
           actions={renderAddStock()}
+          changedTitle={changedTitle}
           clearSelectedRows={toggleCleared}
           columns={columns}
           contextActions={contextActions}
           data={listOfStocks}
-        onSelectedRowsChange={handleRowsSelected}
-        selectedItem={selectedWL}/>
+          onSelectedRowsChange={handleRowsSelected}
+          selectedItem={selectedWL}
+          setChangedTitle={setChangedTitle}
+        />
       </Grid>
 
     </>
