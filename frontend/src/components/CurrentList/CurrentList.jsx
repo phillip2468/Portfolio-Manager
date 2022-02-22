@@ -6,6 +6,7 @@ const CurrentList = (props) => {
   return (
     <Grid container direction={'row'} justifyContent={'center'} spacing={2}>
       <Select
+        data-testid={'selectCurrentList'}
         displayEmpty={true}
         onChange={(e) => props.setCurrentValue(e.target.value)}
         renderValue={(selected) => {

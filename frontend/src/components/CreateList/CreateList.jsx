@@ -54,6 +54,7 @@ const CreateList = (props) => {
           </DialogContentText>
 
           <TextField autoFocus
+                     data-testid={'CreateListText'}
                      fullWidth
                      label={props.textFieldLabel}
                      margin={'dense'}

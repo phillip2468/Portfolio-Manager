@@ -1,8 +1,8 @@
 import DataTable from 'react-data-table-component'
 import * as PropTypes from 'prop-types'
-import ListOfTitle from './ListOfTitle/ListOfTitle'
+import ListOfTitle from '../ListOfTitle/ListOfTitle'
 
-const headerComponent = (props) => {
+const titleComponent = (props) => {
   if (props.selectedItem) {
     return <ListOfTitle
       changedValue={props.changedTitle}
@@ -20,6 +20,7 @@ const TableOfStocks = (props) => {
     columns={props.columns}
     contextActions={props.contextActions}
     data={props.data}
+    data-testid={'TableOfStocks'}
     defaultSortFieldId={'symbol'}
     highlightOnHover={true}
     keyField={'portfolio_id'}
@@ -28,7 +29,7 @@ const TableOfStocks = (props) => {
     pointerOnHover={true}
     selectableRows={true}
     theme={'dark'}
-    title={headerComponent(props)}
+    title={titleComponent(props)}
   />
 }
 

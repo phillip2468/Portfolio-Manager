@@ -15,7 +15,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FetchFunction } from '../../components/FetchFunction'
 import { ClientContext } from '../../store/StoreCredentials'
 import { Link } from 'react-router-dom'
-import TableOfStocks from '../../components/TableOfStocks'
+import TableOfStocks from '../../components/TableOfStocks/TableOfStocks'
 import AddStockDialog from '../../components/AddStockDialog'
 
 const WatchListPage = () => {
