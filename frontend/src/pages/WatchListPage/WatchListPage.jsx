@@ -1,15 +1,4 @@
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grid,
-  MenuItem,
-  Select,
-  TextField,
-  Typography
-} from '@mui/material'
+import { Grid, MenuItem, Select } from '@mui/material'
 import Button from '@mui/material/Button'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FetchFunction } from '../../components/FetchFunction'
@@ -17,9 +6,13 @@ import { ClientContext } from '../../store/StoreCredentials'
 import TableOfStocks from '../../components/TableOfStocks/TableOfStocks'
 import AddStockDialog from '../../components/AddStockDialog/AddStockDialog'
 import Columns from './components/Columns'
+import Title from '../../components/Title/Title'
+import CreateList from '../../components/CreateList/CreateList'
 
 const WatchListPage = () => {
-  const [openWLDialog, setOpenWLDialog] = useState(false)
+  const { userId } = useContext(ClientContext)
+
+  const [openListDialog, setOpenListDialog] = useState(false)
 
   const [listOfWL, setListOfWL] = useState([])
 
@@ -33,17 +26,13 @@ const WatchListPage = () => {
 
   const [stockDialogOpen, setStockDialogOpen] = useState(false)
 
-  const { userId } = useContext(ClientContext)
-
-  const [newWLName, setNewWLName] = useState('')
-
   useEffect(() => {
     if (userId !== null) {
       FetchFunction('GET', `watchlist/${userId}`, null)
         .then(res => setListOfWL(res))
         .catch(error => console.log(error))
     }
-  }, [userId, openWLDialog])
+  }, [userId, openListDialog])
 
   useEffect(() => {
     if (selectedWL !== '') {
@@ -51,7 +40,7 @@ const WatchListPage = () => {
         .then(res => setListOfStocks(res))
         .catch(error => console.log(error))
     }
-  }, [selectedWL, stockDialogOpen, newWLName])
+  }, [selectedWL, stockDialogOpen, openListDialog])
 
   const columns = Columns(listOfStocks)
 
@@ -92,58 +81,30 @@ const WatchListPage = () => {
   return (
     <>
       <Grid item>
-        <Typography align={'center'} variant={'h5'}>
-          Watchlist page
-        </Typography>
+        <Title title={'Watchlist page'}/>
       </Grid>
 
       <Grid item>
         <Grid container justifyContent={'center'}>
-          <Button onClick={() => setOpenWLDialog(true)} variant={'contained'}>
-            Create a new watchlist
-          </Button>
+          <CreateList
+            buttonText={'Create a new watchlist'}
+            dialogContent={'Enter a title for your watchlist here'}
+            dialogOpen={openListDialog}
+            dialogTitle={'Add a new watchlist'}
+            listRoute={'watchlist'}
+            setDialogOpen={setOpenListDialog}
+            textFieldLabel={'Watchlist name'}
+          />
         </Grid>
       </Grid>
 
-      <Dialog onClose={() => setOpenWLDialog(false)} open={openWLDialog}>
-        <DialogTitle>
-          Create a new watchlist
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Enter a title for your watchlist here
-          </DialogContentText>
-
-          <TextField autoFocus
-                     fullWidth
-                     id={'watchlist_name'}
-                     label={'Watchlist name'}
-                     margin={'dense'}
-                     onChange={(e) => setNewWLName(e.target.value)}
-                     type={'text'}
-                     value={newWLName}
-                     variant={'standard'}
-          />
-
-          <DialogActions>
-            <Button onClick={() => setOpenWLDialog(false)}>Cancel</Button>
-            <Button onClick={() => {
-              FetchFunction('POST', `watchlist/${userId}/${newWLName}`, null)
-                .then(res => {
-                  console.log(res)
-                  setOpenWLDialog(false)
-                  setNewWLName('')
-                })
-                .catch(error => {
-                  console.log(error)
-                })
-            }}>Add</Button>
-          </DialogActions>
-        </DialogContent>
-      </Dialog>
-
-      <AddStockDialog onClose={() => setStockDialogOpen(false)} open={stockDialogOpen}
-                      route={'watchlist'} selectedItem={selectedWL} userId={userId}/>
+      <AddStockDialog
+        onClose={() => setStockDialogOpen(false)}
+        open={stockDialogOpen}
+        route={'watchlist'}
+        selectedItem={selectedWL}
+        userId={userId}
+      />
 
       <Grid item>
         <Grid container direction={'row'} justifyContent={'center'} spacing={2}>
