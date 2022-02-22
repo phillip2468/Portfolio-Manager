@@ -45,6 +45,7 @@ const ListOfTitle = props => {
         onBlur={() => changeTitle()}
         onChange={(e) => setNewTitle(e.target.value)}
         placeholder={placeholderText}
+        sx={{ width: '300px' }}
         value={newTitle}
         variant={'standard'}
       />
