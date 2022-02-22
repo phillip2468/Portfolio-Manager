@@ -7,7 +7,7 @@ from money_maker.extensions import cache, db
 from money_maker.models.news_stories import NewsStories
 from sqlalchemy import insert
 
-news_stories_bp = Blueprint('news_stories_bp', __name__)
+news_stories_bp = Blueprint("news_stories_bp", __name__, url_prefix="/news")
 
 
 @news_stories_bp.route("/news-stories")
