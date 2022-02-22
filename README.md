@@ -15,6 +15,44 @@ An example of this website can be found [here](https://morning-temple-33157.hero
 # Project structure
 The project is divided into 2 major sections; the backend and frontend folders. 
 
-The backend routes requests as defined by each blueprint in the app.py file. Each blueprint is registered to the application, so that requests can be properly routed. Each blueprint contains its own methods (and thus their own urls) prefixed by the base blueprint url (for example the url for '/login' is 'auth/login' since it is in the auth blueprint).
+The backend routes requests as defined by each blueprint in the app.py file. Each blueprint is registered to the application, so that requests can be properly routed. Each blueprint contains its own methods (and thus their own urls) prefixed by the base blueprint url (for example the url for '/login' is 'auth/login' since it is in the auth blueprint). All methods exist within the routes.py in each module.
+
+```
+└── backend
+    ├── db                      handles database migrations
+        └── versions            stores previous migrations made by alembic
+        ├── env.py              commands for alembic migrations
+        ├── script.py.mako      provides a git like messages for all migrations
+        ├── seeds.py            provides example data for the website
+    └── money_maker
+        ├── auth                handles the authentication of user accounts
+        ├── home                displays trending tickers and most actively traded stocks on the home page
+        ├── models              SQL tables as defined by SQLAlchemy ORM syntax
+        ├── news                scrapes news articles from AFR
+        ├── portfolio           stores stocks as a list for viewing later with features such as units purchased and unit per price
+        ├── quote               retrieves information for an individual stock
+        ├── search              retrieves a matching stock given a keyword
+        ├── tasks               background tasks powered by celery workers
+        ├── tickers             retrieves infromation for several stocks
+        ├── trending            provides simple trends on all stocks based on certain attributes
+        ├── watchlist           stores stocks as a list for viewing later
+        ├── app.py              entry point to flask application
+        ├── celery.py           entry point for celery app
+        ├── config.py           configuration details for flask and celery
+        ├── extensions.py       callback of extra features that are attached to the flask application
+        ├── helpers.py          provides useful functions used throught the flask application
+        ├── config.py           configuration details for pytests
+        ├── wsgi.py             alternative entry for wsgi servers
+    ├── .flaskenv               environment variables for flask
+    ├── alembic.ini             used for alembic migrations
+    ├── conftest.py             fixtures and constants used by pytests
+    ├── extensions.py           used for celery applications
+    ├── pyproject.toml          github actions config file
+    ├── pytest.ini              configuration file for pytests
+    ├── requirements.txt        pip packages used for tox pytests
+    ├── run.py                  main method for starting the backend
+    ├── tox.ini                 configuration file used for tox testing
+    
+```
 
 The frontend meanwhile has all the pages routed in App.js file. These pages allow for the movement inside the application but do not interact anyway with the backend. Seperate fetch functions are used in order to retrieve the JSON data and components are modified in order to reflect these interactions. 
