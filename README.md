@@ -20,7 +20,7 @@ The backend routes requests as defined by each blueprint in the app.py file. Eac
 ```
 └── backend
     └── db                      handles database migrations
-        └── versions            stores previous migrations made by alembic
+        ├── versions            stores previous migrations made by alembic
         ├── env.py              commands for alembic migrations
         ├── script.py.mako      provides a git like messages for all migrations
         ├── seeds.py            provides example data for the website
