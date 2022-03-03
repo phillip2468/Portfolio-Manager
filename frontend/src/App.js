@@ -34,7 +34,7 @@ function App () {
                                 </Grid>
 
                                 <Grid item>
-                                    <Container maxWidth={'lg'} sx={{ border: '1px solid white' }}>
+                                    <Container maxWidth={'lg'}>
                                         <Grid container direction={'column'} spacing={4}>
                                             <Routes>
                                                 <Route element={<Homepage/>} exact path={'/'}/>
