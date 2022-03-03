@@ -23,7 +23,7 @@ export const ClientWrapper = ({ children }) => {
         navigate('/')
       })
       .catch(e => {
-        console.log(e)
+        alert(e.msg)
       })
   }
 
@@ -34,7 +34,7 @@ export const ClientWrapper = ({ children }) => {
         setLoggedIn(false)
         navigate('/login')
       })
-      .catch(res => console.log(res))
+      .catch(res => alert(e.msg))
   }
 
   const findUser = () => {
