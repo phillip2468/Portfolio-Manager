@@ -12,6 +12,35 @@ When deployed to [Heroku](https://www.heroku.com/) the flask application runs in
 
 An example of this website can be found [here](https://morning-temple-33157.herokuapp.com/).
 
+# Development requirements
+  - Windows 10 or higher / Linux OS
+  - Python3.10+ and pip
+  - Node.js 16.4+
+  - Yarn 1.2+
+  - Terminal
+  - An understaning of basic git and yarn commands + some IDE/ text editor of your choice
+  - Any latest web browser (Chrome, Firefox, etc...)
+ 
+# Getting started
+Make sure the above requirements are met and that a terminal of your choosing is opened.
+
+Git clone this repository, making sure to change into the directory after cloning.
+
+Create a virtual enviroment with python (note that the fourth argument can be whatever name you want) ```python -m venv venv```
+
+Activate the virtual environment (in Windows this command is) ```venv/Scripts/activate```.
+
+Install required dependencies with ```pip -r requirements.txt```.
+
+Then run the backend with ```python3 backend/run.py```.
+
+In a new terminal change into the frontend directory.
+
+Install required packages with ```yarn install```.
+
+Then to start the frontend use ```yarn start```.
+
+
 # Project structure
 The project is divided into 2 major sections; the backend and frontend folders. 
 
