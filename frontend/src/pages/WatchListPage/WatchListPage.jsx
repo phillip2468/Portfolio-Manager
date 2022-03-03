@@ -9,6 +9,7 @@ import Columns from './components/Columns'
 import Title from '../../components/Title/Title'
 import CreateList from '../../components/CreateList/CreateList'
 import CurrentList from '../../components/CurrentList/CurrentList'
+import DeleteList from '../../components/DeleteList/DeleteList'
 
 const WatchListPage = () => {
   const { userId } = useContext(ClientContext)
@@ -50,9 +51,20 @@ const WatchListPage = () => {
   const renderAddStock = () => {
     if (selectedWL) {
       return (
-        <Button
-          onClick={() => setStockDialogOpen(true)}
-          variant={'outlined'}>Add a new stock</Button>
+        <>
+          <Button
+            onClick={() => setStockDialogOpen(true)}
+            variant={'outlined'}>
+            Add a new stock
+          </Button>
+
+          <DeleteList
+            route={'watchlist'}
+            selectedItem={selectedWL}
+            setSelectedItem={setSelectedWL}
+            text={'Delete watchlist'}
+          />
+        </>
       )
     }
   }
@@ -127,6 +139,8 @@ const WatchListPage = () => {
           contextActions={contextActions}
           data={listOfStocks}
           onSelectedRowsChange={handleRowsSelected}
+          route={'watchlist'}
+          routeBody={'watchlist_name'}
           selectedItem={selectedWL}
           setChangedTitle={setChangedTitle}
         />

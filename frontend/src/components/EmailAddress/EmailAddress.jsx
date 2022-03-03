@@ -11,16 +11,17 @@ const validateEmail = (email) => {
   return regexp.test(email)
 }
 
-const EmailAddress = ({ placeholder, email, setValue, errorInInputs, setErrorInInputs, errorKey }) => {
+const EmailAddress = ({ placeholder, email, setEmail }) => {
   const [helperText, setHelperText] = useState(defaultText)
+  const [error, setError] = useState(false)
 
   const checkEmailAddress = (event) => {
     const emailAddress = event.target.value
     if (!validateEmail(emailAddress)) {
-      setErrorInInputs({ ...errorInInputs, [errorKey]: true })
+      setError(true)
       setHelperText(errorText)
     } else {
-      setErrorInInputs({ ...errorInInputs, [errorKey]: false })
+      setError(false)
       setHelperText(defaultText)
     }
   }
@@ -28,11 +29,11 @@ const EmailAddress = ({ placeholder, email, setValue, errorInInputs, setErrorInI
   return (
         <>
             <TextField
-                error={errorInInputs[errorKey]}
+                error={error}
                 fullWidth={true}
                 helperText={helperText}
                 onBlur={checkEmailAddress}
-                onChange={setValue}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder={placeholder}
                 sx={{ width: '350px' }}
                 value={email}
@@ -45,10 +46,7 @@ const EmailAddress = ({ placeholder, email, setValue, errorInInputs, setErrorInI
 EmailAddress.propTypes = {
   placeholder: PropTypes.string,
   email: PropTypes.string,
-  setValue: PropTypes.func,
-  errorInInputs: PropTypes.object,
-  setErrorInInputs: PropTypes.object,
-  errorKey: PropTypes.string
+  setEmail: PropTypes.func
 }
 
 export default EmailAddress

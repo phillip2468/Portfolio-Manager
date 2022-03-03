@@ -1,8 +1,11 @@
-import { Divider, Grid, Link, TextField, Typography } from '@mui/material'
+import { Divider, Grid, Link } from '@mui/material'
 import Button from '@mui/material/Button'
 import { useContext, useState } from 'react'
 import { ClientContext } from '../store/StoreCredentials'
 import { useNavigate } from 'react-router-dom'
+import Password from '../components/Password/Password'
+import EmailAddress from '../components/EmailAddress/EmailAddress'
+import Title from '../components/Title/Title'
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -27,30 +30,24 @@ const LoginPage = () => {
                     spacing={2}
                 >
                     <Grid item>
-                        <Typography variant={'h4'}>Sign in</Typography>
+                      <Title
+                        title={'Sign in'}
+                      />
                     </Grid>
 
                     <Grid item>
-                        <TextField
-                            autoFocus={true}
-                            fullWidth={true}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder={'Email address'}
-                            sx={{ width: '350px' }}
-                            value={email}
-                            variant={'outlined'}
-                        />
+                      <EmailAddress
+                        email={email}
+                        placeholder={'Enter an email address here'}
+                        setEmail={setEmail}
+                      />
                     </Grid>
 
                     <Grid item>
-                        <TextField
-                            fullWidth={true}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder={'Password'}
-                            sx={{ width: '350px' }}
-                            type={'password'}
-                            value={password}
-                            variant={'outlined'}
+                        <Password
+                        password={password}
+                        placeholder={'Enter a password here'}
+                        setPassword={setPassword}
                         />
                     </Grid>
 

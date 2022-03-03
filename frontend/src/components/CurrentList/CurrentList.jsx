@@ -11,7 +11,7 @@ const CurrentList = (props) => {
         onChange={(e) => props.setCurrentValue(e.target.value)}
         renderValue={(selected) => {
           if (selected.length === 0) {
-            return <em>Select a portfolio</em>
+            return <em>Select an item here...</em>
           }
           return selected
         }}

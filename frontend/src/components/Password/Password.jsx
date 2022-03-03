@@ -12,18 +12,19 @@ const validatePassword = (password) => {
   return regex.test(password)
 }
 
-const PasswordField = ({ placeholder, password, setPassword, errorInInputs, setErrorInInputs, errorKey }) => {
+const PasswordField = ({ placeholder, password, setPassword }) => {
   const [helperText, setHelperText] = useState(defaultText)
   const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState(false)
 
   const checkPassword = (event) => {
     const password = event.target.value
     if (!validatePassword(password)) {
-      setErrorInInputs({ ...errorInInputs, [errorKey]: true })
       setHelperText(errorText)
+      setError(true)
     } else {
-      setErrorInInputs({ ...errorInInputs, [errorKey]: false })
       setHelperText(defaultText)
+      setError(false)
     }
   }
 
@@ -43,11 +44,11 @@ const PasswordField = ({ placeholder, password, setPassword, errorInInputs, setE
                         </InputAdornment>
                   )
                 }}
-                error={errorInInputs[errorKey]}
+                error={error}
                 fullWidth={true}
                 helperText={helperText}
                 onBlur={checkPassword}
-                onChange={setPassword}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder={placeholder}
                 sx={{ width: '350px' }}
                 type={showPassword ? 'text' : 'password'}
@@ -61,10 +62,7 @@ const PasswordField = ({ placeholder, password, setPassword, errorInInputs, setE
 PasswordField.propTypes = {
   placeholder: PropTypes.string,
   password: PropTypes.string,
-  setPassword: PropTypes.func,
-  errorInInputs: PropTypes.object,
-  setErrorInInputs: PropTypes.object,
-  errorKey: PropTypes.string
+  setPassword: PropTypes.func
 }
 
 export default PasswordField
