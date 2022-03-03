@@ -1,6 +1,4 @@
 # Portfolio manager using yahoo finance web scraping
-
-
 ![example workflow](https://github.com/phillip2468/stocks_scraper_2/actions/workflows/tests.yml/badge.svg)
 
 
@@ -11,6 +9,10 @@ It is a stateless, single-page app using [Flask](https://flask.palletsprojects.c
 When deployed to [Heroku](https://www.heroku.com/) the flask application runs inside a [Gunicorn](https://gunicorn.org/) WSGI app server. Any interactions that require storage and retrieval are performed by the [Postgresql](https://www.postgresql.org/) database. A seperate [celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) worker performs actions in the background asynchronously and tasks are stored in a separate [Redis](https://redis.io/) queue. 
 
 An example of this website can be found [here](https://morning-temple-33157.herokuapp.com/).
+
+![Screenshot 2022-03-03 at 16-51-19 Money maker](https://user-images.githubusercontent.com/54766922/156507574-37dbe019-50b3-4990-a2c5-28c40e80cee6.png)
+
+
 
 # Development requirements
   - Windows 10 or higher / Linux OS
