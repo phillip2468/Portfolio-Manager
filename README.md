@@ -10,8 +10,9 @@ When deployed to [Heroku](https://www.heroku.com/) the flask application runs in
 
 An example of this website can be found [here](https://morning-temple-33157.herokuapp.com/).
 
-![Screenshot 2022-03-03 at 16-51-19 Money maker](https://user-images.githubusercontent.com/54766922/156507574-37dbe019-50b3-4990-a2c5-28c40e80cee6.png)
-
+![Screenshot 2022-03-03 at 21-11-44 Money maker](https://user-images.githubusercontent.com/54766922/156543740-baad1a7e-7481-425e-8098-94417a198cc8.png)
+![Screenshot 2022-03-03 at 21-11-54 Money maker](https://user-images.githubusercontent.com/54766922/156543744-bd79fd6f-3778-4713-933b-a9becab273b4.png)
+![Screenshot 2022-03-03 at 21-12-09 Money maker](https://user-images.githubusercontent.com/54766922/156543749-b2ce83e4-99a2-4bce-9715-2a6760b9a603.png)
 
 
 # Development requirements
