@@ -18,12 +18,11 @@ const AddStockDialog = (props) => {
 
   const handleSubmit = () => {
     FetchFunction('POST', `${props.route}/${props.userId}/${props.selectedItem}/${selectedStock.stock_id}`)
-      .then((msg) => {
+      .then(() => {
         return props.onClose()
       })
       .catch((error) => {
-        alert(error)
-        console.log(error)
+        alert(error.msg)
       })
   }
 
