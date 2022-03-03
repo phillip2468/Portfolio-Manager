@@ -56,3 +56,24 @@ The backend routes requests as defined by each blueprint in the app.py file. Eac
 ```
 
 The frontend meanwhile has all the pages routed in App.js file. These pages allow for the movement inside the application but do not interact anyway with the backend. Seperate fetch functions are used in order to retrieve the JSON data and components are modified in order to reflect these interactions. 
+
+```
+└── frontend
+    └── build                   importantly contains the index.html which provides a index for all webpages in the website
+    └── public                  contains static files
+    └── src
+        └── components          individual javascript/html components, designed for resuability
+        └── pages               individual webpages
+        └── store               datastore for user authentication
+        ├── App.css             provides default css styling
+        ├── App.js              router for all pages
+        ├── index.css           default css for index
+        ├── index.js            default index file
+        ├── logo.svg            used to display icon in tab
+        ├── reportWebVitals.js  used for testing
+        ├── setupTest.js        testing
+    ├── .eslint.js              eslint config file
+    ├── .gitignore              used to make sure that certain files aren't uploaded
+    ├── README.me               readme generated from react-create-app
+    ├── package.json            contains a list of packages required to use the application
+```
