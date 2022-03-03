@@ -16,25 +16,27 @@ const StockPage = () => {
   const [stockInfo, setStockInfo] = useState({})
   const lastUpdatedFmt = DateTime.fromISO(stockInfo.last_updated).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS)
   const listOfPeriods = ['1d', '5d', '7d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
+  const listOfIntervals = ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo']
   const [historicalData, setHistoricalData] = useState([])
 
   const [selectedPeriod, setPeriod] = useState(listOfPeriods[0])
+  const [selectedInterval, setInterval] = useState(listOfIntervals[5])
 
   useEffect(() => {
     if (stockName !== '') {
       FetchFunction('GET', `/quote/${stockName}`, null)
         .then(res => setStockInfo(res))
         .catch(error => alert(error.msg))
-      handleGetHistoricalData(selectedPeriod)
+      handleGetHistoricalData(selectedPeriod, selectedInterval)
     }
   }, [stockName])
 
   useEffect(() => {
-    handleGetHistoricalData(selectedPeriod)
-  }, [selectedPeriod])
+    handleGetHistoricalData(selectedPeriod, selectedInterval)
+  }, [selectedPeriod, selectedInterval])
 
-  const handleGetHistoricalData = (period) => {
-    FetchFunction('GET', `/quote/${stockName}&period=${period}&interval=30m`, null)
+  const handleGetHistoricalData = (period, interval) => {
+    FetchFunction('GET', `/quote/${stockName}&period=${period}&interval=${interval}`, null)
       .then(res => setHistoricalData(res))
       .catch(error => alert(error.msg))
   }
@@ -56,11 +58,21 @@ const StockPage = () => {
 
             <Grid item>
               <StockTimeButtons
+                duration={selectedPeriod}
                 label={'List of periods'}
                 listOfTimes={listOfPeriods}
                 setDuration={setPeriod}
               />
             </Grid>
+
+          <Grid item>
+            <StockTimeButtons
+              duration={selectedInterval}
+              label={'List of intervals'}
+              listOfTimes={listOfIntervals}
+              setDuration={setInterval}
+            />
+          </Grid>
 
             <StockPriceChart
                 formatTime={dateFormatter}

@@ -14,6 +14,7 @@ const StockTimeButtons = props => {
         return (
           <Grid item key={index}>
             <Button
+              disabled={props.duration === element}
               onClick={e => props.setDuration(e.target.value)}
               size={'small'}
               value={element}
@@ -30,7 +31,8 @@ const StockTimeButtons = props => {
 StockTimeButtons.propTypes = {
   listOfTimes: PropTypes.arrayOf(PropTypes.string),
   label: PropTypes.string,
-  setDuration: PropTypes.func
+  setDuration: PropTypes.func,
+  duration: PropTypes.string
 }
 
 export default StockTimeButtons
