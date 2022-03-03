@@ -21,7 +21,7 @@ const ListOfTitle = props => {
 
   const changeTitle = () => {
     const body = {
-      portfolio_name: newTitle
+      [props.routeBody]: newTitle
     }
     FetchFunction('PATCH', `${props.route}/${userId}/${props.currentValue}`, body)
       .then(res => {
@@ -57,7 +57,8 @@ ListOfTitle.propTypes = {
   currentValue: PropTypes.string,
   setChangedValue: PropTypes.func,
   route: PropTypes.string,
-  changedValue: PropTypes.bool
+  changedValue: PropTypes.bool,
+  routeBody: PropTypes.string
 }
 
 export default ListOfTitle

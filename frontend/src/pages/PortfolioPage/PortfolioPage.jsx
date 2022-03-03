@@ -149,6 +149,8 @@ const PortfolioPage = () => {
           contextActions={contextActions}
           data={listOfStocks}
           onSelectedRowsChange={handleRowsSelected}
+          route={'portfolio'}
+          routeBody={'portfolio_name'}
           selectedItem={selectedPortfolio}
           setChangedTitle={setChangedTitle}
         />

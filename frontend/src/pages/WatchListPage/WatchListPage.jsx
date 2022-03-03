@@ -127,6 +127,8 @@ const WatchListPage = () => {
           contextActions={contextActions}
           data={listOfStocks}
           onSelectedRowsChange={handleRowsSelected}
+          route={'watchlist'}
+          routeBody={'watchlist_name'}
           selectedItem={selectedWL}
           setChangedTitle={setChangedTitle}
         />

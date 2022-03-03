@@ -1,13 +1,14 @@
 import DataTable from 'react-data-table-component'
 import * as PropTypes from 'prop-types'
-import ListOfTitle from '../ListOfTitle/ListOfTitle'
+import ListOfTitle from '../TableOfStocksTitle/ListOfTitle'
 
 const titleComponent = (props) => {
   if (props.selectedItem) {
     return <ListOfTitle
       changedValue={props.changedTitle}
       currentValue={`${props.selectedItem}`}
-      route={'portfolio'}
+      route={props.route}
+      routeBody={props.routeBody}
       setChangedValue={props.setChangedTitle}
     />
   }
@@ -23,7 +24,6 @@ const TableOfStocks = (props) => {
     data-testid={'TableOfStocks'}
     defaultSortFieldId={'symbol'}
     highlightOnHover={true}
-    keyField={'portfolio_id'}
     onSelectedRowsChange={props.onSelectedRowsChange}
     pagination={true}
     pointerOnHover={true}
@@ -42,7 +42,9 @@ TableOfStocks.propTypes = {
   onSelectedRowsChange: PropTypes.func,
   selectedItem: PropTypes.string,
   setChangedTitle: PropTypes.func,
-  changedTitle: PropTypes.bool
+  changedTitle: PropTypes.bool,
+  route: PropTypes.string,
+  routeBody: PropTypes.string
 }
 
 export default TableOfStocks
