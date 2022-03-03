@@ -2,13 +2,12 @@
 
 import { useParams } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
-import { Divider } from '@mui/material'
-import Button from '@mui/material/Button'
+import { Grid } from '@mui/material'
 import StockPriceChart from '../../components/StockPriceChart/StockPriceCharts'
-import StockIntervals from './components/StockIntervals'
 import StockPriceDetails from './components/StockPriceDetails'
 import StockDetails from './components/StockDetails'
 import { FetchFunction } from '../../components/FetchFunction'
+import StockTimeButtons from './components/StockTimeButtons'
 
 const { DateTime } = require('luxon')
 
@@ -19,14 +18,20 @@ const StockPage = () => {
   const listOfPeriods = ['1d', '5d', '7d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
   const [historicalData, setHistoricalData] = useState([])
 
+  const [selectedPeriod, setPeriod] = useState(listOfPeriods[0])
+
   useEffect(() => {
     if (stockName !== '') {
       FetchFunction('GET', `/quote/${stockName}`, null)
         .then(res => setStockInfo(res))
         .catch(error => alert(error.msg))
-      handleGetHistoricalData('1d')
+      handleGetHistoricalData(selectedPeriod)
     }
   }, [stockName])
+
+  useEffect(() => {
+    handleGetHistoricalData(selectedPeriod)
+  }, [selectedPeriod])
 
   const handleGetHistoricalData = (period) => {
     FetchFunction('GET', `/quote/${stockName}&period=${period}&interval=30m`, null)
@@ -44,20 +49,18 @@ const StockPage = () => {
                 stockInfo={stockInfo}
             />
 
-            <Divider light={true}/>
-
             <StockPriceDetails
                 lastUpdatedFmt={lastUpdatedFmt}
                 stockInfo={stockInfo}
             />
 
-            <StockIntervals callbackfn={(element, index) => {
-              return (
-                    <Button key={index} onClick={() => handleGetHistoricalData(element)} size={'small'}>
-                        {element}
-                    </Button>
-              )
-            }} listOfIntervals={listOfPeriods}/>
+            <Grid item>
+              <StockTimeButtons
+                label={'List of periods'}
+                listOfTimes={listOfPeriods}
+                setDuration={setPeriod}
+              />
+            </Grid>
 
             <StockPriceChart
                 formatTime={dateFormatter}
