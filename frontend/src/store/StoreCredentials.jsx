@@ -29,12 +29,11 @@ export const ClientWrapper = ({ children }) => {
 
   const logoutUser = () => {
     FetchFunction('POST', 'auth/logout', null)
-      .then(res => {
-        console.log(res)
+      .then(() => {
         setLoggedIn(false)
         navigate('/login')
       })
-      .catch(res => alert(e.msg))
+      .catch(res => alert(res.msg))
   }
 
   const findUser = () => {

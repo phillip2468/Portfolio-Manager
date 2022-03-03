@@ -8,6 +8,7 @@ import StockPriceChart from '../../components/StockPriceChart/StockPriceCharts'
 import StockIntervals from './components/StockIntervals'
 import StockPriceDetails from './components/StockPriceDetails'
 import StockDetails from './components/StockDetails'
+import { FetchFunction } from '../../components/FetchFunction'
 
 const { DateTime } = require('luxon')
 
@@ -19,18 +20,18 @@ const StockPage = () => {
   const [historicalData, setHistoricalData] = useState([])
 
   useEffect(() => {
-    fetch(`/quote/${stockName}`)
-      .then(res => res.json())
-      .then(res => setStockInfo(res[0]))
-    fetch(`/quote/${stockName}&period=1d&interval=30m`)
-      .then(res => res.json())
-      .then(res => setHistoricalData(res))
+    if (stockName !== '') {
+      FetchFunction('GET', `/quote/${stockName}`, null)
+        .then(res => setStockInfo(res))
+        .catch(error => alert(error.msg))
+      handleGetHistoricalData('1d')
+    }
   }, [stockName])
 
   const handleGetHistoricalData = (period) => {
-    fetch(`/quote/${stockName}&period=${period}&interval=30m`)
-      .then(res => res.json())
+    FetchFunction('GET', `/quote/${stockName}&period=${period}&interval=30m`, null)
       .then(res => setHistoricalData(res))
+      .catch(error => alert(error.msg))
   }
 
   const dateFormatter = date => {

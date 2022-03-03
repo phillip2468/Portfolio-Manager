@@ -1,10 +1,11 @@
-import { Divider, Grid, Link, Typography } from '@mui/material'
+import { Divider, Grid, Link } from '@mui/material'
 import Button from '@mui/material/Button'
 import { useContext, useState } from 'react'
 import { ClientContext } from '../store/StoreCredentials'
 import { useNavigate } from 'react-router-dom'
 import Password from '../components/Password/Password'
 import EmailAddress from '../components/EmailAddress/EmailAddress'
+import Title from '../components/Title/Title'
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -29,7 +30,9 @@ const LoginPage = () => {
                     spacing={2}
                 >
                     <Grid item>
-                        <Typography variant={'h4'}>Sign in</Typography>
+                      <Title
+                        title={'Sign in'}
+                      />
                     </Grid>
 
                     <Grid item>
