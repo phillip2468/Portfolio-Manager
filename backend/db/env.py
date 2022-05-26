@@ -9,7 +9,6 @@ from money_maker.app import create_app
 from money_maker.models.ticker_prices import (on_update_function,
                                               on_update_trigger)
 
-register_entities([on_update_function, on_update_trigger])
 
 # There's no access to current_app here so we must create our own app.
 app = create_app()
