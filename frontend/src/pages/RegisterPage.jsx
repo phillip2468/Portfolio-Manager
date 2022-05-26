@@ -30,7 +30,8 @@ const RegisterPage = () => {
   })
 
   const handleInputChanges = (prop) => (event) => {
-    setInputs({ ...inputs, [prop]: event.target.value })
+    console.log(event)
+    setInputs({ ...inputs, [prop]: event })
   }
 
   const registerAccount = () => {
@@ -95,8 +96,8 @@ const RegisterPage = () => {
                             errorInInputs={errorInInputs}
                             errorKey={'email'}
                             placeholder={'Type in an email address'}
+                            setEmail={handleInputChanges('email')}
                             setErrorInInputs={setErrorInInputs}
-                            setValue={handleInputChanges('email')}
                         />
                     </Grid>
 
