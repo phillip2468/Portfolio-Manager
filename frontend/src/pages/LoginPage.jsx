@@ -10,8 +10,8 @@ import Title from '../components/Title/Title'
 const LoginPage = () => {
   const navigate = useNavigate()
 
-  const [email, setEmail] = useState('testemail1234@email.com')
-  const [password, setPassword] = useState('Password12345')
+  const [email, setEmail] = useState()
+  const [password, setPassword] = useState()
 
   const { loginUser } = useContext(ClientContext)
 
