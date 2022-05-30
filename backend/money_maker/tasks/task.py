@@ -8,11 +8,15 @@ from sqlalchemy import asc, bindparam, insert, select
 from sqlalchemy.dialects.postgresql import insert
 from yahooquery import Ticker
 
+from money_maker.ticker.routes import get_american_yh_stocks, refresh_au_symbols
+
 
 @shared_task()
 def update_yh_stocks():
-    list_asx_symbols = select(tP.symbol).order_by(asc(tP.symbol))
-    list_symbols: list[str] = [element[0] for element in db.session.execute(list_asx_symbols)]
+    get_american_yh_stocks()
+    refresh_au_symbols()
+    list_symbols = select(tP.symbol).order_by(asc(tP.symbol))
+    list_symbols: list[str] = [element[0] for element in db.session.execute(list_symbols)]
 
     yh_market_information: yahooquery.Ticker.__dict__ = \
         Ticker(list_symbols, formatted=True, asynchronous=True, max_workers=min(100, len(list_symbols)),

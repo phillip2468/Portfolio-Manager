@@ -1,10 +1,14 @@
 import flask.app
+import sqlalchemy
 from flask import Flask
 from mixer.backend.flask import mixer
+from sqlalchemy_utils.types.pg_composite import psycopg2
+
 from money_maker.auth.routes import auth_bp
 from money_maker.extensions import (bcrypt, cache, celery, cors, db,
                                     jwt_manager, marshmallow)
 from money_maker.home.routes import home_bp
+from money_maker.models.ticker_prices import TickerPrice
 from money_maker.models.user import User
 from money_maker.news.routes import news_stories_bp
 from money_maker.portfolio.routes import portfolio_bp
@@ -55,6 +59,13 @@ def create_app(testing=False) -> Flask:
     if testing is True:
         app.config["TESTING"] = True
     init_celery(app)
+
+    try:
+        db.session.query(TickerPrice).all()
+    except sqlalchemy.exc.ProgrammingError:
+        db.drop_all()
+        db.create_all()
+
 
     return app
 
