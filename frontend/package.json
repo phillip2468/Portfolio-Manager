@@ -4,7 +4,6 @@
   "proxy": "https://morning-temple-33157.herokuapp.com/",
   "private": true,
   "dependencies": {
-    "@appbaseio/react-searchbox": "^1.7.0",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@material-ui/core": "^4.12.3",
@@ -41,7 +40,7 @@
     "web-vitals": "^2.1.2"
   },
   "engines": {
-    "node": "18.x"
+    "node": "16.x"
   },
   "scripts": {
     "start": "react-scripts start",
