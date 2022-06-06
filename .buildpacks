@@ -1,4 +1,4 @@
 frontend=https://github.com/mars/create-react-app-buildpack
 backend=https://github.com/heroku/heroku-buildpack-nginx.git
 backend=https://github.com/heroku/heroku-buildpack-python.git
-https://github.com/vertragswecker/heroku-buildpack-slug-cleanup
+https://github.com/BOOKATIGER/heroku-buildpack-slug-cleanup
