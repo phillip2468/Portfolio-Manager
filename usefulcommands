@@ -15,3 +15,8 @@ git branch | %{ $_.Trim() } | ?{ $_ -ne 'master' } | %{ git branch -D $_ }
 
 
 https://stackoverflow.com/questions/61348798/sqlalchemy-marshmallow-unknown-field-error-in-a-many-to-one-relationship-al
+
+
+(If using wsl and wanting to activate python)
+python3 -m venv lvenv
+source lvenv/bin/activate
