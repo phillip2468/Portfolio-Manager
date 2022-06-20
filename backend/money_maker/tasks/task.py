@@ -51,14 +51,12 @@ def update_yh_stocks():
         'symbol': bindparam('symbol')
     }
 
+    db.session.query(tP).delete(synchronize_session="fetch")
+
+    # noinspection PyTypeChecker
     stmt = insert(tP).values(market_information)
+    db.session.execute(stmt, formatted_yh_information)
 
-    on_conflict_statement = stmt.on_conflict_do_update(
-        index_elements=['symbol'],
-        set_=market_information
-    )
-
-    db.session.execute(on_conflict_statement, formatted_yh_information)
     db.session.commit()
 
 
