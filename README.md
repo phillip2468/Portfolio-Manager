@@ -1,3 +1,5 @@
+*Note that heroku has switched to paid only plans and thus this repo is no longer functional.
+
 # Portfolio manager using yahoo finance web scraping
 ![example workflow](https://github.com/phillip2468/stocks_scraper_2/actions/workflows/tests.yml/badge.svg)
 
